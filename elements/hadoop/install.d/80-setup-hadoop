@@ -1,0 +1,56 @@
+#!/bin/bash
+tempfile=/tmp/tempfile
+
+echo "Installing SSH server"
+
+apt-get install openssh-server
+
+echo "Creating hadoop user & group"
+
+addgroup hadoop
+adduser --ingroup hadoop --disabled-password --gecos GECOS hadoop
+adduser hadoop sudo
+echo -e "swordfish\nswordfish\n" | passwd hadoop
+
+echo "Hadoop version $DIB_HADOOP_VERSION will be injected into image. Starting the download"
+
+wget -P /home/ubuntu/ "http://archive.apache.org/dist/hadoop/core/hadoop-"$DIB_HADOOP_VERSION"/hadoop_"$DIB_HADOOP_VERSION"-1_x86_64.deb"
+if [ $? -ne 0 ]; then
+   echo -e "Could not find Hadoop version $DIB_HADOOP_VERSION.\nExit"
+   exit 1
+fi
+
+echo "Installing Hadoop"
+
+dpkg -i /home/ubuntu/hadoop_$DIB_HADOOP_VERSION-1_x86_64.deb
+rm /home/ubuntu/hadoop_$DIB_HADOOP_VERSION-1_x86_64.deb
+
+echo "Pre-configuring Hadoop"
+
+cat $TARGET_ROOT/home/ubuntu/.bashrc > $TARGET_ROOT/home/hadoop/.bashrc
+filename=$(find $TARGET_ROOT/usr/lib/ -maxdepth 1 -name "jdk*")
+echo -e "HADOOP_HOME=/usr/share/hadoop/\nPATH=\$PATH:/usr/sbin/" >> $TARGET_ROOT/home/hadoop/.bashrc
+cat /etc/hadoop/hadoop-env.sh | sed "s,export JAVA_HOME=.*,export JAVA_HOME=$filename," > $tempfile
+cat $tempfile > /etc/hadoop/hadoop-env.sh
+
+echo "Generating keypair for 'hadoop' user"
+
+su -c "mkdir -m 700 /home/hadoop/.ssh" hadoop
+su -c "ssh-keygen -t rsa -P \"\" -N \"\" -f /home/hadoop/.ssh/id_rsa" hadoop
+su -c "cat /home/hadoop/.ssh/id_rsa.pub >> /home/hadoop/.ssh/authorized_keys" hadoop
+chmod 600 /home/hadoop/.ssh/authorized_keys
+chown hadoop:hadoop /var/run/
+
+mkdir /root/.ssh
+cp /home/hadoop/.ssh/authorized_keys /root/.ssh/
+
+echo "Adjusting ssh configuration"
+
+cat /etc/ssh/sshd_config | sed 's/PasswordAuthentication no/PasswordAuthentication yes/' > $tempfile
+echo -e "AuthorizedKeysFile .ssh/authorized_keys\nUseDNS no\nPermitTunnel yes" >> $tempfile
+cat $tempfile > /etc/ssh/sshd_config
+
+cat /etc/ssh/ssh_config | sed 's/#   StrictHostKeyChecking ask/StrictHostKeyChecking no/' | sed 's/GSSAPIAuthentication yes/GSSAPIAuthentication no/' > $tempfile
+cat $tempfile > /etc/ssh/ssh_config
+
+rm $tempfile
