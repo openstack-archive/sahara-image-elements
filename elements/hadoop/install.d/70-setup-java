@@ -39,7 +39,7 @@ javaPath=/usr/lib/
 mkdir -p $TARGET_ROOT/$javaPath
 mv $TARGET_ROOT/home/ubuntu/$filename $TARGET_ROOT/$javaPath
 cat $TARGET_ROOT/root/.bashrc >> $TARGET_ROOT/home/ubuntu/.bashrc
-echo -e "export JAVA_HOME="$javaPath$filename"\nexport PATH=\$PATH:"$javaPath$filename"/bin" >> $TARGET_ROOT/home/ubuntu/.bashrc
-echo -e "export JAVA_HOME="$javaPath$filename"\nexport PATH=\$PATH:"$javaPath$filename"/bin" >> $TARGET_ROOT/root/.bashrc
+echo -e "export JAVA_HOME=$javaPath$filename\nexport PATH=\$PATH:$javaPath$filename/bin" >> $TARGET_ROOT/home/ubuntu/.bashrc
+echo -e "export JAVA_HOME=$javaPath$filename\nexport PATH=\$PATH:$javaPath$filename/bin" >> $TARGET_ROOT/root/.bashrc
 source $TARGET_ROOT/home/ubuntu/.bashrc
 echo "Java was installed"
