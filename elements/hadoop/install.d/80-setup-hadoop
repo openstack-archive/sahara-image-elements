@@ -2,7 +2,7 @@
 
 echo "Installing SSH server"
 
-apt-get install openssh-server
+install-packages openssh-server
 
 echo "Creating hadoop user & group"
 
