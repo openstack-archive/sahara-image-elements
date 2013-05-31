@@ -1,5 +1,4 @@
 #!/bin/bash
-tempfile=/tmp/tempfile
 
 echo "Installing SSH server"
 
@@ -30,8 +29,7 @@ echo "Pre-configuring Hadoop"
 cat $TARGET_ROOT/home/ubuntu/.bashrc > $TARGET_ROOT/home/hadoop/.bashrc
 filename=$(find $TARGET_ROOT/usr/lib/ -maxdepth 1 -name "jdk*")
 echo -e "HADOOP_HOME=/usr/share/hadoop/\nPATH=\$PATH:/usr/sbin/" >> $TARGET_ROOT/home/hadoop/.bashrc
-cat /etc/hadoop/hadoop-env.sh | sed "s,export JAVA_HOME=.*,export JAVA_HOME=$filename," > $tempfile
-cat $tempfile > /etc/hadoop/hadoop-env.sh
+sed -i "s,export JAVA_HOME=.*,export JAVA_HOME=$filename," /etc/hadoop/hadoop-env.sh
 
 echo "Generating keypair for 'hadoop' user"
 
@@ -46,11 +44,9 @@ cp /home/hadoop/.ssh/authorized_keys /root/.ssh/
 
 echo "Adjusting ssh configuration"
 
-cat /etc/ssh/sshd_config | sed 's/PasswordAuthentication no/PasswordAuthentication yes/' > $tempfile
-echo -e "AuthorizedKeysFile .ssh/authorized_keys\nUseDNS no\nPermitTunnel yes" >> $tempfile
-cat $tempfile > /etc/ssh/sshd_config
+sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+echo -e "AuthorizedKeysFile .ssh/authorized_keys\nUseDNS no\nPermitTunnel yes" >> /etc/ssh/sshd_config
 
-cat /etc/ssh/ssh_config | sed 's/#   StrictHostKeyChecking ask/StrictHostKeyChecking no/' | sed 's/GSSAPIAuthentication yes/GSSAPIAuthentication no/' > $tempfile
-cat $tempfile > /etc/ssh/ssh_config
-
-rm $tempfile
+sed -i -e 's/#   StrictHostKeyChecking ask/StrictHostKeyChecking no/' \
+       -e 's/GSSAPIAuthentication yes/GSSAPIAuthentication no/' \
+    /etc/ssh/ssh_config
