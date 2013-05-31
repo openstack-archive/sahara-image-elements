@@ -3,7 +3,7 @@ set -e
 
 if [ -z "$JAVA_DOWNLOAD_URL" ]; then
    if [ -z "$JAVA_FILE" ]; then
-      echo "JAVA_FILE and JAVA_DOWNLOAD_URL are now set. Impossible to install java. Exit"
+      echo "JAVA_FILE and JAVA_DOWNLOAD_URL are not set. Impossible to install java. Exit"
       exit 1
    fi
 fi
