@@ -1,0 +1,10 @@
+#!/bin/bash
+echo -e "Creating hadoop_pid_dir"
+mkdir /var/run/hadoop
+mkdir /run/hadoop
+chown hadoop:hadoop /var/run/hadoop/
+chown hadoop:hadoop /run/hadoop/
+echo "Setup ubuntu's directory"
+mkdir -p /home/ubuntu/.ssh
+touch /home/ubuntu/.ssh/authorized_keys
+chown -R ubuntu:ubuntu /home/ubuntu

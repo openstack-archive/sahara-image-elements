@@ -1,1 +1,1 @@
-Installs Java 6 and Hadoop on Ubuntu
+Installs Java and Hadoop on Ubuntu

@@ -1,7 +1,9 @@
 #!/bin/bash
-
+tmp_dir=/tmp/hadoop
+mkdir -p $TARGET_ROOT/$tmp_dir
 echo "Installing SSH server"
 
+mkdir /root/.ssh
 install-packages openssh-server
 
 echo "Creating hadoop user & group"
@@ -9,11 +11,10 @@ echo "Creating hadoop user & group"
 addgroup hadoop
 adduser --ingroup hadoop --disabled-password --gecos GECOS hadoop
 adduser hadoop sudo
-echo -e "swordfish\nswordfish\n" | passwd hadoop
 
 echo "Hadoop version $DIB_HADOOP_VERSION will be injected into image. Starting the download"
 
-wget -P /home/ubuntu/ "http://archive.apache.org/dist/hadoop/core/hadoop-"$DIB_HADOOP_VERSION"/hadoop_"$DIB_HADOOP_VERSION"-1_x86_64.deb"
+wget -P $tmp_dir "http://archive.apache.org/dist/hadoop/core/hadoop-"$DIB_HADOOP_VERSION"/hadoop_"$DIB_HADOOP_VERSION"-1_x86_64.deb"
 if [ $? -ne 0 ]; then
    echo -e "Could not find Hadoop version $DIB_HADOOP_VERSION.\nExit"
    exit 1
@@ -21,15 +22,19 @@ fi
 
 echo "Installing Hadoop"
 
-dpkg -i /home/ubuntu/hadoop_$DIB_HADOOP_VERSION-1_x86_64.deb
-rm /home/ubuntu/hadoop_$DIB_HADOOP_VERSION-1_x86_64.deb
+dpkg -i $tmp_dir/hadoop_$DIB_HADOOP_VERSION-1_x86_64.deb
+rm $tmp_dir/hadoop_$DIB_HADOOP_VERSION-1_x86_64.deb
 
 echo "Pre-configuring Hadoop"
 
-cat $TARGET_ROOT/home/ubuntu/.bashrc > $TARGET_ROOT/home/hadoop/.bashrc
 filename=$(find $TARGET_ROOT/usr/lib/ -maxdepth 1 -name "jdk*")
 echo -e "HADOOP_HOME=/usr/share/hadoop/\nPATH=\$PATH:/usr/sbin/" >> $TARGET_ROOT/home/hadoop/.bashrc
+echo -e "JAVA_HOME=$filename\nPATH=\$PATH:$filename/bin/" >> $TARGET_ROOT/home/hadoop/.bashrc
 sed -i "s,export JAVA_HOME=.*,export JAVA_HOME=$filename," /etc/hadoop/hadoop-env.sh
+log_dir=/mnt/log/hadoop/\$USER/
+sed -i "s,export HADOOP_LOG_DIR=.*,export HADOOP_LOG_DIR=$log_dir," /etc/hadoop/hadoop-env.sh
+log_dir=/mnt/log/hadoop/hdfs
+sed -i "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=$log_dir," /etc/hadoop/hadoop-env.sh
 
 echo "Generating keypair for 'hadoop' user"
 
@@ -37,16 +42,5 @@ su -c "mkdir -m 700 /home/hadoop/.ssh" hadoop
 su -c "ssh-keygen -t rsa -P \"\" -N \"\" -f /home/hadoop/.ssh/id_rsa" hadoop
 su -c "cat /home/hadoop/.ssh/id_rsa.pub >> /home/hadoop/.ssh/authorized_keys" hadoop
 chmod 600 /home/hadoop/.ssh/authorized_keys
-chown hadoop:hadoop /var/run/
 
-mkdir /root/.ssh
 cp /home/hadoop/.ssh/authorized_keys /root/.ssh/
-
-echo "Adjusting ssh configuration"
-
-sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
-echo -e "AuthorizedKeysFile .ssh/authorized_keys\nUseDNS no\nPermitTunnel yes" >> /etc/ssh/sshd_config
-
-sed -i -e 's/#   StrictHostKeyChecking ask/StrictHostKeyChecking no/' \
-       -e 's/GSSAPIAuthentication yes/GSSAPIAuthentication no/' \
-    /etc/ssh/ssh_config

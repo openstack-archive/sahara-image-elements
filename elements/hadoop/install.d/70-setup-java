@@ -1,13 +1,15 @@
 #!/bin/bash
+tmp_dir=/tmp/java
+mkdir -p $TARGET_ROOT/$tmp_dir
 echo "Java setup begins"
 set -e
 if [ -z "$JAVA_DOWNLOAD_URL" ]; then
-   mkdir -p $TARGET_ROOT/home/ubuntu
+   mkdir -p $TARGET_ROOT/$tmp_dir
    script_dir=$(dirname $0)
-   install -D -g root -o root -m 0755 $script_dir/$JAVA_FILE $TARGET_ROOT/home/ubuntu/
+   install -D -g root -o root -m 0755 $script_dir/$JAVA_FILE $TARGET_ROOT/$tmp_dir
    echo "Java file moved"
 else
-   wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" -P $TARGET_ROOT/home/ubuntu/ $JAVA_DOWNLOAD_URL
+   wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" -P $TARGET_ROOT/$tmp_dir $JAVA_DOWNLOAD_URL
    if [ $? -eq 0 ]; then
       echo "Java is downloading"
       else
@@ -15,31 +17,27 @@ else
       exit 1
    fi
 fi
-filename=$(find $TARGET_ROOT/home/ubuntu/ -maxdepth 1 -name "jdk*")
+filename=$(find $TARGET_ROOT/$tmp_dir -maxdepth 1 -name "jdk*")
 filename=$(basename $filename)
 
 if echo $filename | grep -q -s -F .tar.gz ; then
    path=$(pwd)
-   cd $TARGET_ROOT/home/ubuntu/
-   echo $TARGET_ROOT/home/ubuntu/$filename | xargs -n 1 tar -zxvf
+   cd $TARGET_ROOT/$tmp_dir
+   echo $TARGET_ROOT/$tmp_dir/$filename | xargs -n 1 tar -zxvf
    cd $path
    else
       if echo $filename | grep -q -s -F .bin ; then
          path=$(pwd)
-         cd $TARGET_ROOT/home/ubuntu/
+         cd $TARGET_ROOT/$tmp_dir
          echo -e "\n" | sh $filename
          rm $filename
          cd $path
       fi
 fi
 
-filename=$(find $TARGET_ROOT/home/ubuntu/ -maxdepth 1 -type d -name "jdk*")
+filename=$(find $TARGET_ROOT/$tmp_dir -maxdepth 1 -type d -name "jdk*")
 filename=$(basename $filename)
 javaPath=/usr/lib/
 mkdir -p $TARGET_ROOT/$javaPath
-mv $TARGET_ROOT/home/ubuntu/$filename $TARGET_ROOT/$javaPath
-cat $TARGET_ROOT/root/.bashrc >> $TARGET_ROOT/home/ubuntu/.bashrc
-echo -e "export JAVA_HOME=$javaPath$filename\nexport PATH=\$PATH:$javaPath$filename/bin" >> $TARGET_ROOT/home/ubuntu/.bashrc
-echo -e "export JAVA_HOME=$javaPath$filename\nexport PATH=\$PATH:$javaPath$filename/bin" >> $TARGET_ROOT/root/.bashrc
-source $TARGET_ROOT/home/ubuntu/.bashrc
+mv $TARGET_ROOT/$tmp_dir/$filename $TARGET_ROOT/$javaPath
 echo "Java was installed"
