@@ -1,6 +1,6 @@
 if [ -z "$swift_url" ]; then
-   wget -P /usr/share/hadoop/lib/ -O hadoop-swift.jar https://github.com/stackforge/savanna-extra/blob/master/hadoop-swift/hadoop-swift-latest.jar
+   wget -O /usr/share/hadoop/lib/hadoop-swift.jar "https://github.com/stackforge/savanna-extra/blob/master/hadoop-swift/hadoop-swift-latest.jar?raw=true"
 else
-   wget -P /usr/share/hadoop/lib/ -O hadoop-swift.jar $swift_url
+   wget -O /usr/share/hadoop/lib/hadoop-swift.jar $swift_url
 fi
 chmod 0644 /usr/share/hadoop/lib/hadoop-swift.jar
