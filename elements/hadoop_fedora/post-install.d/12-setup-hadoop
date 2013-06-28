@@ -1,0 +1,32 @@
+#!/bin/bash
+echo "Hadoop setup begins"
+tmp_dir=/tmp/hadoop
+
+install-packages openssh-server
+echo "Creating hadoop user & group"
+adduser -G adm,wheel hadoop
+
+echo "Hadoop version $DIB_HADOOP_VERSION will be injected into image. Starting the download"
+wget -P $tmp_dir/ "http://archive.apache.org/dist/hadoop/core/hadoop-"$DIB_HADOOP_VERSION"/hadoop-"$DIB_HADOOP_VERSION"-1.x86_64.rpm"
+if [ $? -ne 0 ]; then
+   echo -e "Could not find Hadoop version $DIB_HADOOP_VERSION.\nAborting"
+   exit 1
+fi
+
+rpm -ivh --replacefiles $tmp_dir/hadoop-"$DIB_HADOOP_VERSION"-1.x86_64.rpm
+chmod 755 /usr/sbin/start-*
+chmod 755 /usr/sbin/stop-*
+chmod 755 /usr/sbin/slaves.sh
+chmod 755 /usr/sbin/update-hadoop-env.sh
+rm $tmp_dir/hadoop-"$DIB_HADOOP_VERSION"-1.x86_64.rpm
+rm -r $tmp_dir
+
+echo "Pre-configuring Hadoop"
+filename=$(find $TARGET_ROOT/usr/java/ -maxdepth 1 -name "jdk*")
+echo -e "PATH=\$PATH:/usr/sbin:$filename/bin\nJAVA_HOME=$filename" >> /home/hadoop/.bashrc
+echo -e "HADOOP_HOME=/usr/share/hadoop/" >> /home/hadoop/.bashrc
+sed -i "s,export JAVA_HOME=.*,export JAVA_HOME=$filename," /etc/hadoop/hadoop-env.sh
+log_dir=/mnt/log/hadoop/\$USER/
+sed -i "s,export HADOOP_LOG_DIR=.*,export HADOOP_LOG_DIR=$log_dir," /etc/hadoop/hadoop-env.sh
+log_dir=/mnt/log/hadoop/hdfs
+sed -i "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=$log_dir," /etc/hadoop/hadoop-env.sh

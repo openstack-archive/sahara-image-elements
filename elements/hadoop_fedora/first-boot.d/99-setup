@@ -1,0 +1,13 @@
+#!/bin/bash
+sleep 10
+rm /etc/resolv.conf
+service network restart
+chown -R ec2-user:ec2-user /home/ec2-user
+chown -R ec2-user:ec2-user /etc/hadoop
+mkdir -p /var/run/hadoop
+chown root:root /mnt
+mkdir -p /mnt/log/hadoop
+chown hadoop:hadoop /var/run/hadoop
+chown hadoop:hadoop /mnt/log/hadoop
+#TODO: configure iptables (https://bugs.launchpad.net/savanna/+bug/1195744)
+iptables -F

@@ -1,0 +1,44 @@
+#!/bin/bash
+echo "Java setup begins"
+install-packages wget
+tmp_dir=/tmp/java/
+mkdir -p $TARGET_ROOT/$tmp_dir
+set -e
+if [ -z "$JAVA_DOWNLOAD_URL" ]; then
+   script_dir=$(dirname $0)
+   install -D -g root -o root -m 0755 $script_dir/$JAVA_FILE $TARGET_ROOT/$tmp_dir
+   filename=$JAVA_FILE
+   echo "Java file moved"
+else
+   wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" -P $TARGET_ROOT/$tmp_dir $JAVA_DOWNLOAD_URL
+   if [ $? -eq 0 ]; then
+      echo "Java is downloading"
+      else
+      echo "Url error. Exit"
+      exit 1
+   fi
+   filename=$(find $TARGET_ROOT/$tmp_dir -maxdepth 1 -name "jdk*")
+   filename=$(basename $filename)
+fi
+
+if echo $tmp_dir/$filename | grep -q -s -F .tar.gz ; then
+   pushd $TARGET_ROOT/$tmp_dir
+   echo -e "\n" | tar -zxvf $TARGET_ROOT/$tmp_dir/$filename
+   popd
+   else
+      if echo $filename | grep -q -s -F .bin ; then
+         pushd $TARGET_ROOT/$tmp_dir
+         echo -e "\n" | sh $filename
+         rm $filename
+         popd
+      fi
+fi
+
+filename=$(find $TARGET_ROOT/$tmp_dir -maxdepth 1 -type d -name "jdk*")
+filename=$(basename $filename)
+javaPath=/usr/java/
+mkdir -p $TARGET_ROOT/$javaPath
+mv $TARGET_ROOT/$tmp_dir/$filename $TARGET_ROOT/$javaPath
+rm -r $tmp_dir
+echo "Java was installed"
+

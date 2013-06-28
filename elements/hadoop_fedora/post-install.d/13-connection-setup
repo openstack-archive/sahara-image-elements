@@ -1,0 +1,21 @@
+#!/bin/bash
+echo "Adjusting ssh configuration"
+
+sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+echo "UseDNS no" >> /etc/ssh/sshd_config
+echo "PermitTunnel yes" >> /etc/ssh/sshd_config
+echo "SyslogFacility AUTH" >> /etc/ssh/sshd_config
+echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+echo "StrictModes yes" >> /etc/ssh/sshd_config
+echo "RSAAuthentication yes" >> /etc/ssh/sshd_config
+echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config
+echo "IgnoreRhosts yes" >> /etc/ssh/sshd_config
+
+echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+echo "GSSAPIDelegateCredentials no" >> /etc/ssh/ssh_config
+sed -i 's/        GSSAPIAuthentication yes/GSSAPIAuthentication no/' /etc/ssh/ssh_config
+
+sed -i 's/ssh_pwauth:   0/ssh_pwauth:   1/' /etc/cloud/cloud.cfg
+chmod 640 /etc/sudoers
+sed -i 's/Defaults    requiretty/#Defaults    requiretty/' /etc/sudoers
+chmod 0440 /etc/sudoers
