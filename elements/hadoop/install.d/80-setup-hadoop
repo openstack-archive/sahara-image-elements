@@ -35,12 +35,3 @@ log_dir=/mnt/log/hadoop/\$USER/
 sed -i "s,export HADOOP_LOG_DIR=.*,export HADOOP_LOG_DIR=$log_dir," /etc/hadoop/hadoop-env.sh
 log_dir=/mnt/log/hadoop/hdfs
 sed -i "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=$log_dir," /etc/hadoop/hadoop-env.sh
-
-echo "Generating keypair for 'hadoop' user"
-
-su -c "mkdir -m 700 /home/hadoop/.ssh" hadoop
-su -c "ssh-keygen -t rsa -P \"\" -N \"\" -f /home/hadoop/.ssh/id_rsa" hadoop
-su -c "cat /home/hadoop/.ssh/id_rsa.pub >> /home/hadoop/.ssh/authorized_keys" hadoop
-chmod 600 /home/hadoop/.ssh/authorized_keys
-
-cp /home/hadoop/.ssh/authorized_keys /root/.ssh/
