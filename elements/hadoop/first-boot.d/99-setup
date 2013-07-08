@@ -1,5 +1,7 @@
 #!/bin/bash
-echo -e "Creating hadoop_pid_dir"
+chown root:root /mnt
+mkdir -p /mnt/log/hadoop
+chown hadoop:hadoop /mnt/log/hadoop
 mkdir /var/run/hadoop
 mkdir /run/hadoop
 chown hadoop:hadoop /var/run/hadoop/
