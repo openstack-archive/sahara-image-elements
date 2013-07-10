@@ -2,7 +2,7 @@
 echo "Hadoop setup begins"
 tmp_dir=/tmp/hadoop
 
-install-packages openssh-server
+install-packages openssh-server wget
 echo "Creating hadoop user & group"
 adduser -G adm,wheel hadoop
 
