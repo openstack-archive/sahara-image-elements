@@ -58,3 +58,6 @@ sed -i 's/ssh_pwauth:   0/ssh_pwauth:   1/' /etc/cloud/cloud.cfg
 
 # Unique to Fedora
 augtool -s clear /files/etc/sudoers/Defaults[type=':nrpe']/requiretty/negate
+
+# Exit with success, even if the last config update failed
+:
