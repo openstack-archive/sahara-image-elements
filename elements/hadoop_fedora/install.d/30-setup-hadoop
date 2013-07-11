@@ -1,32 +1,65 @@
 #!/bin/bash
-echo "Hadoop setup begins"
+
+distro=$(lsb_release -is || :)
+if [ ! "$distro" == "Fedora" -a ! "$distro" == "Ubuntu" ]; then
+   echo "Unknown distro: $distro. Exiting."
+   exit 1
+fi
+
+echo "Hadoop setup begins for $distro"
 tmp_dir=/tmp/hadoop
 
-install-packages wget
 echo "Creating hadoop user & group"
-adduser -G adm,wheel hadoop
+case "$distro" in
+   Ubuntu )
+      addgroup hadoop
+      adduser --ingroup hadoop --disabled-password --gecos GECOS hadoop
+      adduser hadoop sudo
+   ;;
+   Fedora )
+      adduser -G adm,wheel hadoop
+   ;;
+esac
 
 echo "Hadoop version $DIB_HADOOP_VERSION will be injected into image. Starting the download"
-wget -P $tmp_dir/ "http://archive.apache.org/dist/hadoop/core/hadoop-"$DIB_HADOOP_VERSION"/hadoop-"$DIB_HADOOP_VERSION"-1.x86_64.rpm"
+case "$distro" in
+   Ubuntu )
+      package="hadoop_$DIB_HADOOP_VERSION-1_x86_64.deb"
+   ;;
+   Fedora )
+      package="hadoop-$DIB_HADOOP_VERSION-1.x86_64.rpm"
+   ;;
+esac
+
+install-packages wget
+wget -P $tmp_dir "http://archive.apache.org/dist/hadoop/core/hadoop-$DIB_HADOOP_VERSION/$package"
 if [ $? -ne 0 ]; then
    echo -e "Could not find Hadoop version $DIB_HADOOP_VERSION.\nAborting"
    exit 1
 fi
 
-rpm -ivh --replacefiles $tmp_dir/hadoop-"$DIB_HADOOP_VERSION"-1.x86_64.rpm
-chmod 755 /usr/sbin/start-*
-chmod 755 /usr/sbin/stop-*
-chmod 755 /usr/sbin/slaves.sh
-chmod 755 /usr/sbin/update-hadoop-env.sh
-rm $tmp_dir/hadoop-"$DIB_HADOOP_VERSION"-1.x86_64.rpm
+case "$distro" in
+   Ubuntu )
+      dpkg -i $tmp_dir/$package
+   ;;
+   Fedora )
+      rpm -ivh --replacefiles $tmp_dir/$package
+      chmod 755 /usr/sbin/start-*
+      chmod 755 /usr/sbin/stop-*
+      chmod 755 /usr/sbin/slaves.sh
+      chmod 755 /usr/sbin/update-hadoop-env.sh
+   ;;
+esac
 rm -r $tmp_dir
 
 echo "Pre-configuring Hadoop"
 filename=$(find $TARGET_ROOT/usr/java/ -maxdepth 1 -name "jdk*")
-echo -e "PATH=\$PATH:/usr/sbin:$filename/bin\nJAVA_HOME=$filename" >> /home/hadoop/.bashrc
-echo -e "HADOOP_HOME=/usr/share/hadoop/" >> /home/hadoop/.bashrc
-sed -i "s,export JAVA_HOME=.*,export JAVA_HOME=$filename," /etc/hadoop/hadoop-env.sh
-log_dir=/mnt/log/hadoop/\$USER/
-sed -i "s,export HADOOP_LOG_DIR=.*,export HADOOP_LOG_DIR=$log_dir," /etc/hadoop/hadoop-env.sh
-log_dir=/mnt/log/hadoop/hdfs
-sed -i "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=$log_dir," /etc/hadoop/hadoop-env.sh
+cat >> /home/hadoop/.bashrc <<EOF
+PATH=\$PATH:/usr/sbin:$filename/bin
+JAVA_HOME=$filename
+HADOOP_HOME=/usr/share/hadoop/
+EOF
+sed -i -e "s,export JAVA_HOME=.*,export JAVA_HOME=$filename," \
+       -e "s,export HADOOP_LOG_DIR=.*,export HADOOP_LOG_DIR=/mnt/log/hadoop/\$USER," \
+       -e "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=/mnt/log/hadoop/hdfs," \
+    /etc/hadoop/hadoop-env.sh

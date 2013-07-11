@@ -6,6 +6,7 @@ echo "Adjusting ssh configuration"
 # /etc/ssh/ssh_config is provided by openssh-clients
 # Note0: augtool is provided by augeas-tools on Ubuntu
 # Note1: augtool on Ubuntu does not auto-save, pass -s
+# Note2: openssh-clients is openssh-client on Ubuntu
 install-packages augeas openssh-server openssh-clients
 
 
