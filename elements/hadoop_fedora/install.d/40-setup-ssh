@@ -3,11 +3,10 @@
 echo "Adjusting ssh configuration"
 
 # /etc/ssh/sshd_config is provided by openssh-server
-# /etc/ssh/ssh_config is provided by openssh-clients
-# Note0: augtool is provided by augeas-tools on Ubuntu
-# Note1: augtool on Ubuntu does not auto-save, pass -s
-# Note2: openssh-clients is openssh-client on Ubuntu
-install-packages augeas openssh-server openssh-clients
+# /etc/ssh/ssh_config is provided by openssh-client
+# Note: You need diskimage-builder w/ SHA 82eacdec (11 July 2013) for
+#       this install to work on Fedora - https://review.openstack.org/#/c/36739/
+install-packages augeas-tools openssh-server openssh-client
 
 
 ##
