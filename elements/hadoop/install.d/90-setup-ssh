@@ -1,8 +1,0 @@
-#!/bin/bash
-sed -i -e 's/PasswordAuthentication no/PasswordAuthentication yes/' \
-       -e 's/GSSAPIAuthentication yes/GSSAPIAuthentication no/' \
-    /etc/ssh/sshd_config
-echo -e "AuthorizedKeysFile .ssh/authorized_keys\nUseDNS no\nPermitTunnel yes\nGSSAPICleanupCredentials yes" >> /etc/ssh/sshd_config
-
-sed -i -e 's/GSSAPIAuthentication yes/GSSAPIAuthentication no/' /etc/ssh/ssh_config
-echo -e "StrictHostKeyChecking no" >> /etc/ssh/ssh_config

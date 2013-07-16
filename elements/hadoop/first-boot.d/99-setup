@@ -1,12 +1,30 @@
 #!/bin/bash
+
+# Common
 chown root:root /mnt
-mkdir -p /mnt/log/hadoop
-chown hadoop:hadoop /mnt/log/hadoop
-mkdir /var/run/hadoop
-mkdir /run/hadoop
-chown hadoop:hadoop /var/run/hadoop/
-chown hadoop:hadoop /run/hadoop/
-echo "Setup ubuntu's directory"
-mkdir -p /home/ubuntu/.ssh
-touch /home/ubuntu/.ssh/authorized_keys
-chown -R ubuntu:ubuntu /home/ubuntu
+mkdir -p /var/run/hadoop ; chown hadoop:hadoop /var/run/hadoop
+mkdir -p /mnt/log/hadoop ; chown hadoop:hadoop /mnt/log/hadoop
+
+distro=$(lsb_release -is || :)
+case "$distro" in
+   Ubuntu )
+      mkdir /run/hadoop
+      chown hadoop:hadoop /run/hadoop/
+      mkdir -p /home/ubuntu/.ssh
+      touch /home/ubuntu/.ssh/authorized_keys
+      chown -R ubuntu:ubuntu /home/ubuntu
+   ;;
+   Fedora )
+      sleep 10
+      rm /etc/resolv.conf
+      service network restart
+      chown -R ec2-user:ec2-user /home/ec2-user
+      chown -R ec2-user:ec2-user /etc/hadoop
+      #TODO: configure iptables (https://bugs.launchpad.net/savanna/+bug/1195744)
+      iptables -F
+   ;;
+   * )
+      echo "Unknown distro: $distro. Exiting."
+      exit 1
+   ;;
+esac

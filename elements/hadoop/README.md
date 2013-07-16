@@ -1,1 +1,1 @@
-Installs Java and Hadoop on Ubuntu
+Installs Java and Hadoop, configures SSH

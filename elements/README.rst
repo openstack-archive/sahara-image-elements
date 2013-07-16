@@ -38,7 +38,7 @@ Steps how to create cloud image with Apache Hadoop installed using diskimage-bui
 
 .. sourcecode:: bash
 
-    DIB_HADOOP_VERSION=1.1.2 JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_IMAGE_SIZE=10 disk-image-create base vm fedora hadoop_fedora root-passwd -o fedora_hadoop_1_1_2
+    JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_HADOOP_VERSION=1.1.2 DIB_IMAGE_SIZE=10 disk-image-create base vm fedora hadoop root-passwd -o fedora_hadoop_1_1_2
 
 In this command 'DIB_HADOOP_VERSION' parameter is version of hadoop needs to be installed.
 You can use 'JAVA_DOWNLOAD_URL' parameter to specify download link for JDK (tarball or bin).
