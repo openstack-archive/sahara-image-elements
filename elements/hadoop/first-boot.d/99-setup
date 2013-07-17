@@ -1,10 +1,4 @@
 #!/bin/bash
-
-# Common
-chown root:root /mnt
-mkdir -p /var/run/hadoop ; chown hadoop:hadoop /var/run/hadoop
-mkdir -p /mnt/log/hadoop ; chown hadoop:hadoop /mnt/log/hadoop
-
 distro=$(lsb_release -is || :)
 case "$distro" in
    Ubuntu )
@@ -15,11 +9,20 @@ case "$distro" in
       chown -R ubuntu:ubuntu /home/ubuntu
    ;;
    Fedora )
-      sleep 10
+      sleep 20
       rm /etc/resolv.conf
       service network restart
-      chown -R ec2-user:ec2-user /home/ec2-user
-      chown -R ec2-user:ec2-user /etc/hadoop
+      if [ $(lsb_release -rs) = '19' ]; then
+         chown -R fedora:fedora /etc/hadoop
+         chown -R fedora:fedora /home/fedora
+         # we should use this command for corretly connection by ssh to the instanse with this image
+         # without this command we will get an error: "unable to get context for user 'fedora'"
+         #TODO: remove this after fixing bug (https://bugs.launchpad.net/savanna/+bug/1204824)
+         test -z "$WORKAROUND_BUG_1204824" || setenforce 0
+      else
+         chown -R ec2-user:ec2-user /home/ec2-user
+         chown -R ec2-user:ec2-user /etc/hadoop
+      fi
       #TODO: configure iptables (https://bugs.launchpad.net/savanna/+bug/1195744)
       iptables -F
    ;;
@@ -28,3 +31,8 @@ case "$distro" in
       exit 1
    ;;
 esac
+
+# Common
+chown root:root /mnt
+mkdir -p /var/run/hadoop ; chown hadoop:hadoop /var/run/hadoop
+mkdir -p /mnt/log/hadoop ; chown hadoop:hadoop /mnt/log/hadoop

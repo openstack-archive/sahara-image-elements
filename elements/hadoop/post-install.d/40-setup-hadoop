@@ -43,7 +43,11 @@ case "$distro" in
       dpkg -i $tmp_dir/$package
    ;;
    Fedora )
-      rpm -ivh --replacefiles $tmp_dir/$package
+      if [ $(lsb_release -rs) = '19' ]; then
+         rpm -i $tmp_dir/$package --relocate /usr=/usr --replacefiles
+      else
+         rpm -ivh --replacefiles $tmp_dir/$package
+      fi
       chmod 755 /usr/sbin/start-*
       chmod 755 /usr/sbin/stop-*
       chmod 755 /usr/sbin/slaves.sh
