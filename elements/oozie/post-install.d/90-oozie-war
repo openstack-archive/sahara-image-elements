@@ -1,0 +1,7 @@
+#!/bin/bash
+
+mkdir /opt/oozie/libext/
+cp -r /usr/share/hadoop/*.jar /opt/oozie/libext
+cp -r /usr/share/hadoop/lib/*.jar /opt/oozie/libext
+chown -R hadoop:hadoop /opt/oozie
+su hadoop -c "/opt/oozie/bin/oozie-setup.sh prepare-war -extjs /tmp/ext-2.2.zip -jars /usr/share/hadoop/lib/*.jar:/usr/share/hadoop/*.jar"

@@ -1,0 +1,21 @@
+#!/bin/bash
+echo "Oozie setup"
+
+install-packages zip unzip tar wget
+
+if [ -n "$OOZIE_DOWNLOAD_URL" ]; then
+   wget -P /opt/ $OOZIE_DOWNLOAD_URL
+   OOZIE_FILE=$(basename $OOZIE_DOWNLOAD_URL)
+   OOZIE_DIR="${OOZIE_FILE%.*}"
+   OOZIE_DIR="${OOZIE_DIR%.*}"
+elif [ -n "$OOZIE_FILE" ]; then
+    install -D -g root -o root -m 0755 $(dirname $0)/$OOZIE_FILE /opt
+    OOZIE_DIR="${OOZIE_FILE%.*}"
+    OOZIE_DIR="${OOZIE_DIR%.*}"
+fi
+wget -P /tmp/ http://extjs.com/deploy/ext-2.2.zip
+
+cd /opt/
+tar xzf $OOZIE_FILE
+mv $OOZIE_DIR oozie
+rm $OOZIE_FILE

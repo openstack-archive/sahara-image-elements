@@ -32,7 +32,7 @@ Steps how to create cloud image with Apache Hadoop installed using diskimage-bui
 
 .. sourcecode:: bash
 
-    JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_HADOOP_VERSION=1.1.2 disk-image-create base vm hadoop ubuntu root-passwd -o hadoop_1_1_2
+    JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_HADOOP_VERSION=1.1.2 OOZIE_FILE=oozie-3.3.2.tar.gz disk-image-create base vm hadoop oozie ubuntu root-passwd -o hadoop_1_1_2
 
 6.2. Fedora cloud image
 
@@ -51,3 +51,7 @@ In this command 'DIB_HADOOP_VERSION' parameter is version of hadoop needs to be 
 You can use 'JAVA_DOWNLOAD_URL' parameter to specify download link for JDK (tarball or bin).
 'DIB_IMAGE_SIZE' is parameter that specifes a volume of hard disk of instance. You need to specify it because Fedora doesn't use all available volume.
 If you have already downloaded the jdk package, move it to "elements/hadoop/install.d/" and use its filename as 'JAVA_FILE' parameter.
+In order of working EDP components with Savanna DIB images you need pre-installed Oozie libs.
+Use OOZIE_DOWNLOAD_URL to specify link to Oozie archive (tar.gz). For example we have built Oozie libs here:
+http://a8e0dce84b3f00ed7910-a5806ff0396addabb148d230fde09b7b.r31.cf1.rackcdn.com/oozie-3.3.2.tar.gz
+If you have already downloaded archive, move it to "elements/oozie/install.d/" and use its filename as 'OOZIE_FILE' parameter.
