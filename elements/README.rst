@@ -13,7 +13,7 @@ Steps how to create cloud image with Apache Hadoop installed using diskimage-bui
 
 3. Export the following variable ELEMENTS_PATH=/home/$USER/diskimage-builder/elements/ to your .bashrc. Then source it.
 
-4. Copy file "img-build-sudoers" from ~/disk-image-builder/sudoers.d/ to your /etc/sudoers.d/
+4. Copy file "img-build-sudoers" from ~/disk-image-builder/sudoers.d/ to your /etc/sudoers.d/.
 
 .. sourcecode:: bash
 
@@ -44,20 +44,19 @@ Steps how to create cloud image with Apache Hadoop installed using diskimage-bui
 
 .. sourcecode:: bash
 
-    JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_HADOOP_VERSION=1.1.2 OOZIE_FILE=oozie-3.3.2.tar.gz disk-image-create base vm hadoop oozie ubuntu root-passwd -o hadoop_1_1_2
+    JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_HADOOP_VERSION=1.1.2 OOZIE_FILE=oozie-3.3.2.tar.gz disk-image-create base vm hadoop oozie ubuntu root-passwd -o ubuntu_hadoop_1_1_2
 
 8.2. Fedora cloud image
 
 .. sourcecode:: bash
 
-    JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_HADOOP_VERSION=1.1.2 DIB_IMAGE_SIZE=10 disk-image-create base vm fedora hadoop root-passwd -o fedora_hadoop_1_1_2
+    JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_HADOOP_VERSION=1.1.2 OOZIE_FILE=oozie-3.3.2.tar.gz DIB_IMAGE_SIZE=10 disk-image-create base vm fedora hadoop root-passwd oozie -o fedora_hadoop_1_1_2
 
-Note: If you build Fedora 19 image from a non-Fedora 19 host (e.g. Ubuntu or Fedora 18), you should use the parameter 'WORKAROUND_BUG_1204824'. If this bug doesn't have status 'fix-commited', give to parameter 'WORKAROUND_BUG_1204824' not empty value.
-Bug: https://bugs.launchpad.net/diskimage-builder/+bug/1204824
+Note: If you are building this image from Ubuntu or Fedora 18 OS host, you should add element 'selinux-permissive'.
 
 .. sourcecode:: bash
 
-    WORKAROUND_BUG_1204824=true JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_HADOOP_VERSION=1.1.2 DIB_IMAGE_SIZE=10 disk-image-create base vm fedora hadoop root-passwd -o fedora_hadoop_1_1_2
+    JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_HADOOP_VERSION=1.1.2 OOZIE_FILE=oozie-3.3.2.tar.gz DIB_IMAGE_SIZE=10 disk-image-create base vm fedora hadoop root-passwd oozie selinux-permissive -o fedora_hadoop_1_1_2
 
 In this command 'DIB_HADOOP_VERSION' parameter is version of hadoop needs to be installed.
 You can use 'JAVA_DOWNLOAD_URL' parameter to specify download link for JDK (tarball or bin).
