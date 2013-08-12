@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ -z "$SAVANNA_ELEMENTS_COMMIT_ID" -o -z "$DIB_COMMIT_ID" ]
+then
+    exit 3
+else
+    echo -e "Savanna-elements-extra commit id: $SAVANNA_ELEMENTS_COMMIT_ID,
+Diskimage-builder commit id: $DIB_COMMIT_ID" > /etc/savanna-extra.version
+fi

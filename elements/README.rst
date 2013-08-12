@@ -20,21 +20,33 @@ Steps how to create cloud image with Apache Hadoop installed using diskimage-bui
     chmod 440 /etc/sudoers.d/img-build-sudoers
     chown root:root /etc/sudoers.d/img-build-sudoers
 
-5. Move elements/ directory to disk-image-builder/elements/
+5. Export savanna-elements commit id variable (from savanna-extra directory):
+
+.. sourcecode:: bash
+
+    export SAVANNA_ELEMENTS_COMMIT_ID=`git show --format=%H | head -1`
+
+6. Move elements/ directory to disk-image-builder/elements/
 
 .. sourcecode:: bash
 
     mv elements/*  /path_to_disk_image_builder/diskimage-builder/elements/
 
-6. Call the following command to create cloud image is able to run on OpenStack:
+7. Export DIB commit id variable (from DIB directory):
 
-6.1. Ubuntu cloud image
+.. sourcecode:: bash
+
+    export DIB_COMMIT_ID=`git show --format=%H | head -1`
+
+8. Call the following command to create cloud image is able to run on OpenStack:
+
+8.1. Ubuntu cloud image
 
 .. sourcecode:: bash
 
     JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_HADOOP_VERSION=1.1.2 OOZIE_FILE=oozie-3.3.2.tar.gz disk-image-create base vm hadoop oozie ubuntu root-passwd -o hadoop_1_1_2
 
-6.2. Fedora cloud image
+8.2. Fedora cloud image
 
 .. sourcecode:: bash
 
