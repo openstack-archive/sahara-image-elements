@@ -3,5 +3,7 @@
 mkdir /opt/oozie/libext/
 cp -r /usr/share/hadoop/*.jar /opt/oozie/libext
 cp -r /usr/share/hadoop/lib/*.jar /opt/oozie/libext
+ln -s /usr/share/java/mysql-connector-java.jar /opt/oozie/libtools/mysql.jar
+ln -s /usr/share/java/mysql-connector-java.jar /opt/oozie/oozie-server/lib/mysql.jar
 chown -R hadoop:hadoop /opt/oozie
 su hadoop -c "/opt/oozie/bin/oozie-setup.sh prepare-war -extjs /tmp/ext-2.2.zip -jars /usr/share/hadoop/lib/*.jar:/usr/share/hadoop/*.jar"
