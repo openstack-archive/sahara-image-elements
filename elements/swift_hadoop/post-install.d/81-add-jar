@@ -4,4 +4,8 @@ if [ -z "$swift_url" ]; then
 else
    wget -O /usr/share/hadoop/lib/hadoop-swift.jar $swift_url
 fi
+if [ $? -ne 0 ]; then
+   echo -e "Could not download Swift Hadoop FS implementation.\nAborting"
+   exit 1
+fi
 chmod 0644 /usr/share/hadoop/lib/hadoop-swift.jar
