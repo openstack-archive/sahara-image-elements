@@ -1,7 +1,7 @@
 #!/bin/bash
 install-packages wget
 if [ -z "$swift_url" ]; then
-   wget -O /usr/share/hadoop/lib/hadoop-swift.jar "https://github.com/stackforge/savanna-extra/blob/master/hadoop-swift/hadoop-swift-latest.jar?raw=true"
+   wget -O /usr/share/hadoop/lib/hadoop-swift.jar "http://savanna-files.mirantis.com/hadoop-swift/hadoop-swift-latest.jar"
 else
    wget -O /usr/share/hadoop/lib/hadoop-swift.jar $swift_url
 fi
