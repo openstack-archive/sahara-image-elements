@@ -25,3 +25,4 @@ target
 *.iws
 *.db
 .coverage
+ChangeLog
