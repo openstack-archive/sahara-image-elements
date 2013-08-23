@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Disable startup MySQL on boot in Ubuntu
+# Service mysqld dones't start on boot in Fedora
+
+if [ $(lsb_release -is) = 'Ubuntu' ]; then
+  if [ -e "/etc/init/mysql.conf" ]; then
+    sed -i "s/start on runlevel \[.*\]/start on never runlevel [2345]/g" /etc/init/mysql.conf
+  else
+    update-rc.d -f mysql remove
+  fi
+fi
+
+# Script for starting mysql
+
+install -D -g root -o root -m 0755 $(dirname $0)/start-mysql.sh /opt/start-mysql.sh
