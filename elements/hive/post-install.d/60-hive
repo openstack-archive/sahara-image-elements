@@ -1,0 +1,29 @@
+#!/bin/bash
+install-packages wget tar
+
+tmp_dir=/tmp/hive
+mkdir -p $tmp_dir
+cd $tmp_dir
+
+if [ -z $HIVE_DOWNLOAD_URL ]; then
+  HIVE_DOWNLOAD_URL=http://www.apache.org/dist/hive/hive-$HIVE_VERSION/hive-$HIVE_VERSION-bin.tar.gz
+fi
+wget $HIVE_DOWNLOAD_URL
+if [ $? -ne 0 ]; then
+   echo -e "Could not download hive.\nAborting"
+   exit 1
+fi
+HIVE_FILE=$(basename $HIVE_DOWNLOAD_URL)
+tar xzf $HIVE_FILE
+HIVE_DIR="${HIVE_FILE%.*}"
+HIVE_DIR="${HIVE_DIR%.*}"
+mv $HIVE_DIR /opt/hive
+rm -r $tmp_dir
+chmod -R a+rw /opt/hive
+
+ln -s /usr/share/java/mysql-connector-java.jar /opt/hive/lib/libmysql-java.jar
+chown -R hadoop:hadoop /opt/hive
+cat >> /home/hadoop/.bashrc <<EOF
+HIVE_HOME=/opt/hive
+PATH=\$PATH:\$HIVE_HOME/bin
+EOF
