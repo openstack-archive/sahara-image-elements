@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mv /etc/yum.repos.d/tempfile /etc/yum.repos.d/fedora.repo
