@@ -2,6 +2,7 @@
 
 if [ -z "$SAVANNA_ELEMENTS_COMMIT_ID" -o -z "$DIB_COMMIT_ID" ]
 then
+    echo "Both SAVANNA_ELEMENTS_COMMIT_ID and DIB_COMMIT_ID must be specified, exiting"
     exit 3
 else
     echo -e "Savanna-elements-extra commit id: $SAVANNA_ELEMENTS_COMMIT_ID,
