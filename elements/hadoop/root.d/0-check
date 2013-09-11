@@ -3,8 +3,7 @@ set -e
 
 if [ -z "$JAVA_DOWNLOAD_URL" ]; then
    if [ -z "$JAVA_FILE" ]; then
-      echo "JAVA_FILE and JAVA_DOWNLOAD_URL are not set. Impossible to install java. Exit"
-      exit 1
+      echo "JAVA_FILE and JAVA_DOWNLOAD_URL are not set. Proceeding with distro native Java."
    fi
 fi
 if [ -z "$DIB_HADOOP_VERSION" ]; then
