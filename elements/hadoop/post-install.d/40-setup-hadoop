@@ -64,13 +64,26 @@ esac
 rm -r $tmp_dir
 
 echo "Pre-configuring Hadoop"
-filename=$(find $TARGET_ROOT/usr/java/ -maxdepth 1 -name "jdk*")
+
+# Find JAVA_HOME...
+case "$distro" in
+   Ubuntu)
+      JAVA_HOME=$(readlink -e /usr/bin/java | sed "s:bin/java::")
+   ;;
+   Fedora )
+      JAVA_HOME=$(rpm --eval '%{?java_home}')
+   ;;
+esac
+if [ -z "$JAVA_HOME" ]; then
+   JAVA_HOME=$(find $TARGET_ROOT/usr/java/ -maxdepth 1 -name "jdk*")
+fi
+
 cat >> /home/hadoop/.bashrc <<EOF
-PATH=\$PATH:/usr/sbin:$filename/bin
-JAVA_HOME=$filename
+PATH=\$PATH:/usr/sbin:$JAVA_HOME/bin
+JAVA_HOME=$JAVA_HOME
 HADOOP_HOME=/usr/share/hadoop/
 EOF
-sed -i -e "s,export JAVA_HOME=.*,export JAVA_HOME=$filename," \
+sed -i -e "s,export JAVA_HOME=.*,export JAVA_HOME=$JAVA_HOME," \
        -e "s,export HADOOP_LOG_DIR=.*,export HADOOP_LOG_DIR=/mnt/log/hadoop/\$USER," \
        -e "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=/mnt/log/hadoop/hdfs," \
     /etc/hadoop/hadoop-env.sh

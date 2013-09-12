@@ -20,15 +20,19 @@ elif [ -n "$JAVA_FILE" ]; then
    install -D -g root -o root -m 0755 $(dirname $0)/$JAVA_FILE $JAVA_HOME
 fi
 
-cd $JAVA_HOME
-if echo $JAVA_FILE | grep -q -s -F .tar.gz ; then
-   echo -e "\n" | tar -zxvf $JAVA_FILE
-elif echo $JAVA_FILE | grep -q -s -F .bin ; then
-   echo -e "\n" | sh $JAVA_FILE
+if [ -z "$JAVA_FILE" ]; then
+   install-packages default-jre
 else
-   echo "Unknown file type: $JAVA_FILE. Exiting."
-   exit 1
+   cd $JAVA_HOME
+   if echo $JAVA_FILE | grep -q -s -F .tar.gz ; then
+      echo -e "\n" | tar -zxvf $JAVA_FILE
+   elif echo $JAVA_FILE | grep -q -s -F .bin ; then
+      echo -e "\n" | sh $JAVA_FILE
+   else
+      echo "Unknown file type: $JAVA_FILE. Exiting."
+      exit 1
+   fi
+   rm $JAVA_FILE
 fi
-rm $JAVA_FILE
 
 echo "Java was installed"
