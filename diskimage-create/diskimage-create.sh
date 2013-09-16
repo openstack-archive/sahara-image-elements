@@ -4,7 +4,7 @@ set -e
 
 # Export variables for elements
 
-export DIB_HADOOP_VERSION="1.1.2"
+export DIB_HADOOP_VERSION="1.2.1"
 export JAVA_DOWNLOAD_URL="http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jdk-7u25-linux-x64.tar.gz"
 export ubuntu_image_name="ubuntu_savanna_latest"
 export fedora_image_name="fedora_savanna_latest"
