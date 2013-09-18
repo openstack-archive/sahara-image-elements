@@ -44,19 +44,19 @@ Steps how to create cloud image with Apache Hadoop installed using diskimage-bui
 
 .. sourcecode:: bash
 
-    JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_HADOOP_VERSION=1.2.1 OOZIE_FILE=oozie-3.3.2.tar.gz disk-image-create base vm hadoop oozie ubuntu root-passwd -o ubuntu_hadoop_1_2_1
+    JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_HADOOP_VERSION=1.2.1 OOZIE_FILE=oozie-4.0.0.tar.gz disk-image-create base vm hadoop oozie ubuntu root-passwd -o ubuntu_hadoop_1_2_1
 
 8.2. Fedora cloud image
 
 .. sourcecode:: bash
 
-    JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_HADOOP_VERSION=1.2.1 OOZIE_FILE=oozie-3.3.2.tar.gz DIB_IMAGE_SIZE=10 disk-image-create base vm fedora hadoop root-passwd oozie -o fedora_hadoop_1_2_1
+    JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_HADOOP_VERSION=1.2.1 OOZIE_FILE=oozie-4.0.0.tar.gz DIB_IMAGE_SIZE=10 disk-image-create base vm fedora hadoop root-passwd oozie -o fedora_hadoop_1_2_1
 
 Note: If you are building this image from Ubuntu or Fedora 18 OS host, you should add element 'selinux-permissive'.
 
 .. sourcecode:: bash
 
-    JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_HADOOP_VERSION=1.2.1 OOZIE_FILE=oozie-3.3.2.tar.gz DIB_IMAGE_SIZE=10 disk-image-create base vm fedora hadoop root-passwd oozie selinux-permissive -o fedora_hadoop_1_2_1
+    JAVA_FILE=jdk-7u21-linux-x64.tar.gz DIB_HADOOP_VERSION=1.2.1 OOZIE_FILE=oozie-4.0.0.tar.gz DIB_IMAGE_SIZE=10 disk-image-create base vm fedora hadoop root-passwd oozie selinux-permissive -o fedora_hadoop_1_2_1
 
 In this command 'DIB_HADOOP_VERSION' parameter is version of hadoop needs to be installed.
 You can use 'JAVA_DOWNLOAD_URL' parameter to specify download link for JDK (tarball or bin).
@@ -64,5 +64,5 @@ You can use 'JAVA_DOWNLOAD_URL' parameter to specify download link for JDK (tarb
 If you have already downloaded the jdk package, move it to "elements/hadoop/install.d/" and use its filename as 'JAVA_FILE' parameter.
 In order of working EDP components with Savanna DIB images you need pre-installed Oozie libs.
 Use OOZIE_DOWNLOAD_URL to specify link to Oozie archive (tar.gz). For example we have built Oozie libs here:
-http://a8e0dce84b3f00ed7910-a5806ff0396addabb148d230fde09b7b.r31.cf1.rackcdn.com/oozie-3.3.2.tar.gz
+http://savanna-files.mirantis.com/oozie-4.0.0.tar.gz
 If you have already downloaded archive, move it to "elements/oozie/install.d/" and use its filename as 'OOZIE_FILE' parameter.

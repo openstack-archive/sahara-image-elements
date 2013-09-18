@@ -8,7 +8,7 @@ export DIB_HADOOP_VERSION="1.2.1"
 export JAVA_DOWNLOAD_URL="http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jdk-7u25-linux-x64.tar.gz"
 export ubuntu_image_name="ubuntu_savanna_latest"
 export fedora_image_name="fedora_savanna_latest"
-export OOZIE_DOWNLOAD_URL="http://a8e0dce84b3f00ed7910-a5806ff0396addabb148d230fde09b7b.r31.cf1.rackcdn.com/oozie-3.3.2.tar.gz"
+export OOZIE_DOWNLOAD_URL="http://savanna-files.mirantis.com/oozie-4.0.0.tar.gz"
 export HIVE_VERSION="0.11.0"
 
 platform=$(head -1 /etc/os-release)
