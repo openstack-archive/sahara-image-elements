@@ -24,36 +24,31 @@ if [ -d /home/$USER/.cache/image-create ]; then
   rm -rf /home/$USER/.cache/image-create/*
 fi
 
-cur_dir=$(pwd)
-if [ ! -d "DIB_work" ]; then
-   mkdir DIB_work
-fi
-pushd DIB_work
+TEMP=$(mktemp -d diskimage-create.XXXXXX)
+pushd $TEMP
 
 # Cloning repostiroies
 
-rm -rf diskimage-builder
 git clone https://github.com/openstack/diskimage-builder
-rm -rf savanna-image-elements
 git clone https://github.com/stackforge/savanna-image-elements
 
 pushd diskimage-builder
 export DIB_COMMIT_ID=`git show --format=%H | head -1`
 popd
 
-export PATH=$PATH:$cur_dir/DIB_work/diskimage-builder/bin
-export ELEMENTS_PATH=$cur_dir/DIB_work/diskimage-builder/elements
+export PATH=$PATH:$PWD/diskimage-builder/bin
+export ELEMENTS_PATH=$PWD/diskimage-builder/elements
 
 pushd savanna-image-elements
 export SAVANNA_ELEMENTS_COMMIT_ID=`git show --format=%H | head -1`
 popd
 
-if [ -e $cur_dir/DIB_work/diskimage-builder/sudoers.d/img-build-sudoers ]; then
-  cp $cur_dir/DIB_work/diskimage-builder/sudoers.d/img-build-sudoers /etc/sudoers.d/
+if [ -e diskimage-builder/sudoers.d/img-build-sudoers ]; then
+  cp diskimage-builder/sudoers.d/img-build-sudoers /etc/sudoers.d/
   chown root:root /etc/sudoers.d/img-build-sudoers
   chmod 0440 /etc/sudoers.d/img-build-sudoers
 fi
-cp -r $cur_dir/DIB_work/savanna-image-elements/elements/* $cur_dir/DIB_work/diskimage-builder/elements/
+cp -r savanna-image-elements/elements/* diskimage-builder/elements/
 
 ubuntu_elements_sequence="base vm ubuntu hadoop swift_hadoop oozie mysql hive"
 fedora_elements_sequence="base vm fedora hadoop swift_hadoop oozie mysql hive"
@@ -86,5 +81,6 @@ disk-image-create $fedora_elements_sequence -o $fedora_image_name
 
 mv $fedora_image_name.qcow2 ../
 mv $ubuntu_image_name.qcow2 ../
-popd
-rm -rf DIB_work
+
+popd # out of $TEMP
+rm -rf $TEMP
