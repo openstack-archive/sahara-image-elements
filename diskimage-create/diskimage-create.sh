@@ -11,11 +11,11 @@ export fedora_image_name="fedora_savanna_latest"
 export OOZIE_DOWNLOAD_URL="http://a8e0dce84b3f00ed7910-a5806ff0396addabb148d230fde09b7b.r31.cf1.rackcdn.com/oozie-3.3.2.tar.gz"
 export HIVE_VERSION="0.11.0"
 
-str=$(head -1 /etc/os-release)
-if [ $str = 'NAME="Ubuntu"' ]; then
+platform=$(head -1 /etc/os-release)
+if [ $platform = 'NAME="Ubuntu"' ]; then
   apt-get update -y
   apt-get install qemu kpartx git -y
-elif [ $str = 'NAME=Fedora' ]; then
+elif [ $platform = 'NAME=Fedora' ]; then
   yum update -y
   yum install qemu kpartx git -y
 fi
@@ -56,7 +56,18 @@ fi
 cp -r $cur_dir/DIB_work/savanna-image-elements/elements/* $cur_dir/DIB_work/diskimage-builder/elements/
 
 ubuntu_elements_sequence="base vm ubuntu hadoop swift_hadoop oozie mysql hive"
-fedora_elements_sequence="base vm fedora hadoop swift_hadoop oozie mysql hive selinux-permissive"
+fedora_elements_sequence="base vm fedora hadoop swift_hadoop oozie mysql hive"
+
+# Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
+if [ $platform = 'NAME="Ubuntu"' ]; then
+  echo "**************************************************************"
+  echo "WARNING: As a workaround for DIB bug 1204824, you are about to"
+  echo "         create a Fedora image that has SELinux disabled. Do  "
+  echo "         not use this image in production.                    "
+  echo "**************************************************************"
+  fedora_elements_sequence="$fedora_elements_sequence selinux-permissive"
+  fedora_image_name="$fedora_image_name.selinux-permissive"
+fi
 
 if [ -n "$USE_MIRRORS" ]; then
   mirror_element=" apt-mirror"
