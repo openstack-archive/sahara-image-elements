@@ -8,7 +8,7 @@
 #   https://issues.apache.org/jira/browse/HADOOP-9777
 
 distro=$(lsb_release -is || :)
-if [ ! "$distro" == "Fedora" -a ! "$distro" == "Ubuntu" ]; then
+if [ ! "$distro" == "Fedora" -a ! "$distro" == "Ubuntu" -a ! "$distro" == "RedHatEnterpriseServer" ]; then
    echo "Unknown distro: $distro. Exiting."
    exit 1
 fi
@@ -23,7 +23,7 @@ case "$distro" in
       adduser --ingroup hadoop --disabled-password --gecos GECOS hadoop
       adduser hadoop sudo
    ;;
-   Fedora )
+   Fedora | RedHatEnterpriseServer )
       adduser -G adm,wheel hadoop
    ;;
 esac
@@ -33,7 +33,7 @@ case "$distro" in
    Ubuntu )
       package="hadoop_$DIB_HADOOP_VERSION-1_x86_64.deb"
    ;;
-   Fedora )
+   Fedora | RedHatEnterpriseServer )
       package="hadoop-$DIB_HADOOP_VERSION-1.x86_64.rpm"
    ;;
 esac
@@ -49,7 +49,7 @@ case "$distro" in
    Ubuntu )
       dpkg -i $tmp_dir/$package
    ;;
-   Fedora )
+   Fedora | RedHatEnterpriseServer )
       if [ $(lsb_release -rs) = '19' ]; then
          rpm -i $tmp_dir/$package --relocate /usr=/usr --replacefiles
       else
@@ -70,7 +70,7 @@ case "$distro" in
    Ubuntu)
       JAVA_HOME=$(readlink -e /usr/bin/java | sed "s:bin/java::")
    ;;
-   Fedora )
+   Fedora | RedHatEnterpriseServer )
       JAVA_HOME=$(rpm --eval '%{?java_home}')
    ;;
 esac

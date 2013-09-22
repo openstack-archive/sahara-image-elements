@@ -4,6 +4,9 @@ set -o xtrace
 if [ $(lsb_release -is) = 'Fedora' ]; then
   install-packages community-mysql community-mysql-libs community-mysql-server mysql-connector-java
   mkdir -p /etc/mysql/conf.d
+elif [ $(lsb_release -is) = 'RedHatEnterpriseServer' ]; then
+  install-packages mysql mysql-libs mysql-server mysql-connector-java
+  mkdir -p /etc/mysql/conf.d
 elif [ $(lsb_release -is) = 'Ubuntu' ]; then
   install-packages mysql-server-5.5 mysql-client-5.5 libmysql-java
 else
