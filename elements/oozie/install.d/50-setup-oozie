@@ -13,7 +13,6 @@ elif [ -n "$OOZIE_FILE" ]; then
     OOZIE_DIR="${OOZIE_FILE%.*}"
     OOZIE_DIR="${OOZIE_DIR%.*}"
 fi
-wget -P /tmp/ http://extjs.com/deploy/ext-2.2.zip
 
 cd /opt/
 tar xzf $OOZIE_FILE
