@@ -20,12 +20,10 @@ elif [ $platform = 'NAME=Fedora' ]; then
   yum install qemu kpartx git -y
 fi
 
-if [ -d /home/$USER/.cache/image-create ]; then
-  rm -rf /home/$USER/.cache/image-create/*
-fi
-
 TEMP=$(mktemp -d diskimage-create.XXXXXX)
 pushd $TEMP
+
+export DIB_IMAGE_CACHE=$TEMP/.cache-image-create
 
 # Cloning repostiroies
 
