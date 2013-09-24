@@ -35,7 +35,7 @@ export DIB_COMMIT_ID=`git show --format=%H | head -1`
 popd
 
 export PATH=$PATH:$PWD/diskimage-builder/bin
-export ELEMENTS_PATH=$PWD/diskimage-builder/elements
+export ELEMENTS_PATH=$PWD/diskimage-builder/elements:$PWD/savanna-image-elements/elements
 
 pushd savanna-image-elements
 export SAVANNA_ELEMENTS_COMMIT_ID=`git show --format=%H | head -1`
@@ -46,7 +46,6 @@ if [ -e diskimage-builder/sudoers.d/img-build-sudoers ]; then
   chown root:root /etc/sudoers.d/img-build-sudoers
   chmod 0440 /etc/sudoers.d/img-build-sudoers
 fi
-cp -r savanna-image-elements/elements/* diskimage-builder/elements/
 
 ubuntu_elements_sequence="base vm ubuntu hadoop swift_hadoop oozie mysql hive"
 fedora_elements_sequence="base vm fedora hadoop swift_hadoop oozie mysql hive"
