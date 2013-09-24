@@ -41,12 +41,6 @@ pushd savanna-image-elements
 export SAVANNA_ELEMENTS_COMMIT_ID=`git show --format=%H | head -1`
 popd
 
-if [ -e diskimage-builder/sudoers.d/img-build-sudoers ]; then
-  cp diskimage-builder/sudoers.d/img-build-sudoers /etc/sudoers.d/
-  chown root:root /etc/sudoers.d/img-build-sudoers
-  chmod 0440 /etc/sudoers.d/img-build-sudoers
-fi
-
 ubuntu_elements_sequence="base vm ubuntu hadoop swift_hadoop oozie mysql hive"
 fedora_elements_sequence="base vm fedora hadoop swift_hadoop oozie mysql hive"
 
