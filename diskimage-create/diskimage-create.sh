@@ -31,14 +31,14 @@ git clone https://github.com/openstack/diskimage-builder
 git clone https://github.com/stackforge/savanna-image-elements
 
 pushd diskimage-builder
-export DIB_COMMIT_ID=`git show --format=%H | head -1`
+export DIB_COMMIT_ID=`git rev-parse HEAD`
 popd
 
 export PATH=$PATH:$PWD/diskimage-builder/bin
 export ELEMENTS_PATH=$PWD/diskimage-builder/elements:$PWD/savanna-image-elements/elements
 
 pushd savanna-image-elements
-export SAVANNA_ELEMENTS_COMMIT_ID=`git show --format=%H | head -1`
+export SAVANNA_ELEMENTS_COMMIT_ID=`git rev-parse HEAD`
 popd
 
 ubuntu_elements_sequence="base vm ubuntu hadoop swift_hadoop oozie mysql hive"
