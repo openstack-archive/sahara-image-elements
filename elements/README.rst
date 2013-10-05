@@ -3,11 +3,11 @@ Diskimage-builder tools for creation cloud images
 
 Steps how to create cloud image with Apache Hadoop installed using diskimage-builder project:
 
-1. Clone the repository "https://github.com/stackforge/diskimage-builder" locally. Note: Make sure you have commit 43b96d91 in your clone, it provides a mapping for default-jre.
+1. Clone the repository "https://github.com/openstack/diskimage-builder" locally. Note: Make sure you have commit 43b96d91 in your clone, it provides a mapping for default-jre.
 
 .. sourcecode:: bash
 
-    git clone https://github.com/stackforge/diskimage-builder
+    git clone https://github.com/openstack/diskimage-builder
 
 2. Add ~/diskimage-builder/bin/ directory to your path (for example, PATH=$PATH:/home/$USER/diskimage-builder/bin/ ).
 

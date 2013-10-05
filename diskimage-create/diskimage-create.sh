@@ -27,8 +27,8 @@ export DIB_IMAGE_CACHE=$TEMP/.cache-image-create
 
 # Cloning repostiroies
 
-git clone https://github.com/openstack/diskimage-builder
-git clone https://github.com/stackforge/savanna-image-elements
+git clone https://git.openstack.org/openstack/diskimage-builder
+git clone https://git.openstack.org/openstack/savanna-image-elements
 
 pushd diskimage-builder
 export DIB_COMMIT_ID=`git rev-parse HEAD`

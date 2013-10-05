@@ -9,4 +9,4 @@ Script for creating Fedora and Ubuntu cloud images with our elements and default
 
     sudo bash diskimage-create.sh
 
-Note: More information about script `diskimage-create <https://github.com/stackforge/savanna-image-elements/blob/master/diskimage-create/README.rst>`_
+Note: More information about script `diskimage-create <https://github.com/openstack/savanna-image-elements/blob/master/diskimage-create/README.rst>`_
