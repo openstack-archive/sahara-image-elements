@@ -60,7 +60,7 @@ Note: If you are building this image from Ubuntu or Fedora 18 OS host, you shoul
 
 In this command 'DIB_HADOOP_VERSION' parameter is version of hadoop needs to be installed.
 You can use 'JAVA_DOWNLOAD_URL' parameter to specify download link for JDK (tarball or bin).
-'DIB_IMAGE_SIZE' is parameter that specifes a volume of hard disk of instance. You need to specify it because Fedora doesn't use all available volume.
+'DIB_IMAGE_SIZE' is parameter that specifes a volume of hard disk of instance. You need to specify it because Fedora and CentOS don't use all available volume.
 If you have already downloaded the jdk package, move it to "elements/hadoop/install.d/" and use its filename as 'JAVA_FILE' parameter.
 In order of working EDP components with Savanna DIB images you need pre-installed Oozie libs.
 Use OOZIE_DOWNLOAD_URL to specify link to Oozie archive (tar.gz). For example we have built Oozie libs here:

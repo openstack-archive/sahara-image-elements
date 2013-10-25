@@ -1,0 +1,13 @@
+#!/bin/bash
+
+chown -R cloud-user:cloud-user /etc/hadoop
+chown -R cloud-user:cloud-user /home/cloud-user
+service iptables stop
+chkconfig iptables off
+
+chown root:root /mnt
+mkdir -p /var/run/hadoop ; chown hadoop:hadoop /var/run/hadoop
+mkdir -p /mnt/log/hadoop ; chown hadoop:hadoop /mnt/log/hadoop
+
+rm -f /etc/rc3.d/S56firstboot
+rm -f $0

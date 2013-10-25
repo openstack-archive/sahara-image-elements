@@ -1,7 +1,9 @@
 Diskimage-builder script for creation cloud images
-=================================================
+==================================================
 
-This scrtips builds Ubuntu and Fedora cloud images with default parameters.
+This scrtips builds Ubuntu, Fedora, CentOS cloud images with default parameters.
+
+NOTE: You should use Ubuntu or Fedora host OS for building images, CentOS as a host OS has not been tested well.
 
 For users:
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Disable startup MySQL on boot in Ubuntu
-# Service mysqld doesn't start on boot in Fedora
+# Service mysqld doesn't start on boot in Fedora and CentOS
 # Delete config property 'bind-address' for remote mode (0.0.0.0)
 
 if [ $(lsb_release -is) = 'Ubuntu' ]; then
