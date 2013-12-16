@@ -31,24 +31,43 @@ else
   fi
 fi
 
+base_dir="$(dirname $(readlink -e $0))"
+
 TEMP=$(mktemp -d diskimage-create.XXXXXX)
 pushd $TEMP
 
 export DIB_IMAGE_CACHE=$TEMP/.cache-image-create
 
-# Cloning repostiroies
+# Working with repositories
+# disk-image-builder repo
 
-git clone https://git.openstack.org/openstack/diskimage-builder
-git clone https://git.openstack.org/openstack/savanna-image-elements
+if [ -z $DIB_REPO_PATH ]; then
+  git clone https://git.openstack.org/openstack/diskimage-builder
+  DIB_REPO_PATH="$(pwd)/diskimage-builder"
+fi
 
-pushd diskimage-builder
+export PATH=$PATH:$DIB_REPO_PATH/bin
+
+pushd $DIB_REPO_PATH
 export DIB_COMMIT_ID=`git rev-parse HEAD`
 popd
 
-export PATH=$PATH:$PWD/diskimage-builder/bin
-export ELEMENTS_PATH=$PWD/diskimage-builder/elements:$PWD/savanna-image-elements/elements
+export ELEMENTS_PATH="$DIB_REPO_PATH/elements"
 
-pushd savanna-image-elements
+# savanna-image-elements repo
+
+if [ -z $SIM_REPO_PATH ]; then
+  SIM_REPO_PATH="$(dirname $base_dir)"
+  if [ $(basename $SIM_REPO_PATH) != "savanna-image-elements" ]; then
+    echo "Can't find Savanna-image-elements repository. Cloning it."
+    git clone https://git.openstack.org/openstack/savanna-image-elements
+    SIM_REPO_PATH="$(pwd)/savanna-image-elements"
+  fi
+fi
+
+ELEMENTS_PATH=$ELEMENTS_PATH:$SIM_REPO_PATH/elements
+
+pushd $SIM_REPO_PATH
 export SAVANNA_ELEMENTS_COMMIT_ID=`git rev-parse HEAD`
 popd
 
