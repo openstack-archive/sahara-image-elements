@@ -26,3 +26,4 @@ target
 *.db
 .coverage
 ChangeLog
+AUTHORS
