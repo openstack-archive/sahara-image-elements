@@ -89,7 +89,18 @@ sed -i -e "s,export JAVA_HOME=.*,export JAVA_HOME=$JAVA_HOME," \
        -e "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=/mnt/log/hadoop/hdfs," \
     /etc/hadoop/hadoop-env.sh
 
-if [ "$distro" == "CentOS" ]; then
-  install -D -g root -o root -m 0755 $(dirname $0)/firstboot /etc/first-boot.d/firstboot
-  ln -s /etc/first-boot.d/firstboot /etc/rc3.d/S56firstboot
+echo "Applying firstboot script"
+
+if [ "$distro" == "Ubuntu" ]; then
+  # File '/etc/rc.local' may not exist
+  if [ -f "/etc/rc.local" ]; then
+    mv /etc/rc.local /etc/rc.local.old
+  fi
+  install -D -g root -o root -m 0755 $(dirname $0)/firstboot /etc/rc.local
+else
+  # File '/etc/rc.d/rc.local' may not exist
+  if [ -f "/etc/rc.d/rc.local" ]; then
+    mv /etc/rc.d/rc.local /etc/rc.d/rc.local.old
+  fi
+  install -D -g root -o root -m 0755 $(dirname $0)/firstboot /etc/rc.d/rc.local
 fi

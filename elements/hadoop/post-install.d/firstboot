@@ -1,13 +1,60 @@
 #!/bin/bash
 
-chown -R cloud-user:cloud-user /etc/hadoop
-chown -R cloud-user:cloud-user /home/cloud-user
-service iptables stop
-chkconfig iptables off
+distro=$(lsb_release -is || :)
+case "$distro" in
+   Ubuntu )
+      mkdir /run/hadoop
+      chown hadoop:hadoop /run/hadoop/
+      mkdir -p /home/ubuntu/.ssh
+      touch /home/ubuntu/.ssh/authorized_keys
+      chown -R ubuntu:ubuntu /home/ubuntu
+      chown -R ubuntu:ubuntu /etc/hadoop
+   ;;
+   Fedora )
+      sleep 20
+      rm /etc/resolv.conf
+      service network restart
+      if [ $(lsb_release -rs) = '19' ]; then
+        user=fedora
+      else
+        user=ec2-user
+      fi
+      until [[ -n $(grep "$user:" /etc/passwd) && -n $(cat /etc/group | grep "$user:") ]];
+      do
+        sleep 1
+      done
+      chown -R $user:$user /etc/hadoop
+      chown -R $user:$user /home/$user
 
+      #TODO: configure iptables (https://bugs.launchpad.net/savanna/+bug/1195744)
+      iptables -F
+   ;;
+   CentOS )
+      chown -R cloud-user:cloud-user /etc/hadoop
+      chown -R cloud-user:cloud-user /home/cloud-user
+      service iptables stop
+      chkconfig iptables off
+   ;;
+   * )
+      echo "Unknown distro: $distro. Exiting."
+      exit 1
+   ;;
+esac
+
+# Common
 chown root:root /mnt
 mkdir -p /var/run/hadoop ; chown hadoop:hadoop /var/run/hadoop
 mkdir -p /mnt/log/hadoop ; chown hadoop:hadoop /mnt/log/hadoop
 
-rm -f /etc/rc3.d/S56firstboot
-rm -f $0
+# Clean
+if [ "$distro" == "Ubuntu" ]; then
+  if [ -f /etc/rc.local.old ]; then
+    mv /etc/rc.local.old /etc/rc.local
+  fi
+else
+  if [ -f /etc/rc.d/rc.local.old ]; then
+    mv /etc/rc.d/rc.local.old /etc/rc.d/rc.local
+  fi
+fi
+
+exit 0
