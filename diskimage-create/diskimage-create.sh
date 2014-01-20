@@ -101,13 +101,13 @@ fi
 disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
 
 # Creating Fedora cloud image
-# Patameter 'DIB_IMAGE_SIZE' should be specified for Fedora and CentOS
-export DIB_IMAGE_SIZE="10"
 disk-image-create $fedora_elements_sequence -o $fedora_image_name
 
 # CentOS cloud image:
 # - Disable including 'base' element for CentOS
 # - Export link and filename for CentOS cloud image to download
+# - Patameter 'DIB_IMAGE_SIZE' should be specified for CentOS only
+export DIB_IMAGE_SIZE="10"
 export BASE_IMAGE_FILE="CentOS-6.4-cloud-init.qcow2"
 export DIB_CLOUD_IMAGES="http://savanna-files.mirantis.com"
 # Read Create_CentOS_cloud_image.rst to know how to create CentOS image in qcow2 format
