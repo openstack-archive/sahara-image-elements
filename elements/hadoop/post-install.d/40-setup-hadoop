@@ -50,7 +50,7 @@ case "$distro" in
       dpkg -i $tmp_dir/$package
    ;;
    Fedora | RedHatEnterpriseServer | CentOS )
-      if [ $(lsb_release -rs) = '19' ]; then
+      if [ $(lsb_release -rs) -ge '19' ]; then
          rpm -i $tmp_dir/$package --relocate /usr=/usr --replacefiles
       else
          rpm -ivh --replacefiles $tmp_dir/$package

@@ -14,7 +14,7 @@ case "$distro" in
       sleep 20
       rm /etc/resolv.conf
       service network restart
-      if [ $(lsb_release -rs) = '19' ]; then
+      if [ $(lsb_release -rs) -ge '19' ]; then
         user=fedora
       else
         user=ec2-user
