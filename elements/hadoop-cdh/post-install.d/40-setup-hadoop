@@ -1,0 +1,95 @@
+#!/bin/bash
+
+# This element installs Hadoop CDH 4 HDFS from Cloudera.
+# It does not do a full install of CDH, it installs the miminum needed to
+# Spark to run correctly.
+
+distro=$(lsb_release -is || :)
+if [ "$distro" != "Ubuntu" ]; then
+   echo "Distro $distro not supported by CDH. Exiting."
+   exit 1
+fi
+
+if [ $DIB_HADOOP_VERSION != "2.0.0-mr1-cdh4.5.0" ]; then
+   echo "CDH version $DIB_HADOOP_VERSION not supported. Exiting."
+fi
+
+echo "Hadoop CDH setup begins for $distro"
+tmp_dir=/tmp/hadoop
+
+echo "Creating hadoop user & group"
+case "$distro" in
+   Ubuntu )
+      addgroup hadoop
+      adduser --ingroup hadoop --disabled-password --gecos GECOS hadoop
+      adduser hadoop sudo
+   ;;
+esac
+
+echo "CDH 4 will be injected into image. Starting the download"
+
+install-packages wget
+# Here more versions of CDH could be supported by downloading the right repository package.
+wget -P $tmp_dir "http://archive.cloudera.com/cdh4/one-click-install/precise/amd64/cdh4-repository_1.0_all.deb"
+if [ $? -ne 0 ]; then
+   echo -e "Could not find CDH 4.\nAborting"
+   exit 1
+fi
+
+# Pin packages from cloudera repository
+cat >> /etc/apt/preferences.d/cloudera << EOF
+Package: *
+Pin: origin "archive.cloudera.com"
+Pin-Priority: 800
+EOF
+
+case "$distro" in
+   Ubuntu )
+      dpkg -i $tmp_dir/cdh4-repository_1.0_all.deb
+      curl -s http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh/archive.key | sudo apt-key add -
+      sudo apt-get update
+      # Here the script could be expanded to install all CDH packages and not only HDFS.
+      install-packages hadoop-hdfs-namenode hadoop-hdfs-datanode
+      # pietro: small hack to fix install problems on ubuntu
+      # the CDH package contains a broken symlink instead of the log4j jar file
+      # these 4 lines should go away once Cloudera fixes the package
+      echo "Fixing install problem for CDH: log4j";
+      wget http://repo1.maven.org/maven2/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar;
+      sudo rm /usr/lib/hadoop/lib/slf4j-log4j12-1.6.1.jar;
+      sudo mv slf4j-log4j12-1.6.1.jar /usr/lib/hadoop/lib/
+   ;;
+esac
+rm -r $tmp_dir
+
+echo "Pre-configuring Hadoop"
+
+# Find JAVA_HOME...
+JAVA_HOME=$(find $TARGET_ROOT/usr/java/ -maxdepth 1 -name "jdk*")
+
+if [ -z "$JAVA_HOME" ]; then
+   case "$distro" in
+      Ubuntu)
+         JAVA_HOME=$(readlink -e /usr/bin/java | sed "s:bin/java::")
+      ;;
+   esac
+fi
+
+cat >> /home/hadoop/.bashrc <<EOF
+PATH=$PATH:/usr/sbin:$JAVA_HOME/bin
+JAVA_HOME=$JAVA_HOME
+EOF
+sed -i -e "s,export JAVA_HOME=.*,export JAVA_HOME=$JAVA_HOME," \
+       -e "s,export HADOOP_LOG_DIR=.*,export HADOOP_LOG_DIR=/mnt/log/hadoop/\$USER," \
+       -e "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=/mnt/log/hadoop/hdfs," \
+    /etc/hadoop/hadoop-env.sh
+
+echo "Applying firstboot script"
+
+if [ "$distro" == "Ubuntu" ]; then
+  # File '/etc/rc.local' may not exist
+  if [ -f "/etc/rc.local" ]; then
+    mv /etc/rc.local /etc/rc.local.old
+  fi
+  install -D -g root -o root -m 0755 $(dirname $0)/firstboot /etc/rc.local
+fi
+
