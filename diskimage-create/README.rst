@@ -1,7 +1,7 @@
 Diskimage-builder script for creation cloud images
 ==================================================
 
-This scrtips builds Ubuntu, Fedora, CentOS cloud images with default parameters.
+This script builds Ubuntu, Fedora, CentOS cloud images for use in Savanna. By default the Vanilla plugin is targeted, the '-p' option can be used to select other plugins.
 
 NOTE: You should use Ubuntu or Fedora host OS for building images, CentOS as a host OS has not been tested well.
 
@@ -20,6 +20,12 @@ For users:
 .. sourcecode:: bash
 
   sudo USE_MIRRORS=true FEDORA_MIRROR="url_for_fedora_mirror" UBUNTU_MIRROR="url_for_ubuntu_mirror" bash savanna-image-elements/diskimage-create/diskimage-create.sh
+
+4. To select which plugin to target use the '-p' commandline option like this:
+
+.. sourcecode:: bash
+
+  sudo bash savanna-image-elements/diskimage-create/diskimage-create.sh -p [vanilla|spark]
 
 For developers:
 
