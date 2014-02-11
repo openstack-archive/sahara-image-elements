@@ -7,6 +7,119 @@
 # HADOOP-9777 is resolved.
 #   https://issues.apache.org/jira/browse/HADOOP-9777
 
+function download_hadoop_package()
+{
+    echo "Hadoop version $DIB_HADOOP_VERSION will be injected into image. Starting the download"
+    install-packages wget
+    wget -P $tmp_dir "http://archive.apache.org/dist/hadoop/core/hadoop-$DIB_HADOOP_VERSION/$package"
+    if [ $? -ne 0 ]; then
+        echo -e "Could not find Hadoop version $DIB_HADOOP_VERSION.\nAborting"
+        exit 1
+    fi
+}
+
+function find_java_home()
+{
+    JAVA_HOME=$(find $TARGET_ROOT/usr/java/ -maxdepth 1 -name "jdk*")
+
+    if [ -z "$JAVA_HOME" ]; then
+        case "$distro" in
+            Ubuntu )
+                JAVA_HOME=$(readlink -e /usr/bin/java | sed "s:bin/java::")
+            ;;
+            Fedora | RedHatEnterpriseServer | CentOS )
+                JAVA_HOME=$(rpm --eval '%{?java_home}')
+            ;;
+        esac
+    fi
+}
+
+function install_hadoop_v1()
+{
+    case "$distro" in
+        Ubuntu )
+            package="hadoop_$DIB_HADOOP_VERSION-1_x86_64.deb"
+        ;;
+        Fedora | RedHatEnterpriseServer | CentOS )
+            package="hadoop-$DIB_HADOOP_VERSION-1.x86_64.rpm"
+        ;;
+    esac
+
+    download_hadoop_package
+
+    case "$distro" in
+        Ubuntu )
+            dpkg -i $tmp_dir/$package
+        ;;
+        Fedora | RedHatEnterpriseServer | CentOS )
+            if [ $(lsb_release -rs) -ge '19' ]; then
+                rpm -i $tmp_dir/$package --relocate /usr=/usr --replacefiles
+            else
+                rpm -ivh --replacefiles $tmp_dir/$package
+            fi
+            chmod 755 /usr/sbin/start-*
+            chmod 755 /usr/sbin/stop-*
+            chmod 755 /usr/sbin/slaves.sh
+            chmod 755 /usr/sbin/update-hadoop-env.sh
+        ;;
+    esac
+    rm -r $tmp_dir
+
+    echo "Pre-configuring Hadoop"
+    find_java_home
+
+    cat >> /home/hadoop/.bashrc <<EOF
+PATH=\$PATH:/usr/sbin:$JAVA_HOME/bin
+JAVA_HOME=$JAVA_HOME
+HADOOP_HOME=/usr/share/hadoop/
+EOF
+
+    sed -i -e "s,export JAVA_HOME=.*,export JAVA_HOME=$JAVA_HOME," \
+           -e "s,export HADOOP_LOG_DIR=.*,export HADOOP_LOG_DIR=/mnt/log/hadoop/\$USER," \
+           -e "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=/mnt/log/hadoop/hdfs," \
+        /etc/hadoop/hadoop-env.sh
+}
+
+
+function install_hadoop_v2()
+{
+    package="hadoop-$DIB_HADOOP_VERSION.tar.gz"
+
+    download_hadoop_package
+
+    echo "Installing hadoop"
+
+    INSTALL_DIR="/opt"
+    HADOOP_HOME="/opt/hadoop"
+    mkdir -p "$INSTALL_DIR"
+    tar xvf "$tmp_dir/$package" -C "$INSTALL_DIR"
+    ln -s "$INSTALL_DIR/hadoop-$DIB_HADOOP_VERSION" "$HADOOP_HOME"
+    chown -R hadoop:hadoop "$INSTALL_DIR/hadoop-$DIB_HADOOP_VERSION"
+    chown -R hadoop:hadoop "$HADOOP_HOME"
+    rm -r $tmp_dir
+
+    echo "Pre-configuring Hadoop"
+    find_java_home
+
+    cat >> /etc/profile.d/hadoop.sh <<EOF
+export JAVA_HOME=$JAVA_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export PATH=\$PATH:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+export HADOOP_HDFS_HOME=\$HADOOP_COMMON_HOME
+export HADOOP_YARN_HOME=\$HADOOP_COMMON_HOME
+export HADOOP_MAPRED_HOME=\$HADOOP_COMMON_HOME
+EOF
+
+    sed -i -e "s,export JAVA_HOME=.*,export JAVA_HOME=$JAVA_HOME," \
+           -e "s,\#export HADOOP_LOG_DIR=.*,export HADOOP_LOG_DIR=/mnt/log/hadoop/\$USER," \
+           -e "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=/mnt/log/hadoop/hdfs," \
+        $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+
+    sed -i -e "s,\# export JAVA_HOME=.*,export JAVA_HOME=$JAVA_HOME," \
+           -e "s,YARN_LOG_DIR=.*,YARN_LOG_DIR=/mnt/log/hadoop/yarn," \
+        $HADOOP_HOME/etc/hadoop/yarn-env.sh
+}
+
 distro=$(lsb_release -is || :)
 if [ ! "$distro" == "Fedora" -a ! "$distro" == "Ubuntu" -a ! "$distro" == "RedHatEnterpriseServer" -a ! "$distro" == "CentOS" ]; then
    echo "Unknown distro: $distro. Exiting."
@@ -28,79 +141,29 @@ case "$distro" in
    ;;
 esac
 
-echo "Hadoop version $DIB_HADOOP_VERSION will be injected into image. Starting the download"
-case "$distro" in
-   Ubuntu )
-      package="hadoop_$DIB_HADOOP_VERSION-1_x86_64.deb"
-   ;;
-   Fedora | RedHatEnterpriseServer | CentOS )
-      package="hadoop-$DIB_HADOOP_VERSION-1.x86_64.rpm"
-   ;;
-esac
-
-install-packages wget
-wget -P $tmp_dir "http://archive.apache.org/dist/hadoop/core/hadoop-$DIB_HADOOP_VERSION/$package"
-if [ $? -ne 0 ]; then
-   echo -e "Could not find Hadoop version $DIB_HADOOP_VERSION.\nAborting"
-   exit 1
+if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]]; then
+    install_hadoop_v1
+else
+    install_hadoop_v2
 fi
-
-case "$distro" in
-   Ubuntu )
-      dpkg -i $tmp_dir/$package
-   ;;
-   Fedora | RedHatEnterpriseServer | CentOS )
-      if [ $(lsb_release -rs) -ge '19' ]; then
-         rpm -i $tmp_dir/$package --relocate /usr=/usr --replacefiles
-      else
-         rpm -ivh --replacefiles $tmp_dir/$package
-      fi
-      chmod 755 /usr/sbin/start-*
-      chmod 755 /usr/sbin/stop-*
-      chmod 755 /usr/sbin/slaves.sh
-      chmod 755 /usr/sbin/update-hadoop-env.sh
-   ;;
-esac
-rm -r $tmp_dir
-
-echo "Pre-configuring Hadoop"
-
-# Find JAVA_HOME...
-JAVA_HOME=$(find $TARGET_ROOT/usr/java/ -maxdepth 1 -name "jdk*")
-
-if [ -z "$JAVA_HOME" ]; then
-   case "$distro" in
-      Ubuntu)
-         JAVA_HOME=$(readlink -e /usr/bin/java | sed "s:bin/java::")
-      ;;
-      Fedora | RedHatEnterpriseServer | CentOS  )
-         JAVA_HOME=$(rpm --eval '%{?java_home}')
-      ;;
-   esac
-fi
-
-cat >> /home/hadoop/.bashrc <<EOF
-PATH=\$PATH:/usr/sbin:$JAVA_HOME/bin
-JAVA_HOME=$JAVA_HOME
-HADOOP_HOME=/usr/share/hadoop/
-EOF
-sed -i -e "s,export JAVA_HOME=.*,export JAVA_HOME=$JAVA_HOME," \
-       -e "s,export HADOOP_LOG_DIR=.*,export HADOOP_LOG_DIR=/mnt/log/hadoop/\$USER," \
-       -e "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=/mnt/log/hadoop/hdfs," \
-    /etc/hadoop/hadoop-env.sh
 
 echo "Applying firstboot script"
 
+sed -i -e "s,DIB_HADOOP_VERSION=,DIB_HADOOP_VERSION=$DIB_HADOOP_VERSION," $(dirname $0)/firstboot
+
+RC_SCRIPT_DIR=""
 if [ "$distro" == "Ubuntu" ]; then
   # File '/etc/rc.local' may not exist
   if [ -f "/etc/rc.local" ]; then
     mv /etc/rc.local /etc/rc.local.old
   fi
-  install -D -g root -o root -m 0755 $(dirname $0)/firstboot /etc/rc.local
+  RC_SCRIPT_DIR="/etc"
 else
   # File '/etc/rc.d/rc.local' may not exist
   if [ -f "/etc/rc.d/rc.local" ]; then
     mv /etc/rc.d/rc.local /etc/rc.d/rc.local.old
   fi
-  install -D -g root -o root -m 0755 $(dirname $0)/firstboot /etc/rc.d/rc.local
+  RC_SCRIPT_DIR="/etc/rc.d"
 fi
+
+install -D -g root -o root -m 0755 $(dirname $0)/firstboot $RC_SCRIPT_DIR/rc.local
