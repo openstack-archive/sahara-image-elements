@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# Copyright (c) 2013 Hortonworks, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+##########################################################
+# Element Script for initializing the image for an HDP install
+#
+##########################################################
+
+
+install-packages wget
+install-packages ntp
+
+install-packages bind-utils
+
+cd /tmp
+# ====== EPEL =======
+wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+rpm -Uvh epel-release-6*.rpm
+
+#install cloud-inint which is necessary for all images
+install-packages cloud-init
+
+# change the cloud-init user to root
+sed "s/ec2-user/root/" -i /etc/cloud/cloud.cfg
+sed "s/disable_root: 1/disable_root: 0/" -i /etc/cloud/cloud.cfg
+
+# ====== COMMENT OUT Defaults requiretty in /etc/sudoers ========
+sed '/^Defaults    requiretty*/ s/^/#/' -i /etc/sudoers
+
+# add .ssh directory for all new users
+mkdir -p /etc/skel/.ssh
+chmod 700 /etc/skel/.ssh
+
+# Create .ssh directory in case it does not already exist
+if [ ! -d /root/.ssh ]; then
+  mkdir -p /root/.ssh
+  chmod 700 /root/.ssh
+fi
+
+# Disable SE Linux
+setenforce 0
+echo "setenforce 0" >> /etc/yum/pluginconf.d/refresh-packagekit.conf
+
+

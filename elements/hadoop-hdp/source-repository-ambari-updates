@@ -1,0 +1,1 @@
+ambari-updates tar /opt/hdp-local-repos/ambari http://s3.amazonaws.com/public-repo-1.hortonworks.com/ambari/centos6/ambari-1.2.5.17-centos6.tar.gz

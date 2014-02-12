@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Copyright (c) 2013 Hortonworks, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+##########################################################
+# Element install script for turning off yum repositories
+# after the HDP install is completed.
+##########################################################
+
+#
+# This script just changes the enabled flag to 0 to prevent yum install
+# from going out over the network. It allows Savanna to provision VMs
+# in disconnected mode.
+#
+
+find /etc/yum.repos.d -name "*.repo" -type f | xargs sed "s/enabled=1/enabled=0/" -i

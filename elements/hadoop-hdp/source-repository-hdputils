@@ -1,0 +1,1 @@
+hdputils tar /opt/hdp-local-repos/hdputils http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.16/repos/centos6/HDP-UTILS-1.1.0.16-centos6.tar.gz

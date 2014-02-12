@@ -9,7 +9,7 @@ while getopts "p:" opt; do
     ;;
     *)
       echo
-      echo "Usage: $0 [-p vanilla|spark]"
+      echo "Usage: $0 [-p vanilla|spark|hdp]"
       echo "By default the vanilla plugin will be selected"
       exit
     ;;
@@ -21,7 +21,7 @@ if [ -z "$PLUGIN" ]; then
   PLUGIN="vanilla"
 fi
 # Sanity checks
-if [ "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" ]; then
+if [ "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" ]; then
   echo -e "Unknown plugin selected.\nAborting"
   exit 1
 fi
@@ -36,7 +36,13 @@ elif [ $PLUGIN = "vanilla" ]; then
   export centos_image_name="centos_savanna_latest"
   export OOZIE_DOWNLOAD_URL=${OOZIE_DOWNLOAD_URL:-"http://savanna-files.mirantis.com/oozie-4.0.0.tar.gz"}
   export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
+elif [ $PLUGIN = "hdp" ]; then
+  # Set image names for HDP-based images
+  export centos_image_name_hdp_1_3="centos-6_4-64-hdp-1-3"
+  export centos_image_name_hdp_2_0="centos-6_4-64-hdp-2-0"
+  export centos_image_name_plain="centos-6_4-64-plain"
 fi
+
 export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jdk-7u25-linux-x64.tar.gz"}
 export ubuntu_image_name="ubuntu_savanna_latest"
 
@@ -105,11 +111,16 @@ elif [ $PLUGIN = "vanilla" ]; then
   ubuntu_elements_sequence="base vm ubuntu hadoop swift_hadoop oozie mysql hive"
   fedora_elements_sequence="base vm fedora hadoop swift_hadoop oozie mysql hive"
   centos_elements_sequence="vm rhel hadoop swift_hadoop oozie mysql hive redhat-lsb"
+elif [ $PLUGIN = "hdp"  ]; then
+  # Elements to include in an HDP-based image
+  centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb root-passwd savanna-version source-repositories yum"
+  # Elements for a plain CentOS image that does not contain HDP or Apache Hadoop
+  centos_plain_elements_sequence="vm rhel redhat-lsb root-passwd savanna-version yum"
 fi
 
 # Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
 # https://bugs.launchpad.net/savanna/+bug/1252684
-if [ $PLUGIN != "spark" -a "$platform" = 'NAME="Ubuntu"' ]; then
+if [ $PLUGIN != "spark" -a $PLUGIN != "hdp" -a "$platform" = 'NAME="Ubuntu"' ]; then
   echo "**************************************************************"
   echo "WARNING: As a workaround for DIB bug 1204824, you are about to"
   echo "         create a Fedora and CentOS images that has SELinux    "
@@ -131,12 +142,15 @@ if [ -n "$USE_MIRRORS" ]; then
   fi
 fi
 
-# Creating Ubuntu cloud image
-disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
-mv $ubuntu_image_name.qcow2 ../
+# HDP does not support an Ubuntu image
+if [ $PLUGIN != "hdp"  ]; then
+  # Creating Ubuntu cloud image
+  disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
+  mv $ubuntu_image_name.qcow2 ../
+fi
 
 # Spark uses CDH that is available only for Ubuntu
-if [ $PLUGIN != "spark" ]; then
+if [ $PLUGIN != "spark" -a $PLUGIN != "hdp" ]; then
   # Creating Fedora cloud image
   disk-image-create $fedora_elements_sequence -o $fedora_image_name
 
@@ -153,6 +167,38 @@ if [ $PLUGIN != "spark" ]; then
   mv $fedora_image_name.qcow2 ../
   mv $centos_image_name.qcow2 ../
 fi
+
+if [ $PLUGIN = "hdp"  ]; then
+  # Generate HDP images
+
+  # Parameter 'DIB_IMAGE_SIZE' should be specified for Fedora and CentOS
+  export DIB_IMAGE_SIZE="10"
+
+  # CentOS cloud image:
+  # - Disable including 'base' element for CentOS
+  # - Export link and filename for CentOS cloud image to download
+  export BASE_IMAGE_FILE="CentOS-6.4-cloud-init.qcow2"
+  export DIB_CLOUD_IMAGES="http://savanna-files.mirantis.com"
+
+  # Each image has a root login, password is "hadoop"
+  export DIB_PASSWORD="hadoop"
+
+  # generate image with HDP 1.3
+  export DIB_HDP_VERSION="1.3"
+  disk-image-create $centos_elements_sequence -n -o $centos_image_name_hdp_1_3
+
+  # generate image with HDP 2.0
+  export DIB_HDP_VERSION="2.0"
+  disk-image-create $centos_elements_sequence -n -o $centos_image_name_hdp_2_0
+
+  # generate plain (no Hadoop components) image for testing
+  disk-image-create $centos_plain_elements_sequence -n -o $centos_image_name_plain
+
+  mv $centos_image_name_hdp_1_3.qcow2 ../
+  mv $centos_image_name_hdp_2_0.qcow2 ../
+  mv $centos_image_name_plain.qcow2 ../
+fi
+
 
 popd # out of $TEMP
 rm -rf $TEMP
