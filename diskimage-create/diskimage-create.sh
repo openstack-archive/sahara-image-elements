@@ -31,13 +31,13 @@ echo "Selected Savanna plugin $PLUGIN"
 if [ $PLUGIN = "spark" ]; then
   export DIB_HADOOP_VERSION="2.0.0-mr1-cdh4.5.0"
 elif [ $PLUGIN = "vanilla" ]; then
-  export DIB_HADOOP_VERSION="1.2.1"
+  export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION:-"1.2.1"}
   export fedora_image_name="fedora_savanna_latest"
   export centos_image_name="centos_savanna_latest"
-  export OOZIE_DOWNLOAD_URL="http://savanna-files.mirantis.com/oozie-4.0.0.tar.gz"
-  export HIVE_VERSION="0.11.0"
+  export OOZIE_DOWNLOAD_URL=${OOZIE_DOWNLOAD_URL:-"http://savanna-files.mirantis.com/oozie-4.0.0.tar.gz"}
+  export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
 fi
-export JAVA_DOWNLOAD_URL="http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jdk-7u25-linux-x64.tar.gz"
+export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jdk-7u25-linux-x64.tar.gz"}
 export ubuntu_image_name="ubuntu_savanna_latest"
 
 if [ -e /etc/os-release ]; then
