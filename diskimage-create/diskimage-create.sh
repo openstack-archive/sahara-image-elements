@@ -2,49 +2,51 @@
 
 set -e
 
-while getopts "p:" opt; do
+while getopts "p:i:v:" opt; do
   case $opt in
     p)
       PLUGIN=$OPTARG
     ;;
+    i)
+      IMAGE_TYPE=$OPTARG
+     ;;
+    v)
+      HADOOP_VERSION=$OPTARG
+    ;;
     *)
       echo
-      echo "Usage: $0 [-p vanilla|spark|hdp]"
-      echo "By default the vanilla plugin will be selected"
-      exit
+      echo "Usage: $(basename $0) [-p vanilla|spark|hdp] [-i ubuntu|fedora|centos] [-v 1|2|plain]"
+      echo "'-p' is plugin version, '-i' is image type, '-v' is hadoop version"
+      echo "You shouldn't specify hadoop version and image type for spark plugin"
+      echo "You shouldn't specify image type for hdp plugin"
+      echo "Version 'plain' could be specified for hdp plugin only"
+      echo "By default all images for all plugins will be created"
+      exit 1
     ;;
   esac
 done
 
-# Default
-if [ -z "$PLUGIN" ]; then
-  PLUGIN="vanilla"
-fi
-# Sanity checks
-if [ "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" ]; then
+# Checks of input
+if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" ]; then
   echo -e "Unknown plugin selected.\nAborting"
   exit 1
 fi
-echo "Selected Savanna plugin $PLUGIN"
 
-# Export variables for elements
-if [ $PLUGIN = "spark" ]; then
-  export DIB_HADOOP_VERSION="2.0.0-mr1-cdh4.5.0"
-elif [ $PLUGIN = "vanilla" ]; then
-  export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION:-"1.2.1"}
-  export fedora_image_name="fedora_savanna_latest"
-  export centos_image_name="centos_savanna_latest"
-  export OOZIE_DOWNLOAD_URL=${OOZIE_DOWNLOAD_URL:-"http://savanna-files.mirantis.com/oozie-4.0.0.tar.gz"}
-  export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
-elif [ $PLUGIN = "hdp" ]; then
-  # Set image names for HDP-based images
-  export centos_image_name_hdp_1_3="centos-6_4-64-hdp-1-3"
-  export centos_image_name_hdp_2_0="centos-6_4-64-hdp-2-0"
-  export centos_image_name_plain="centos-6_4-64-plain"
+if [ -n "$IMAGE_TYPE" -a "$IMAGE_TYPE" != "ubuntu" -a "$IMAGE_TYPE" != "fedora" -a "$IMAGE_TYPE" != "centos" ]; then
+  echo -e "Unknown image type selected.\nAborting"
+  exit 1
 fi
 
-export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jdk-7u25-linux-x64.tar.gz"}
-export ubuntu_image_name="ubuntu_savanna_latest"
+if [ -n "$HADOOP_VERSION" -a "$HADOOP_VERSION" != "1" -a "$HADOOP_VERSION" != "2" -a "$HADOOP_VERSION" != "plain" ]; then
+  echo -e "Unknown hadoop version selected.\nAborting"
+  exit 1
+fi
+
+if [ "$PLUGIN" = "vanilla" -a "$HADOOP_VERSION" = "plain" ]; then
+  echo "Impossible combination.\nAborting"
+  exit 1
+fi
+#################
 
 if [ -e /etc/os-release ]; then
   platform=$(head -1 /etc/os-release)
@@ -105,70 +107,127 @@ pushd $SIM_REPO_PATH
 export SAVANNA_ELEMENTS_COMMIT_ID=`git rev-parse HEAD`
 popd
 
-if [ $PLUGIN = "spark" ]; then
-  ubuntu_elements_sequence="base vm ubuntu hadoop-cdh spark"
-elif [ $PLUGIN = "vanilla" ]; then
+#############################
+# Images for Vanilla plugin #
+#############################
+
+if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
+  export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jdk-7u25-linux-x64.tar.gz"}
+  export OOZIE_DOWNLOAD_URL=${OOZIE_DOWNLOAD_URL:-"http://savanna-files.mirantis.com/oozie-4.0.0.tar.gz"}
+  export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
+
   ubuntu_elements_sequence="base vm ubuntu hadoop swift_hadoop oozie mysql hive"
   fedora_elements_sequence="base vm fedora hadoop swift_hadoop oozie mysql hive"
   centos_elements_sequence="vm rhel hadoop swift_hadoop oozie mysql hive redhat-lsb"
-elif [ $PLUGIN = "hdp"  ]; then
-  # Elements to include in an HDP-based image
-  centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb root-passwd savanna-version source-repositories yum"
-  # Elements for a plain CentOS image that does not contain HDP or Apache Hadoop
-  centos_plain_elements_sequence="vm rhel redhat-lsb root-passwd savanna-version yum"
-fi
 
-# Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
-# https://bugs.launchpad.net/savanna/+bug/1252684
-if [ $PLUGIN != "spark" -a $PLUGIN != "hdp" -a "$platform" = 'NAME="Ubuntu"' ]; then
-  echo "**************************************************************"
-  echo "WARNING: As a workaround for DIB bug 1204824, you are about to"
-  echo "         create a Fedora and CentOS images that has SELinux    "
-  echo "         disabled. Do not use these images in production.       "
-  echo "**************************************************************"
-  fedora_elements_sequence="$fedora_elements_sequence selinux-permissive"
-  centos_elements_sequence="$centos_elements_sequence selinux-permissive"
-  fedora_image_name="$fedora_image_name.selinux-permissive"
-  centos_image_name="$centos_image_name.selinux-permissive"
-fi
+  # Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
+  # https://bugs.launchpad.net/savanna/+bug/1252684
+  if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "centos" -o "$IMAGE_TYPE" = "fedora" ]; then
+    if [ "$platform" = 'NAME="Ubuntu"' ]; then
+      echo "**************************************************************"
+      echo "WARNING: As a workaround for DIB bug 1204824, you are about to"
+      echo "         create a Fedora and CentOS images that has SELinux    "
+      echo "         disabled. Do not use these images in production.       "
+      echo "**************************************************************"
+      fedora_elements_sequence="$fedora_elements_sequence selinux-permissive"
+      centos_elements_sequence="$centos_elements_sequence selinux-permissive"
+      suffix=".selinux-permissive"
+    fi
+  fi
 
-# CentOS mirror will be added some later
-if [ -n "$USE_MIRRORS" ]; then
-  mirror_element=" apt-mirror"
-  ubuntu_elements_sequence=$ubuntu_elements_sequence$mirror_element
-  if [ $PLUGIN != "spark" ]; then
+  if [ -n "$USE_MIRRORS" ]; then
+    mirror_element=" apt-mirror"
+    ubuntu_elements_sequence=$ubuntu_elements_sequence$mirror_element
     mirror_element=" yum-mirror"
     fedora_elements_sequence=$fedora_elements_sequence$mirror_element
   fi
-fi
 
-# HDP does not support an Ubuntu image
-if [ $PLUGIN != "hdp"  ]; then
-  # Creating Ubuntu cloud image
-  disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
-  mv $ubuntu_image_name.qcow2 ../
-fi
+  # Ubuntu cloud image
+  if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "ubuntu" ]; then
+    if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
+      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
+      export ubuntu_image_name="ubuntu_savanna_vanilla_hadoop_1_latest"
+      disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
+      mv $ubuntu_image_name.qcow2 ../
+    fi
+    if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
+      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2:-"2.2.0"}
+      export ubuntu_image_name="ubuntu_savanna_vanilla_hadoop_2_latest"
+      disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
+      mv $ubuntu_image_name.qcow2 ../
+    fi
+  fi
 
-# Spark uses CDH that is available only for Ubuntu
-if [ $PLUGIN != "spark" -a $PLUGIN != "hdp" ]; then
-  # Creating Fedora cloud image
-  disk-image-create $fedora_elements_sequence -o $fedora_image_name
+  # Fedora cloud image
+  if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "fedora" ]; then
+    if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
+      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
+      export fedora_image_name="fedora_savanna_vanilla_hadoop_1_latest$suffix"
+      disk-image-create $fedora_elements_sequence -o $fedora_image_name
+      mv $fedora_image_name.qcow2 ../
+    fi
+    if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
+      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2:-"2.2.0"}
+      export fedora_image_name="fedora_savanna_vanilla_hadoop_2_latest$suffix"
+      disk-image-create $fedora_elements_sequence -o $fedora_image_name
+      mv $fedora_image_name.qcow2 ../
+    fi
+  fi
 
   # CentOS cloud image:
   # - Disable including 'base' element for CentOS
   # - Export link and filename for CentOS cloud image to download
   # - Patameter 'DIB_IMAGE_SIZE' should be specified for CentOS only
-  export DIB_IMAGE_SIZE="10"
-  export BASE_IMAGE_FILE="CentOS-6.4-cloud-init.qcow2"
-  export DIB_CLOUD_IMAGES="http://savanna-files.mirantis.com"
-  # Read Create_CentOS_cloud_image.rst to know how to create CentOS image in qcow2 format
-  disk-image-create $centos_elements_sequence -n -o $centos_image_name
-
-  mv $fedora_image_name.qcow2 ../
-  mv $centos_image_name.qcow2 ../
+  if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "centos" ]; then
+    export DIB_IMAGE_SIZE="10"
+    # Read Create_CentOS_cloud_image.rst to know how to create CentOS image in qcow2 format
+    export BASE_IMAGE_FILE="CentOS-6.4-cloud-init.qcow2"
+    export DIB_CLOUD_IMAGES="http://savanna-files.mirantis.com"
+    if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
+      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
+      export centos_image_name="centos_savanna_vanilla_hadoop_1_latest$suffix"
+      disk-image-create $centos_elements_sequence -n -o $centos_image_name
+      mv $centos_image_name.qcow2 ../
+    fi
+    if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
+      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2:-"2.2.0"}
+      export centos_image_name="centos_savanna_vanilla_hadoop_2_latest$suffix"
+      disk-image-create $centos_elements_sequence -n -o $centos_image_name
+      mv $centos_image_name.qcow2 ../
+    fi
+  fi
 fi
 
-if [ $PLUGIN = "hdp"  ]; then
+##########################
+# Image for Spark plugin #
+##########################
+
+if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
+  # Ignoring image type and hadoop version options
+  echo "For spark plugin options -i and -v are ignored"
+
+  export DIB_HADOOP_VERSION="2.0.0-mr1-cdh4.5.0"
+  export ubuntu_image_name="ubuntu_savanna_spark_latest"
+
+  ubuntu_elements_sequence="base vm ubuntu hadoop-cdh spark"
+
+  if [ -n "$USE_MIRRORS" ]; then
+    mirror_element=" apt-mirror"
+    ubuntu_elements_sequence=$ubuntu_elements_sequence$mirror_element
+  fi
+
+  # Creating Ubuntu cloud image
+  disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
+  mv $ubuntu_image_name.qcow2 ../
+fi
+
+#########################
+# Images for HDP plugin #
+#########################
+
+if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
+  echo "For hdp plugin option -i is ignored"
+
   # Generate HDP images
 
   # Parameter 'DIB_IMAGE_SIZE' should be specified for Fedora and CentOS
@@ -183,20 +242,35 @@ if [ $PLUGIN = "hdp"  ]; then
   # Each image has a root login, password is "hadoop"
   export DIB_PASSWORD="hadoop"
 
-  # generate image with HDP 1.3
-  export DIB_HDP_VERSION="1.3"
-  disk-image-create $centos_elements_sequence -n -o $centos_image_name_hdp_1_3
+  # Ignoring image type option
+  if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
+    export centos_image_name_hdp_1_3="centos-6_4-64-hdp-1-3"
+    # Elements to include in an HDP-based image
+    centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb root-passwd savanna-version source-repositories yum"
+    # generate image with HDP 1.3
+    export DIB_HDP_VERSION="1.3"
+    disk-image-create $centos_elements_sequence -n -o $centos_image_name_hdp_1_3
+    mv $centos_image_name_hdp_1_3.qcow2 ../
+  fi
 
-  # generate image with HDP 2.0
-  export DIB_HDP_VERSION="2.0"
-  disk-image-create $centos_elements_sequence -n -o $centos_image_name_hdp_2_0
+  if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
+    export centos_image_name_hdp_2_0="centos-6_4-64-hdp-2-0"
+    # Elements to include in an HDP-based image
+    centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb root-passwd savanna-version source-repositories yum"
+    # generate image with HDP 2.0
+    export DIB_HDP_VERSION="2.0"
+    disk-image-create $centos_elements_sequence -n -o $centos_image_name_hdp_2_0
+    mv $centos_image_name_hdp_2_0.qcow2 ../
+  fi
 
-  # generate plain (no Hadoop components) image for testing
-  disk-image-create $centos_plain_elements_sequence -n -o $centos_image_name_plain
-
-  mv $centos_image_name_hdp_1_3.qcow2 ../
-  mv $centos_image_name_hdp_2_0.qcow2 ../
-  mv $centos_image_name_plain.qcow2 ../
+  if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "plain" ]; then
+    export centos_image_name_plain="centos-6_4-64-plain"
+    # Elements for a plain CentOS image that does not contain HDP or Apache Hadoop
+    centos_plain_elements_sequence="vm rhel redhat-lsb root-passwd savanna-version yum"
+    # generate plain (no Hadoop components) image for testing
+    disk-image-create $centos_plain_elements_sequence -n -o $centos_image_name_plain
+    mv $centos_image_name_plain.qcow2 ../
+  fi
 fi
 
 

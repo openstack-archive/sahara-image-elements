@@ -1,15 +1,15 @@
 Diskimage-builder script for creation cloud images
 ==================================================
 
-This script builds Ubuntu, Fedora, CentOS cloud images for use in Savanna. By default the Vanilla plugin is targeted, the '-p' option can be used to select other plugins.
+This script builds Ubuntu, Fedora, CentOS cloud images for use in Savanna. By default the all plugin are targeted, all images will be built. The '-p' option can be used to select plugin (vanilla, spark or hdp). The '-i' option can be used to select image type (ubuntu, fedora or centos). The '-v' option can be used to select hadoop version (1, 2 or plain).
 
 NOTE: You should use Ubuntu or Fedora host OS for building images, CentOS as a host OS has not been tested well.
 
 For users:
 
-1. Use your environment (export / setenv) to alter the scripts behavior. Environment variables the script accepts are 'DIB_HADOOP_VERSION', 'JAVA_DOWNLOAD_URL', 'OOZIE_DOWNLOAD_URL', 'HIVE_VERSION', 'ubuntu_image_name', 'fedora_image_name'.
+1. Use your environment (export / setenv) to alter the scripts behavior. Environment variables the script accepts are 'DIB_HADOOP_VERSION_1' and 'DIB_HADOOP_VERSION_2', 'JAVA_DOWNLOAD_URL', 'OOZIE_DOWNLOAD_URL', 'HIVE_VERSION', 'ubuntu_image_name', 'fedora_image_name'.
 
-2. For creating images just clone this repository and run script.
+2. For creating all images just clone this repository and run script.
 
 .. sourcecode:: bash
 
@@ -25,7 +25,25 @@ For users:
 
 .. sourcecode:: bash
 
-  sudo bash savanna-image-elements/diskimage-create/diskimage-create.sh -p [vanilla|spark]
+  sudo bash savanna-image-elements/diskimage-create/diskimage-create.sh -p [vanilla|spark|hdp]
+
+5. To select which hadoop version to target use the '-v' commandline option like this:
+
+.. sourcecode:: bash
+
+  sudo bash savanna-image-elements/diskimage-create/diskimage-create.sh -v [1|2|plain]
+
+6. To select which image type to target use the '-i' commandline option like this:
+
+.. sourcecode:: bash
+
+  sudo bash savanna-image-elements/diskimage-create/diskimage-create.sh -i [ubuntu|fedora|centos]
+
+NOTE for 4, 5, 6:
+
+For Vanilla you can create ubuntu, fedora and centos cloud image with hadoop 1.x.x and 2.x.x versions. Use environment variables 'DIB_HADOOP_VERSION_1' and 'DIB_HADOOP_VERSION_2' to change defaults.
+For Spark you can create only ubuntu image with one hadoop version. You shouldn't specify image type and hadoop version.
+For HDP you can create only centos image with hadoop 1.3.0 or 2.0 and without hadoop ('plain' image). You shouldn't specify image type.
 
 For developers:
 
