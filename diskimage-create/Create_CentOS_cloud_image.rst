@@ -1,12 +1,9 @@
-This element setups our CentOS cloud image (http://savanna-files.mirantis.com/CentOS-6.4-cloud-init.qcow2):
-1. Disable filesystem checks;
-2. Use specifies for CentOS only map-package and install-package files;
-3. Install redhat-lsb package for using command `lsb_release`.
+We have CentOS 6.4 and 6.5 cloud images. Recommended is CentOS 6.5 (http://savanna-files.mirantis.com/CentOS-6.5-cloud-init.qcow2).
 
 For preparing your own CentOS cloud image with pre-installed cloud-init you should follow this guide:
-`CentOS cloud image <http://docs.openstack.org/grizzly/openstack-image/content/centos-image.html>`_
+`CentOS cloud image. <http://docs.openstack.org/image-guide/content/centos-image.html>`_ Use the latest version of cloud-init package from `testing repository <http://pkgs.org/centos-6/epel-testing-i386/cloud-init-0.7.4-2.el6.noarch.rpm.html>`_
 
-In the end you should check installation of cloud-init packege.
+In the end you should check installation of cloud-init package.
 
 You should mount your image and check some files. Follow this example to mount cloud image using qemu:
 
@@ -22,13 +19,15 @@ Check files:
 
 1. File '/etc/cloud/cloud.cfg' should contain these lines:
 
-default_user:
-   name: cloud-user
-   lock_passwd: true
-   gecos: CentOS Cloud User
-   groups: [wheel, adm]
-   sudo: ["ALL=(ALL) NOPASSWD:ALL"]
-   shell: /bin/bash
+.. sourcecode:: cfg
+
+  default_user:
+     name: cloud-user
+     lock_passwd: true
+     gecos: CentOS Cloud User
+     groups: [wheel, adm]
+     sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+     shell: /bin/bash
 
 Add them if they are not exist.
 

@@ -181,7 +181,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "centos" ]; then
     export DIB_IMAGE_SIZE="10"
     # Read Create_CentOS_cloud_image.rst to know how to create CentOS image in qcow2 format
-    export BASE_IMAGE_FILE="CentOS-6.4-cloud-init.qcow2"
+    export BASE_IMAGE_FILE="CentOS-6.5-cloud-init.qcow2"
     export DIB_CLOUD_IMAGES="http://savanna-files.mirantis.com"
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
