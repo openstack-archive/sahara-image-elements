@@ -1,50 +1,86 @@
 #!/bin/bash
 
-distro=$(lsb_release -is || :)
-case "$distro" in
-   Ubuntu )
-      mkdir /run/hadoop
-      chown hadoop:hadoop /run/hadoop/
-      mkdir -p /home/ubuntu/.ssh
-      touch /home/ubuntu/.ssh/authorized_keys
-      chown -R ubuntu:ubuntu /home/ubuntu
-      chown -R ubuntu:ubuntu /etc/hadoop
-   ;;
-   Fedora )
-      sleep 20
-      rm /etc/resolv.conf
-      service network restart
-      if [ $(lsb_release -rs) -ge '19' ]; then
-        user=fedora
-      else
-        user=ec2-user
-      fi
-      until [[ -n $(grep "$user:" /etc/passwd) && -n $(cat /etc/group | grep "$user:") ]];
-      do
-        sleep 1
-      done
-      chown -R $user:$user /etc/hadoop
-      chown -R $user:$user /home/$user
+function firstboot_common()
+{
+    distro=$(lsb_release -is || :)
+    case "$distro" in
+       Ubuntu )
+          mkdir -p /home/ubuntu/.ssh
+          touch /home/ubuntu/.ssh/authorized_keys
+          chown -R ubuntu:ubuntu /home/ubuntu
+       ;;
+       Fedora )
+          sleep 20
+          rm /etc/resolv.conf
+          service network restart
+          if [ $(lsb_release -rs) -ge '19' ]; then
+             user=fedora
+          else
+             user=ec2-user
+          fi
+          until [[ -n $(grep "$user:" /etc/passwd) && -n $(cat /etc/group | grep "$user:") ]];
+          do
+             sleep 1
+          done
+          chown -R $user:$user /home/$user
 
-      #TODO: configure iptables (https://bugs.launchpad.net/savanna/+bug/1195744)
-      iptables -F
-   ;;
-   CentOS )
-      chown -R cloud-user:cloud-user /etc/hadoop
-      chown -R cloud-user:cloud-user /home/cloud-user
-      service iptables stop
-      chkconfig iptables off
-   ;;
-   * )
-      echo "Unknown distro: $distro. Exiting."
-      exit 1
-   ;;
-esac
+          #TODO: configure iptables (https://bugs.launchpad.net/savanna/+bug/1195744)
+          iptables -F
+       ;;
+       CentOS )
+          chown -R cloud-user:cloud-user /home/cloud-user
+          service iptables stop
+          chkconfig iptables off
+       ;;
+       * )
+          echo "Unknown distro: $distro. Exiting."
+          exit 1
+       ;;
+    esac
 
-# Common
-chown root:root /mnt
-mkdir -p /var/run/hadoop ; chown hadoop:hadoop /var/run/hadoop
-mkdir -p /mnt/log/hadoop ; chown hadoop:hadoop /mnt/log/hadoop
+    chown root:root /mnt
+    mkdir -p /mnt/log/hadoop
+    chown hadoop:hadoop /mnt/log/hadoop
+}
+
+function firstboot_hadoop_v1()
+{
+    distro=$(lsb_release -is || :)
+    case "$distro" in
+        Ubuntu )
+            mkdir /run/hadoop
+            chown hadoop:hadoop /run/hadoop/
+            chown -R ubuntu:ubuntu /etc/hadoop
+        ;;
+        Fedora )
+            if [ $(lsb_release -rs) -ge '19' ]; then
+                user=fedora
+            else
+                user=ec2-user
+            fi
+            chown -R $user:$user /etc/hadoop
+        ;;
+        CentOS )
+            chown -R cloud-user:cloud-user /etc/hadoop
+        ;;
+        * )
+            echo "Unknown distro: $distro. Exiting."
+            exit 1
+        ;;
+    esac
+
+    mkdir -p /var/run/hadoop
+    chown hadoop:hadoop /var/run/hadoop
+}
+
+DIB_HADOOP_VERSION=
+
+firstboot_common
+
+if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]];
+then
+    firstboot_hadoop_v1
+fi
 
 # Clean
 if [ "$distro" == "Ubuntu" ]; then
