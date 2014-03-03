@@ -7,7 +7,7 @@ NOTE: You should use Ubuntu or Fedora host OS for building images, CentOS as a h
 
 For users:
 
-1. Use your environment (export / setenv) to alter the scripts behavior. Environment variables the script accepts are 'DIB_HADOOP_VERSION_1' and 'DIB_HADOOP_VERSION_2', 'JAVA_DOWNLOAD_URL', 'OOZIE_DOWNLOAD_URL', 'HIVE_VERSION', 'ubuntu_image_name', 'fedora_image_name'.
+1. Use your environment (export / setenv) to alter the scripts behavior. Environment variables the script accepts are 'DIB_HADOOP_VERSION_1' and 'DIB_HADOOP_VERSION_2', 'JAVA_DOWNLOAD_URL', 'OOZIE_DOWNLOAD_URL', 'HIVE_VERSION', 'ubuntu_[vanilla|spark]_hadoop_[1|2]_image_name', 'fedora_vanilla_hadoop_[1|2]_image_name', 'centos_[vanilla|hdp]_[hadoop_1|hadoop_2|plain]_image_name'.
 
 2. For creating all images just clone this repository and run script.
 

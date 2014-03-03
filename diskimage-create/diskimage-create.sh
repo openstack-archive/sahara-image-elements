@@ -146,13 +146,13 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "ubuntu" ]; then
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
-      export ubuntu_image_name="ubuntu_sahara_vanilla_hadoop_1_latest"
+      export ubuntu_image_name=${ubuntu_vanilla_hadoop_1_image_name:-"ubuntu_sahara_vanilla_hadoop_1_latest"}
       disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
       mv $ubuntu_image_name.qcow2 ../
     fi
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2:-"2.3.0"}
-      export ubuntu_image_name="ubuntu_sahara_vanilla_hadoop_2_latest"
+      export ubuntu_image_name=${ubuntu_vanilla_hadoop_2_image_name:-"ubuntu_sahara_vanilla_hadoop_2_latest"}
       disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
       mv $ubuntu_image_name.qcow2 ../
     fi
@@ -162,13 +162,13 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "fedora" ]; then
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
-      export fedora_image_name="fedora_sahara_vanilla_hadoop_1_latest$suffix"
+      export fedora_image_name=${fedora_vanilla_hadoop_1_image_name:-"fedora_sahara_vanilla_hadoop_1_latest$suffix"}
       disk-image-create $fedora_elements_sequence -o $fedora_image_name
       mv $fedora_image_name.qcow2 ../
     fi
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2:-"2.3.0"}
-      export fedora_image_name="fedora_sahara_vanilla_hadoop_2_latest$suffix"
+      export fedora_image_name=${fedora_vanilla_hadoop_2_image_name:-"fedora_sahara_vanilla_hadoop_2_latest$suffix"}
       disk-image-create $fedora_elements_sequence -o $fedora_image_name
       mv $fedora_image_name.qcow2 ../
     fi
@@ -185,13 +185,13 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
-      export centos_image_name="centos_sahara_vanilla_hadoop_1_latest$suffix"
+      export centos_image_name=${centos_vanilla_hadoop_1_image_name:-"centos_sahara_vanilla_hadoop_1_latest$suffix"}
       disk-image-create $centos_elements_sequence -n -o $centos_image_name
       mv $centos_image_name.qcow2 ../
     fi
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2:-"2.3.0"}
-      export centos_image_name="centos_sahara_vanilla_hadoop_2_latest$suffix"
+      export centos_image_name=${centos_vanilla_hadoop_2_image_name:-"centos_sahara_vanilla_hadoop_2_latest$suffix"}
       disk-image-create $centos_elements_sequence -n -o $centos_image_name
       mv $centos_image_name.qcow2 ../
     fi
@@ -207,7 +207,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
   echo "For spark plugin options -i and -v are ignored"
 
   export DIB_HADOOP_VERSION="2.0.0-mr1-cdh4.5.0"
-  export ubuntu_image_name="ubuntu_sahara_spark_latest"
+  export ubuntu_image_name=${ubuntu_spark_image_name:-"ubuntu_sahara_spark_latest"}
 
   ubuntu_elements_sequence="base vm ubuntu hadoop-cdh spark"
 
@@ -244,7 +244,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
 
   # Ignoring image type option
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
-    export centos_image_name_hdp_1_3="centos-6_4-64-hdp-1-3"
+    export centos_image_name_hdp_1_3=${centos_hdp_hadoop_1_image_name:-"centos-6_4-64-hdp-1-3"}
     # Elements to include in an HDP-based image
     centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb root-passwd sahara-version source-repositories yum"
     # generate image with HDP 1.3
@@ -254,7 +254,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   fi
 
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
-    export centos_image_name_hdp_2_0="centos-6_4-64-hdp-2-0"
+    export centos_image_name_hdp_2_0=${centos_hdp_hadoop_2_image_name:-"centos-6_4-64-hdp-2-0"}
     # Elements to include in an HDP-based image
     centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb root-passwd sahara-version source-repositories yum"
     # generate image with HDP 2.0
@@ -264,7 +264,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   fi
 
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "plain" ]; then
-    export centos_image_name_plain="centos-6_4-64-plain"
+    export centos_image_name_plain=${centos_hdp_plain_image_name:-"centos-6_4-64-plain"}
     # Elements for a plain CentOS image that does not contain HDP or Apache Hadoop
     centos_plain_elements_sequence="vm rhel redhat-lsb root-passwd sahara-version yum"
     # generate plain (no Hadoop components) image for testing
