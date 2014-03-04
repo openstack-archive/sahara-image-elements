@@ -15,7 +15,7 @@ while getopts "p:i:v:" opt; do
     ;;
     *)
       echo
-      echo "Usage: $(basename $0) [-p vanilla|spark|hdp] [-i ubuntu|fedora|centos] [-v 1|2|plain]"
+      echo "Usage: $(basename $0) [-p vanilla|spark|hdp|idh] [-i ubuntu|fedora|centos] [-v 1|2|plain]"
       echo "'-p' is plugin version, '-i' is image type, '-v' is hadoop version"
       echo "You shouldn't specify hadoop version and image type for spark plugin"
       echo "You shouldn't specify image type for hdp plugin"
@@ -27,7 +27,7 @@ while getopts "p:i:v:" opt; do
 done
 
 # Checks of input
-if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" ]; then
+if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" -a "$PLUGIN" != "idh" ]; then
   echo -e "Unknown plugin selected.\nAborting"
   exit 1
 fi
@@ -273,6 +273,34 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   fi
 fi
 
+########################
+# Image for IDH plugin #
+########################
+
+if [ -z "$PLUGIN" -o "$PLUGIN" = "idh" ]; then
+  # Ignoring image type and hadoop version options
+  echo "For idh plugin options -i and -v are ignored"
+
+  export DIB_IMAGE_SIZE="10"
+  export BASE_IMAGE_FILE="CentOS-6.4-cloud-init.qcow2"
+  export DIB_CLOUD_IMAGES="http://savanna-files.mirantis.com"
+  export centos_image_name_idh="centos_savanna_idh_latest"
+
+  centos_elements_sequence="vm rhel hadoop-idh"
+
+  if [ "$platform" = 'NAME="Ubuntu"' ]; then
+      echo "**************************************************************"
+      echo "WARNING: As a workaround for DIB bug 1204824, you are about to"
+      echo "         create a CentOS image that has SELinux               "
+      echo "         disabled. Do not use these images in production.     "
+      echo "**************************************************************"
+      centos_elements_sequence="$centos_elements_sequence selinux-permissive"
+      centos_image_name_idh="$centos_image_name_idh.selinux-permissive"
+  fi
+
+  disk-image-create $centos_elements_sequence -o $centos_image_name_idh
+  mv $centos_image_name_idh.qcow2 ../
+fi
 
 popd # out of $TEMP
 rm -rf $TEMP
