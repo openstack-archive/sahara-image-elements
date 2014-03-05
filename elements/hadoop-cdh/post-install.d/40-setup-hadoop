@@ -10,10 +10,6 @@ if [ "$distro" != "Ubuntu" ]; then
    exit 1
 fi
 
-if [ $DIB_HADOOP_VERSION != "2.0.0-mr1-cdh4.5.0" ]; then
-   echo "CDH version $DIB_HADOOP_VERSION not supported. Exiting."
-fi
-
 echo "Hadoop CDH setup begins for $distro"
 tmp_dir=/tmp/hadoop
 
