@@ -112,7 +112,7 @@ popd
 #############################
 
 if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
-  export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jdk-7u25-linux-x64.tar.gz"}
+  export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz"}
   export OOZIE_DOWNLOAD_URL=${OOZIE_DOWNLOAD_URL:-"http://savanna-files.mirantis.com/oozie-4.0.0.tar.gz"}
   export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
 
