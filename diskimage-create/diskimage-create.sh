@@ -117,8 +117,8 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
 
   ubuntu_elements_sequence="base vm ubuntu hadoop swift_hadoop oozie mysql hive"
-  fedora_elements_sequence="base vm fedora hadoop swift_hadoop oozie mysql hive"
-  centos_elements_sequence="vm rhel hadoop swift_hadoop oozie mysql hive redhat-lsb"
+  fedora_elements_sequence="base vm fedora hadoop swift_hadoop oozie mysql hive disable-firewall"
+  centos_elements_sequence="vm rhel hadoop swift_hadoop oozie mysql hive redhat-lsb disable-firewall"
 
   # Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
   # https://bugs.launchpad.net/sahara/+bug/1252684

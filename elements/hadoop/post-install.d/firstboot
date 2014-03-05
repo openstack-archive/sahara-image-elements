@@ -23,14 +23,9 @@ function firstboot_common()
              sleep 1
           done
           chown -R $user:$user /home/$user
-
-          #TODO: configure iptables (https://bugs.launchpad.net/sahara/+bug/1195744)
-          iptables -F
        ;;
        CentOS )
           chown -R cloud-user:cloud-user /home/cloud-user
-          service iptables stop
-          chkconfig iptables off
        ;;
        * )
           echo "Unknown distro: $distro. Exiting."
