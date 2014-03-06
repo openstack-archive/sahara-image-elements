@@ -10,10 +10,7 @@ if [ -z "$DIB_HADOOP_VERSION" ]; then
    echo "DIB_HADOOP_VERSION is not set. Impossible to install hadoop. Exit"
    exit 1
 fi
-version_check=$(echo $DIB_HADOOP_VERSION | sed -e '/[0-9]\.[0-9]\.[0-9]/d')
-if [[ -z $version_check ]]; then
-   echo "All variables are set, continue."
-else
-   echo "Version error. Exit"
+if [ $DIB_HADOOP_VERSION != "2.0.0-mr1-cdh4.5.0" ]; then
+   echo "CDH version $DIB_HADOOP_VERSION not supported. Exiting."
    exit 1
 fi
