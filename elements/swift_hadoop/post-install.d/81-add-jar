@@ -2,15 +2,8 @@
 
 install-packages wget
 
-if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]];
-then
-    HDFS_LIB_DIR="/usr/share/hadoop/lib"
-    SWIFT_LIB_URI="http://sahara-files.mirantis.com/hadoop-swift/hadoop-swift-latest.jar"
-else
-    HDFS_LIB_DIR="/opt/hadoop/share/hadoop/common/lib"
-    #TODO(sreshetniak): make jar and upload to sahara-files
-    SWIFT_LIB_URI="https://repository.cloudera.com/artifactory/repo/org/apache/hadoop/hadoop-openstack/2.3.0/hadoop-openstack-2.3.0.jar"
-fi
+HDFS_LIB_DIR="/usr/share/hadoop/lib"
+SWIFT_LIB_URI="http://sahara-files.mirantis.com/hadoop-swift/hadoop-swift-latest.jar"
 
 if [ -z "$swift_url" ]; then
    wget -O $HDFS_LIB_DIR/hadoop-swift.jar $SWIFT_LIB_URI

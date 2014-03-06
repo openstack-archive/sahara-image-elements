@@ -118,6 +118,9 @@ EOF
     sed -i -e "s,\# export JAVA_HOME=.*,export JAVA_HOME=$JAVA_HOME," \
            -e "s,YARN_LOG_DIR=.*,YARN_LOG_DIR=/mnt/log/hadoop/yarn," \
         $HADOOP_HOME/etc/hadoop/yarn-env.sh
+
+    # enable swiftfs
+    ln -s ${HADOOP_HOME}/share/hadoop/tools/lib/hadoop-openstack-${DIB_HADOOP_VERSION}.jar ${HADOOP_HOME}/share/hadoop/common/lib/
 }
 
 distro=$(lsb_release -is || :)
