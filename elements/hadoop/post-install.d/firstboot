@@ -24,7 +24,7 @@ function firstboot_common()
           done
           chown -R $user:$user /home/$user
 
-          #TODO: configure iptables (https://bugs.launchpad.net/savanna/+bug/1195744)
+          #TODO: configure iptables (https://bugs.launchpad.net/sahara/+bug/1195744)
           iptables -F
        ;;
        CentOS )

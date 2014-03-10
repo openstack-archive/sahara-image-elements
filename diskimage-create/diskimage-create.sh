@@ -90,21 +90,21 @@ popd
 
 export ELEMENTS_PATH="$DIB_REPO_PATH/elements"
 
-# savanna-image-elements repo
+# sahara-image-elements repo
 
 if [ -z $SIM_REPO_PATH ]; then
   SIM_REPO_PATH="$(dirname $base_dir)"
-  if [ $(basename $SIM_REPO_PATH) != "savanna-image-elements" ]; then
-    echo "Can't find Savanna-image-elements repository. Cloning it."
-    git clone https://git.openstack.org/openstack/savanna-image-elements
-    SIM_REPO_PATH="$(pwd)/savanna-image-elements"
+  if [ $(basename $SIM_REPO_PATH) != "sahara-image-elements" ]; then
+    echo "Can't find Sahara-image-elements repository. Cloning it."
+    git clone https://git.openstack.org/openstack/sahara-image-elements
+    SIM_REPO_PATH="$(pwd)/sahara-image-elements"
   fi
 fi
 
 ELEMENTS_PATH=$ELEMENTS_PATH:$SIM_REPO_PATH/elements
 
 pushd $SIM_REPO_PATH
-export SAVANNA_ELEMENTS_COMMIT_ID=`git rev-parse HEAD`
+export SAHARA_ELEMENTS_COMMIT_ID=`git rev-parse HEAD`
 popd
 
 #############################
@@ -113,7 +113,7 @@ popd
 
 if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz"}
-  export OOZIE_DOWNLOAD_URL=${OOZIE_DOWNLOAD_URL:-"http://savanna-files.mirantis.com/oozie-4.0.0.tar.gz"}
+  export OOZIE_DOWNLOAD_URL=${OOZIE_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/oozie-4.0.0.tar.gz"}
   export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
 
   ubuntu_elements_sequence="base vm ubuntu hadoop swift_hadoop oozie mysql hive"
@@ -121,7 +121,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   centos_elements_sequence="vm rhel hadoop swift_hadoop oozie mysql hive redhat-lsb"
 
   # Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
-  # https://bugs.launchpad.net/savanna/+bug/1252684
+  # https://bugs.launchpad.net/sahara/+bug/1252684
   if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "centos" -o "$IMAGE_TYPE" = "fedora" ]; then
     if [ "$platform" = 'NAME="Ubuntu"' ]; then
       echo "**************************************************************"
@@ -146,13 +146,13 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "ubuntu" ]; then
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
-      export ubuntu_image_name="ubuntu_savanna_vanilla_hadoop_1_latest"
+      export ubuntu_image_name="ubuntu_sahara_vanilla_hadoop_1_latest"
       disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
       mv $ubuntu_image_name.qcow2 ../
     fi
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2:-"2.3.0"}
-      export ubuntu_image_name="ubuntu_savanna_vanilla_hadoop_2_latest"
+      export ubuntu_image_name="ubuntu_sahara_vanilla_hadoop_2_latest"
       disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
       mv $ubuntu_image_name.qcow2 ../
     fi
@@ -162,13 +162,13 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "fedora" ]; then
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
-      export fedora_image_name="fedora_savanna_vanilla_hadoop_1_latest$suffix"
+      export fedora_image_name="fedora_sahara_vanilla_hadoop_1_latest$suffix"
       disk-image-create $fedora_elements_sequence -o $fedora_image_name
       mv $fedora_image_name.qcow2 ../
     fi
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2:-"2.3.0"}
-      export fedora_image_name="fedora_savanna_vanilla_hadoop_2_latest$suffix"
+      export fedora_image_name="fedora_sahara_vanilla_hadoop_2_latest$suffix"
       disk-image-create $fedora_elements_sequence -o $fedora_image_name
       mv $fedora_image_name.qcow2 ../
     fi
@@ -182,16 +182,16 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     export DIB_IMAGE_SIZE="10"
     # Read Create_CentOS_cloud_image.rst to know how to create CentOS image in qcow2 format
     export BASE_IMAGE_FILE="CentOS-6.5-cloud-init.qcow2"
-    export DIB_CLOUD_IMAGES="http://savanna-files.mirantis.com"
+    export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
-      export centos_image_name="centos_savanna_vanilla_hadoop_1_latest$suffix"
+      export centos_image_name="centos_sahara_vanilla_hadoop_1_latest$suffix"
       disk-image-create $centos_elements_sequence -n -o $centos_image_name
       mv $centos_image_name.qcow2 ../
     fi
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2:-"2.3.0"}
-      export centos_image_name="centos_savanna_vanilla_hadoop_2_latest$suffix"
+      export centos_image_name="centos_sahara_vanilla_hadoop_2_latest$suffix"
       disk-image-create $centos_elements_sequence -n -o $centos_image_name
       mv $centos_image_name.qcow2 ../
     fi
@@ -207,7 +207,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
   echo "For spark plugin options -i and -v are ignored"
 
   export DIB_HADOOP_VERSION="2.0.0-mr1-cdh4.5.0"
-  export ubuntu_image_name="ubuntu_savanna_spark_latest"
+  export ubuntu_image_name="ubuntu_sahara_spark_latest"
 
   ubuntu_elements_sequence="base vm ubuntu hadoop-cdh spark"
 
@@ -237,7 +237,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   # - Disable including 'base' element for CentOS
   # - Export link and filename for CentOS cloud image to download
   export BASE_IMAGE_FILE="CentOS-6.4-cloud-init.qcow2"
-  export DIB_CLOUD_IMAGES="http://savanna-files.mirantis.com"
+  export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
 
   # Each image has a root login, password is "hadoop"
   export DIB_PASSWORD="hadoop"
@@ -246,7 +246,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
     export centos_image_name_hdp_1_3="centos-6_4-64-hdp-1-3"
     # Elements to include in an HDP-based image
-    centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb root-passwd savanna-version source-repositories yum"
+    centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb root-passwd sahara-version source-repositories yum"
     # generate image with HDP 1.3
     export DIB_HDP_VERSION="1.3"
     disk-image-create $centos_elements_sequence -n -o $centos_image_name_hdp_1_3
@@ -256,7 +256,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
     export centos_image_name_hdp_2_0="centos-6_4-64-hdp-2-0"
     # Elements to include in an HDP-based image
-    centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb root-passwd savanna-version source-repositories yum"
+    centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb root-passwd sahara-version source-repositories yum"
     # generate image with HDP 2.0
     export DIB_HDP_VERSION="2.0"
     disk-image-create $centos_elements_sequence -n -o $centos_image_name_hdp_2_0
@@ -266,7 +266,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "plain" ]; then
     export centos_image_name_plain="centos-6_4-64-plain"
     # Elements for a plain CentOS image that does not contain HDP or Apache Hadoop
-    centos_plain_elements_sequence="vm rhel redhat-lsb root-passwd savanna-version yum"
+    centos_plain_elements_sequence="vm rhel redhat-lsb root-passwd sahara-version yum"
     # generate plain (no Hadoop components) image for testing
     disk-image-create $centos_plain_elements_sequence -n -o $centos_image_name_plain
     mv $centos_image_name_plain.qcow2 ../
@@ -283,8 +283,8 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "idh" ]; then
 
   export DIB_IMAGE_SIZE="10"
   export BASE_IMAGE_FILE="CentOS-6.4-cloud-init.qcow2"
-  export DIB_CLOUD_IMAGES="http://savanna-files.mirantis.com"
-  export centos_image_name_idh="centos_savanna_idh_latest"
+  export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
+  export centos_image_name_idh="centos_sahara_idh_latest"
 
   centos_elements_sequence="vm rhel hadoop-idh"
 

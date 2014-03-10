@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ -z "$SAHARA_ELEMENTS_COMMIT_ID" -o -z "$DIB_COMMIT_ID" ]
+then
+    echo "Both SAHARA_ELEMENTS_COMMIT_ID and DIB_COMMIT_ID must be specified, exiting"
+    exit 3
+else
+    echo -e "Sahara-elements-extra commit id: $SAHARA_ELEMENTS_COMMIT_ID,
+Diskimage-builder commit id: $DIB_COMMIT_ID" > /etc/sahara-extra.version
+fi

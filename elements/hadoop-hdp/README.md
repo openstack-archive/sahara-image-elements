@@ -9,7 +9,7 @@ Currently, the following versions of the Hortonworks Data Platform are supported
 
 The following script:
 
-savanna-image-elements/diskimage-create/diskimage-create.sh
+sahara-image-elements/diskimage-create/diskimage-create.sh
 
 is the default script to use for creating CentOS images with HDP installed/configured.  This script can be used without modification, or can be used as an example to describe how a more customized script may be created with the "hadoop-hdp" diskimage-builder element.
 

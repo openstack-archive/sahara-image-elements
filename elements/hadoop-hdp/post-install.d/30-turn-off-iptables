@@ -20,7 +20,7 @@
 # once the HDP install has completed.
 #
 # This is a recommended network optimization for images used
-# by Savanna and OpenStack.
+# by Sahara and OpenStack.
 ##########################################################
 
 

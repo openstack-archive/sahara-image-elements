@@ -22,7 +22,7 @@
 
 #
 # This script just changes the enabled flag to 0 to prevent yum install
-# from going out over the network. It allows Savanna to provision VMs
+# from going out over the network. It allows Sahara to provision VMs
 # in disconnected mode.
 #
 

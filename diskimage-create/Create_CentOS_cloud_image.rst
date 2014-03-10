@@ -1,4 +1,4 @@
-We have CentOS 6.4 and 6.5 cloud images. Recommended is CentOS 6.5 (http://savanna-files.mirantis.com/CentOS-6.5-cloud-init.qcow2).
+We have CentOS 6.4 and 6.5 cloud images. Recommended is CentOS 6.5 (http://sahara-files.mirantis.com/CentOS-6.5-cloud-init.qcow2).
 
 For preparing your own CentOS cloud image with pre-installed cloud-init you should follow this guide:
 `CentOS cloud image. <http://docs.openstack.org/image-guide/content/centos-image.html>`_ Use the latest version of cloud-init package from `testing repository <http://pkgs.org/centos-6/epel-testing-i386/cloud-init-0.7.4-2.el6.noarch.rpm.html>`_

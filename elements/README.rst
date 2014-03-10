@@ -20,11 +20,11 @@ Steps how to create cloud image with Apache Hadoop installed using diskimage-bui
     chmod 440 /etc/sudoers.d/img-build-sudoers
     chown root:root /etc/sudoers.d/img-build-sudoers
 
-5. Export savanna-elements commit id variable (from savanna-extra directory):
+5. Export sahara-elements commit id variable (from sahara-extra directory):
 
 .. sourcecode:: bash
 
-    export SAVANNA_ELEMENTS_COMMIT_ID=`git show --format=%H | head -1`
+    export SAHARA_ELEMENTS_COMMIT_ID=`git show --format=%H | head -1`
 
 6. Move elements/ directory to disk-image-builder/elements/
 
@@ -62,7 +62,7 @@ In this command 'DIB_HADOOP_VERSION' parameter is version of hadoop needs to be 
 You can use 'JAVA_DOWNLOAD_URL' parameter to specify download link for JDK (tarball or bin).
 'DIB_IMAGE_SIZE' is parameter that specifes a volume of hard disk of instance. You need to specify it because Fedora and CentOS don't use all available volume.
 If you have already downloaded the jdk package, move it to "elements/hadoop/install.d/" and use its filename as 'JAVA_FILE' parameter.
-In order of working EDP components with Savanna DIB images you need pre-installed Oozie libs.
+In order of working EDP components with Sahara DIB images you need pre-installed Oozie libs.
 Use OOZIE_DOWNLOAD_URL to specify link to Oozie archive (tar.gz). For example we have built Oozie libs here:
-http://savanna-files.mirantis.com/oozie-4.0.0.tar.gz
+http://sahara-files.mirantis.com/oozie-4.0.0.tar.gz
 If you have already downloaded archive, move it to "elements/oozie/install.d/" and use its filename as 'OOZIE_FILE' parameter.
