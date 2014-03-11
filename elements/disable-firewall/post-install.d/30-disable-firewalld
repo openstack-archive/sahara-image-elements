@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if which systemctl; then
+   systemctl disable firewalld
+fi
+
+: # continue without error
