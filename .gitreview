@@ -1,5 +1,5 @@
 [gerrit]
 host=review.openstack.org
 port=29418
-project=openstack/savanna-image-elements.git
+project=openstack/sahara-image-elements.git
 defaultbranch=stable/0.3
