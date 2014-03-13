@@ -151,7 +151,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
       mv $ubuntu_image_name.qcow2 ../
     fi
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
-      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2:-"2.2.0"}
+      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2:-"2.3.0"}
       export ubuntu_image_name="ubuntu_savanna_vanilla_hadoop_2_latest"
       disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
       mv $ubuntu_image_name.qcow2 ../
@@ -167,7 +167,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
       mv $fedora_image_name.qcow2 ../
     fi
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
-      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2:-"2.2.0"}
+      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2:-"2.3.0"}
       export fedora_image_name="fedora_savanna_vanilla_hadoop_2_latest$suffix"
       disk-image-create $fedora_elements_sequence -o $fedora_image_name
       mv $fedora_image_name.qcow2 ../
@@ -190,7 +190,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
       mv $centos_image_name.qcow2 ../
     fi
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
-      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2:-"2.2.0"}
+      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2:-"2.3.0"}
       export centos_image_name="centos_savanna_vanilla_hadoop_2_latest$suffix"
       disk-image-create $centos_elements_sequence -n -o $centos_image_name
       mv $centos_image_name.qcow2 ../
