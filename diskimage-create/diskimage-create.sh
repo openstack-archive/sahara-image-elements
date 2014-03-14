@@ -58,8 +58,8 @@ if [ -e /etc/os-release ]; then
     yum install qemu kpartx git -y
   fi
 else
-  platform=$(head -1 /etc/system-release | grep CentOS)
-  if [ -z $platform ]; then
+  platform=$(head -1 /etc/system-release | grep CentOS || :)
+  if [ -n "$platform" ]; then
     yum update -y
     yum install qemu-kvm kpartx git -y
   else
