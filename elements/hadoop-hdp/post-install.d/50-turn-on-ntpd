@@ -23,10 +23,3 @@
 
 # Turn on ntp service
 chkconfig ntpd on
-
-# Synchronize the clock
-ntpdate pool.ntp.org
-
-# Start ntpd
-/etc/init.d/ntpd start
-
