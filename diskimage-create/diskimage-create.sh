@@ -246,7 +246,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
     export centos_image_name_hdp_1_3=${centos_hdp_hadoop_1_image_name:-"centos-6_4-64-hdp-1-3"}
     # Elements to include in an HDP-based image
-    centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb root-passwd sahara-version source-repositories yum"
+    centos_elements_sequence="vm rhel hadoop-hdp disable-firewall redhat-lsb root-passwd sahara-version source-repositories yum"
     # generate image with HDP 1.3
     export DIB_HDP_VERSION="1.3"
     disk-image-create $centos_elements_sequence -n -o $centos_image_name_hdp_1_3
@@ -256,7 +256,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
     export centos_image_name_hdp_2_0=${centos_hdp_hadoop_2_image_name:-"centos-6_4-64-hdp-2-0"}
     # Elements to include in an HDP-based image
-    centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb root-passwd sahara-version source-repositories yum"
+    centos_elements_sequence="vm rhel hadoop-hdp disable-firewall redhat-lsb root-passwd sahara-version source-repositories yum"
     # generate image with HDP 2.0
     export DIB_HDP_VERSION="2.0"
     disk-image-create $centos_elements_sequence -n -o $centos_image_name_hdp_2_0
