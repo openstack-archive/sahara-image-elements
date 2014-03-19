@@ -30,6 +30,11 @@ function install_ganglia ()
     install-packages libganglia ganglia-gmond ganglia-gmond-modules-python ganglia-devel ganglia-gmetad ganglia-web
 }
 
+function install_mysql()
+{
+    # install mysql
+    install-packages mysql mysql-server mysql-connector-java
+}
 
 function installHDP_1_3 ()
 {
@@ -43,13 +48,13 @@ function installHDP_1_3 ()
     # ====== INSTALL HDP =======
     wget -nv http://s3.amazonaws.com/public-repo-1.hortonworks.com/HDP/centos6/1.x/updates/1.3.2.0/hdp.repo -O /etc/yum.repos.d/hdp.repo
 
-    install-packages mysqld mysql mysql-server mysql-connector-java
+    install_mysql
 
     install-packages net-snmp net-snmp-utils
 
-    install-packages hadoop hadoop-libhdfs hadoop-native hadoop-pipes hadoop-sbin hadoop-lzo lzo lzo-devel hadoop-lzo-native hadoop-mapreduce hadoop-mapreduce-historyserver
+    install-packages hadoop hadoop-libhdfs hadoop-native hadoop-pipes hadoop-sbin hadoop-lzo lzo lzo-devel hadoop-lzo-native
 
-    install-packages snappy snappy-devel htpasswd
+    install-packages snappy snappy-devel
 
     install-packages oozie zookeeper hbase webhcat-tar-hive sqoop  oozie-client extjs-2.2-1 hive hcatalog pig webhcat-tar-pig
 
@@ -72,7 +77,9 @@ function installHDP_2_0 ()
     # ====== INSTALL HDP =======
     wget -nv http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.0.6.0/hdp.repo -O /etc/yum.repos.d/hdp.repo
 
-    install-packages hadoop hadoop-libhdfs hadoop-hdfs hadoop-native hadoop-pipes hadoop-sbin hadoop-lzo hadoop-lzo-native hadoop-mapreduce hadoop-mapreduce-historyserver hadoop-client oozie oozie-client zookeeper hbase pig mysql mysql-server mysql-client webhcat-tar-hive webhcat-tar-pig hdp_mon_dashboard
+    install_mysql
+
+    install-packages hadoop hadoop-libhdfs hadoop-hdfs hadoop-lzo hadoop-lzo-native hadoop-mapreduce hadoop-mapreduce-historyserver hadoop-client oozie oozie-client zookeeper hbase pig webhcat-tar-hive webhcat-tar-pig
 
     # Install Yarn
     install-packages hadoop-yarn hadoop-yarn-nodemanager hadoop-yarn-proxyserver hadoop-yarn-resourcemanager
