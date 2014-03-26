@@ -68,7 +68,7 @@ function firstboot_hadoop_v1()
     chown hadoop:hadoop /var/run/hadoop
 }
 
-DIB_HADOOP_VERSION=
+DIB_HADOOP_VERSION=$(hadoop version | head -1 | awk '{print $2}')
 
 firstboot_common
 

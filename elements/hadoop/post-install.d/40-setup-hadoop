@@ -152,8 +152,6 @@ fi
 
 echo "Applying firstboot script"
 
-sed -i -e "s,DIB_HADOOP_VERSION=,DIB_HADOOP_VERSION=$DIB_HADOOP_VERSION," $(dirname $0)/firstboot
-
 RC_SCRIPT_DIR=""
 if [ "$distro" == "Ubuntu" ]; then
   # File '/etc/rc.local' may not exist
