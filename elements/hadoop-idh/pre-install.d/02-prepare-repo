@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 mkdir /root/old-repo
 mv /etc/yum.repos.d/* /root/old-repo
@@ -6,7 +6,7 @@ install -D -g root -o root -m 644 $(dirname $0)/Centos-Vault.repo /etc/yum.repos
 
 install-packages wget createrepo
 mkdir -p /var/repo/intel
-wget -P /var/repo/intel --no-parent -r -l inf --content-disposition -nH --cut-dirs=5 http://repo1.intelhadoop.com:3424/evaluation/en/RHEL/2.5.1/rpm/
+wget -P /var/repo/intel --no-parent -r -l inf --content-disposition -nH --cut-dirs=5 http://repo2.intelhadoop.com/evaluation/en/RHEL/$DIB_HADOOP_VERSION/rpm/
 createrepo /var/repo/intel
 
 install -D -g root -o root -m 644 $(dirname $0)/Intel.repo /etc/yum.repos.d/

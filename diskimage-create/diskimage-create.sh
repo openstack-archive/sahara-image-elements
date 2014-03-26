@@ -46,6 +46,11 @@ if [ "$PLUGIN" = "vanilla" -a "$HADOOP_VERSION" = "plain" ]; then
   echo "Impossible combination.\nAborting"
   exit 1
 fi
+
+if [ "$PLUGIN" = "idh" -a "$HADOOP_VERSION" = "plain" ]; then
+  echo "Impossible combination.\nAborting"
+  exit 1
+fi
 #################
 
 if [ -e /etc/os-release ]; then
@@ -287,12 +292,11 @@ fi
 
 if [ -z "$PLUGIN" -o "$PLUGIN" = "idh" ]; then
   # Ignoring image type and hadoop version options
-  echo "For idh plugin options -i and -v are ignored"
+  echo "For idh plugin option -i is ignored"
 
   export DIB_IMAGE_SIZE="10"
   export BASE_IMAGE_FILE="CentOS-6.4-cloud-init.qcow2"
   export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
-  export centos_image_name_idh="centos_sahara_idh_latest"
 
   centos_elements_sequence="vm rhel hadoop-idh"
 
@@ -303,11 +307,24 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "idh" ]; then
       echo "         disabled. Do not use these images in production.     "
       echo "**************************************************************"
       centos_elements_sequence="$centos_elements_sequence selinux-permissive"
-      centos_image_name_idh="$centos_image_name_idh.selinux-permissive"
+      suffix=".selinux-permissive"
   fi
 
-  disk-image-create $centos_elements_sequence -o $centos_image_name_idh
-  mv $centos_image_name_idh.qcow2 ../
+  if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
+    export HADOOP_VERSION="1"
+    export DIB_HADOOP_VERSION="2.5.1"
+    export centos_image_name_idh="centos_sahara_idh_${DIB_HADOOP_VERSION}${suffix}"
+    disk-image-create $centos_elements_sequence -o $centos_image_name_idh
+    mv $centos_image_name_idh.qcow2 ../
+  fi
+
+  if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
+    export HADOOP_VERSION="2"
+    export DIB_HADOOP_VERSION="3.0.2"
+    export centos_image_name_idh="centos_sahara_idh_${DIB_HADOOP_VERSION}${suffix}"
+    disk-image-create $centos_elements_sequence -o $centos_image_name_idh
+    mv $centos_image_name_idh.qcow2 ../
+  fi
 fi
 
 popd # out of $TEMP
