@@ -64,6 +64,7 @@ else
     yum install qemu-kvm kpartx git -y
   else
     echo -e "Unknown Host OS. Impossible to build images.\nAborting"
+    exit 2
   fi
 fi
 
