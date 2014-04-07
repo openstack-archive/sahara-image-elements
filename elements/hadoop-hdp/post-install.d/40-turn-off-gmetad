@@ -21,8 +21,6 @@
 #
 ##########################################################
 
-/etc/init.d/gmetad stop
-
 # Turn off gmetad
 chkconfig gmetad off
 
