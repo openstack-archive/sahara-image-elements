@@ -2,7 +2,10 @@
 
 set -e
 
-while getopts "p:i:v:" opt; do
+# default debug setting should be false
+IMAGE_GENERATION_DEBUG_MODE="false"
+
+while getopts "p:i:v:d:" opt; do
   case $opt in
     p)
       PLUGIN=$OPTARG
@@ -13,18 +16,23 @@ while getopts "p:i:v:" opt; do
     v)
       HADOOP_VERSION=$OPTARG
     ;;
+    d)
+      IMAGE_GENERATION_DEBUG_MODE=$OPTARG
+    ;;
     *)
       echo
-      echo "Usage: $(basename $0) [-p vanilla|spark|hdp|idh] [-i ubuntu|fedora|centos] [-v 1|2|plain]"
-      echo "'-p' is plugin version, '-i' is image type, '-v' is hadoop version"
+      echo "Usage: $(basename $0) [-p vanilla|spark|hdp|idh] [-i ubuntu|fedora|centos] [-v 1|2|plain] [-d true|false]"
+      echo "'-p' is plugin version, '-i' is image type, '-v' is hadoop version, '-d controls the debug mode for image generation (false by default)"
       echo "You shouldn't specify hadoop version and image type for spark plugin"
       echo "You shouldn't specify image type for hdp plugin"
       echo "Version 'plain' could be specified for hdp plugin only"
+      echo "Debug mode should only be enabled for local debugging purposes, not for production systems"
       echo "By default all images for all plugins will be created"
       exit 1
     ;;
   esac
 done
+
 
 # Checks of input
 if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" -a "$PLUGIN" != "idh" ]; then
@@ -40,6 +48,15 @@ fi
 if [ -n "$HADOOP_VERSION" -a "$HADOOP_VERSION" != "1" -a "$HADOOP_VERSION" != "2" -a "$HADOOP_VERSION" != "plain" ]; then
   echo -e "Unknown hadoop version selected.\nAborting"
   exit 1
+fi
+
+if [ -n "$IMAGE_GENERATION_DEBUG_MODE" -a "$IMAGE_GENERATION_DEBUG_MODE" != "true" -a "$IMAGE_GENERATION_DEBUG_MODE" != "false" ]; then
+  echo -e "Unknown debug mode.\nAborting"
+  exit 1
+else if [ -z "$IMAGE_GENERATION_DEBUG_MODE"  ]; then
+     echo -e "Empty string passed for debug mode.  Invalid input. \nAborting"
+     exit 1
+     fi
 fi
 
 if [ "$PLUGIN" = "vanilla" -a "$HADOOP_VERSION" = "plain" ]; then
@@ -253,14 +270,22 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   export BASE_IMAGE_FILE="CentOS-6.4-cloud-init.qcow2"
   export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
 
-  # Each image has a root login, password is "hadoop"
-  export DIB_PASSWORD="hadoop"
+  if [ "$IMAGE_GENERATION_DEBUG_MODE" = "true" ]; then
+      echo "Using HDP Image Debug Mode, using root-pwd in images, NOT FOR PRODUCTION USAGE."
+      # Each image has a root login, password is "hadoop"
+      export DIB_PASSWORD="hadoop"
+  fi
 
   # Ignoring image type option
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
     export centos_image_name_hdp_1_3=${centos_hdp_hadoop_1_image_name:-"centos-6_4-64-hdp-1-3"}
     # Elements to include in an HDP-based image
-    centos_elements_sequence="vm rhel hadoop-hdp disable-firewall redhat-lsb root-passwd sahara-version source-repositories yum"
+    centos_elements_sequence="vm rhel hadoop-hdp disable-firewall redhat-lsb sahara-version source-repositories yum"
+    if [ "$IMAGE_GENERATION_DEBUG_MODE" = "true" ]; then
+        # enable the root-pwd element, for simpler local debugging of images
+        centos_elements_sequence=$centos_elements_sequence" root-passwd"
+    fi
+
     # generate image with HDP 1.3
     export DIB_HDP_VERSION="1.3"
     disk-image-create $centos_elements_sequence -n -o $centos_image_name_hdp_1_3
@@ -270,7 +295,12 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
     export centos_image_name_hdp_2_0=${centos_hdp_hadoop_2_image_name:-"centos-6_4-64-hdp-2-0"}
     # Elements to include in an HDP-based image
-    centos_elements_sequence="vm rhel hadoop-hdp disable-firewall redhat-lsb root-passwd sahara-version source-repositories yum"
+    centos_elements_sequence="vm rhel hadoop-hdp disable-firewall redhat-lsb sahara-version source-repositories yum"
+    if  [ "$IMAGE_GENERATION_DEBUG_MODE" = "true" ]; then
+        # enable the root-pwd element, for simpler local debugging of images
+        centos_elements_sequence=$centos_elements_sequence" root-passwd"
+    fi
+
     # generate image with HDP 2.0
     export DIB_HDP_VERSION="2.0"
     disk-image-create $centos_elements_sequence -n -o $centos_image_name_hdp_2_0
@@ -280,7 +310,12 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "plain" ]; then
     export centos_image_name_plain=${centos_hdp_plain_image_name:-"centos-6_4-64-plain"}
     # Elements for a plain CentOS image that does not contain HDP or Apache Hadoop
-    centos_plain_elements_sequence="vm rhel redhat-lsb root-passwd sahara-version yum"
+    centos_plain_elements_sequence="vm rhel redhat-lsb sahara-version yum"
+    if [ "$IMAGE_GENERATION_DEBUG_MODE" = "true" ]; then
+        # enable the root-pwd element, for simpler local debugging of images
+        centos_elements_sequence=$centos_elements_sequence" root-passwd"
+    fi
+
     # generate plain (no Hadoop components) image for testing
     disk-image-create $centos_plain_elements_sequence -n -o $centos_image_name_plain
     mv $centos_image_name_plain.qcow2 ../
