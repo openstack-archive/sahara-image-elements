@@ -1,2 +1,2 @@
-hadoopswift file /opt/hdp-local-repos/hadoop-swift/hadoop-swift-1.0-1.x86_64.rpm https://s3.amazonaws.com/public-repo-1.hortonworks.com/savanna/swift/hadoop-swift-1.0-1.x86_64.rpm
+hadoopswift file /opt/hdp-local-repos/hadoop-swift/hadoop-swift-1.0-1.x86_64.rpm https://s3.amazonaws.com/public-repo-1.hortonworks.com/sahara/swift/hadoop-swift-1.0-1.x86_64.rpm
 
