@@ -1,9 +1,14 @@
 #!/bin/bash
 set -e
 
-if [ -z "$OOZIE_DOWNLOAD_URL" ]; then
-   if [ -z "$OOZIE_FILE" ]; then
-      echo "OOZIE_FILE and OOZIE_DOWNLOAD_URL are not set. Impossible to install Oozie. Exit"
-      exit 1
-   fi
+if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]]; then
+    if [ -z "$OOZIE_HADOOP_V1_DOWNLOAD_URL" -a -z "$OOZIE_HADOOP_V1_FILE" ]; then
+        echo "OOZIE_HADOOP_V1_FILE and OOZIE_HADOOP_V1_DOWNLOAD_URL are not set. Impossible to install Oozie. Exit"
+        exit 1
+    fi
+else
+    if [ -z "$OOZIE_HADOOP_V2_DOWNLOAD_URL" -a -z "$OOZIE_HADOOP_V2_FILE" ]; then
+        echo "OOZIE_HADOOP_V2_FILE and OOZIE_HADOOP_V2_DOWNLOAD_URL are not set. Impossible to install Oozie. Exit"
+        exit 1
+    fi
 fi

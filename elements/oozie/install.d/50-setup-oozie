@@ -6,6 +6,14 @@ install-packages zip unzip tar wget
 tmp_dir=/tmp/oozie
 mkdir $tmp_dir
 
+if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]]; then
+    OOZIE_DOWNLOAD_URL="$OOZIE_HADOOP_V1_DOWNLOAD_URL"
+    OOZIE_FILE="$OOZIE_HADOOP_V1_FILE"
+else
+    OOZIE_DOWNLOAD_URL="$OOZIE_HADOOP_V2_DOWNLOAD_URL"
+    OOZIE_FILE="$OOZIE_HADOOP_V2_FILE"
+fi
+
 if [ -n "$OOZIE_DOWNLOAD_URL" ]; then
    wget -P $tmp_dir $OOZIE_DOWNLOAD_URL
    OOZIE_FILE=$(basename $OOZIE_DOWNLOAD_URL)
