@@ -2,6 +2,10 @@
 
 set -e
 
+export IMAGE_SIZE=$DIB_IMAGE_SIZE
+# This will unset parameter DIB_IMAGE_SIZE for Ubuntu and Fedora vanilla images
+unset DIB_IMAGE_SIZE
+
 # default debug setting should be false
 IMAGE_GENERATION_DEBUG_MODE="false"
 
@@ -209,7 +213,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   # - Export link and filename for CentOS cloud image to download
   # - Patameter 'DIB_IMAGE_SIZE' should be specified for CentOS only
   if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "centos" ]; then
-    export DIB_IMAGE_SIZE="10"
+    export DIB_IMAGE_SIZE=${IMAGE_SIZE:-"10"}
     # Read Create_CentOS_cloud_image.rst to know how to create CentOS image in qcow2 format
     export BASE_IMAGE_FILE="CentOS-6.5-cloud-init.qcow2"
     export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
@@ -237,6 +241,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
   # Ignoring image type and hadoop version options
   echo "For spark plugin options -i and -v are ignored"
 
+  unset DIB_IMAGE_SIZE
   export DIB_HADOOP_VERSION="2.0.0-mr1-cdh4.5.0"
   export ubuntu_image_name=${ubuntu_spark_image_name:-"ubuntu_sahara_spark_latest"}
 
@@ -261,8 +266,8 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
 
   # Generate HDP images
 
-  # Parameter 'DIB_IMAGE_SIZE' should be specified for Fedora and CentOS
-  export DIB_IMAGE_SIZE="10"
+  # Parameter 'DIB_IMAGE_SIZE' should be specified for CentOS only
+  export DIB_IMAGE_SIZE=${IMAGE_SIZE:-"10"}
 
   # CentOS cloud image:
   # - Disable including 'base' element for CentOS
@@ -330,7 +335,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "idh" ]; then
   # Ignoring image type and hadoop version options
   echo "For idh plugin option -i is ignored"
 
-  export DIB_IMAGE_SIZE="10"
+  export DIB_IMAGE_SIZE=${IMAGE_SIZE:-"10"}
   export BASE_IMAGE_FILE="CentOS-6.4-cloud-init.qcow2"
   export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
 
