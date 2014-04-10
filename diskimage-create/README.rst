@@ -46,6 +46,17 @@ For Spark you can create only ubuntu image with one hadoop version. You shouldn'
 For HDP you can create only centos image with hadoop 1.3.0 or 2.0 and without hadoop ('plain' image). You shouldn't specify image type.
 For IDH you can create only centos image with one hadoop version. You shouldn't specify image type and hadoop version.
 
+NOTE for CentOS images (for vanilla, hdp and idh plugins):
+
+Resizing disk space during firstboot on that images fails with errors (https://bugs.launchpad.net/sahara/+bug/1304100). So, you will get an instance that will have a small available disk space. To solve this problem we build images with 10G available disk space as default. If you need in more available disk space you should export parameter DIB_IMAGE_SIZE:
+
+.. sourcecode:: bash
+
+  sudo DIB_IMAGE_SIZE=40 bash sahara-image-elements/diskimage-create/diskimage-create.sh -i centos
+
+For all another images parameter DIB_IMAGE_SIZE will be unset.
+
+
 For developers:
 
 1. If you want to add your element to this repository, you should edit this script in your commit (you should export variables for your element and add name of element to variables 'element_sequence').
