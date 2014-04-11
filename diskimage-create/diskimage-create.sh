@@ -138,6 +138,12 @@ pushd $SIM_REPO_PATH
 export SAHARA_ELEMENTS_COMMIT_ID=`git rev-parse HEAD`
 popd
 
+if [ "$DEBUG_MODE" = "true" ]; then
+    echo "Using Image Debug Mode, using root-pwd in images, NOT FOR PRODUCTION USAGE."
+    # Each image has a root login, password is "hadoop"
+    export DIB_PASSWORD="hadoop"
+fi
+
 #############################
 # Images for Vanilla plugin #
 #############################
@@ -153,6 +159,12 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   ubuntu_elements_sequence="base vm ubuntu hadoop oozie mysql hive"
   fedora_elements_sequence="base vm fedora hadoop oozie mysql hive disable-firewall"
   centos_elements_sequence="vm rhel hadoop oozie mysql hive redhat-lsb disable-firewall"
+
+  if [ "$DEBUG_MODE" = "true" ]; then
+    ubuntu_elements_sequence="$ubuntu_elements_sequence root-passwd"
+    fedora_elements_sequence="$fedora_elements_sequence root-passwd"
+    centos_elements_sequence="$centos_elements_sequence root-passwd"
+  fi
 
   # Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
   # https://bugs.launchpad.net/sahara/+bug/1252684
@@ -275,12 +287,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   # - Export link and filename for CentOS cloud image to download
   export BASE_IMAGE_FILE="CentOS-6.4-cloud-init.qcow2"
   export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
-
-  if [ "$DEBUG_MODE" = "true" ]; then
-      echo "Using HDP Image Debug Mode, using root-pwd in images, NOT FOR PRODUCTION USAGE."
-      # Each image has a root login, password is "hadoop"
-      export DIB_PASSWORD="hadoop"
-  fi
 
   # Ignoring image type option
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
