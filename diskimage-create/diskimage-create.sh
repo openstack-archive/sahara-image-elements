@@ -57,6 +57,13 @@ else
 fi
 
 # Checks of input
+if [ "$DEBUG_MODE" = "true" -a "$platform" != 'NAME="Ubuntu"' ]; then
+  if [ "$(getenforce)" != "Disabled" ]; then
+    echo "Debug mode cannot be used from this platform while SELinux is enabled, see https://bugs.launchpad.net/sahara/+bug/1292614"
+    exit 1
+  fi
+fi
+
 if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" ]; then
   echo -e "Unknown plugin selected.\nAborting"
   exit 1
