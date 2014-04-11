@@ -98,6 +98,13 @@ function install_hadoop_v2()
     chown -R hadoop:hadoop "$HADOOP_HOME"
     rm -r $tmp_dir
 
+    echo "Inject Hadoop native libs"
+    rm -r "$HADOOP_HOME/lib/native"
+    wget "$HADOOP_V2_NATIVE_LIBS_DOWNLOAD_URL"
+    native_libs_filename=$(basename "$HADOOP_V2_NATIVE_LIBS_DOWNLOAD_URL")
+    tar xvf "$native_libs_filename" -C "$HADOOP_HOME/lib"
+    rm "$native_libs_filename"
+
     echo "Pre-configuring Hadoop"
     find_java_home
 
