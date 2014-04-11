@@ -160,17 +160,15 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
 
   # Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
   # https://bugs.launchpad.net/sahara/+bug/1252684
-  if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "centos" -o "$IMAGE_TYPE" = "fedora" ]; then
-    if [ "$platform" = 'NAME="Ubuntu"' ]; then
-      echo "**************************************************************"
-      echo "WARNING: As a workaround for DIB bug 1204824, you are about to"
-      echo "         create a Fedora and CentOS images that has SELinux    "
-      echo "         disabled. Do not use these images in production.       "
-      echo "**************************************************************"
-      fedora_elements_sequence="$fedora_elements_sequence selinux-permissive"
-      centos_elements_sequence="$centos_elements_sequence selinux-permissive"
-      suffix=".selinux-permissive"
-    fi
+  if [ "$platform" = 'NAME="Ubuntu"' ]; then
+    echo "**************************************************************"
+    echo "WARNING: As a workaround for DIB bug 1204824, you are about to"
+    echo "         create a Fedora and CentOS images that has SELinux    "
+    echo "         disabled. Do not use these images in production.       "
+    echo "**************************************************************"
+    fedora_elements_sequence="$fedora_elements_sequence selinux-permissive"
+    centos_elements_sequence="$centos_elements_sequence selinux-permissive"
+    suffix=".selinux-permissive"
   fi
 
   if [ -n "$USE_MIRRORS" ]; then
