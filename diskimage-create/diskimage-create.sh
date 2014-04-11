@@ -26,7 +26,7 @@ while getopts "p:i:v:d:" opt; do
     *)
       echo
       echo "Usage: $(basename $0)"
-      echo "         [-p vanilla|spark|hdp|idh]"
+      echo "         [-p vanilla|spark|hdp]"
       echo "         [-i ubuntu|fedora|centos]"
       echo "         [-v 1|2|plain]"
       echo "         [-d true|false]"
@@ -48,7 +48,7 @@ done
 
 
 # Checks of input
-if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" -a "$PLUGIN" != "idh" ]; then
+if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" ]; then
   echo -e "Unknown plugin selected.\nAborting"
   exit 1
 fi
@@ -77,10 +77,6 @@ if [ "$PLUGIN" = "vanilla" -a "$HADOOP_VERSION" = "plain" ]; then
   exit 1
 fi
 
-if [ "$PLUGIN" = "idh" -a "$HADOOP_VERSION" = "plain" ]; then
-  echo "Impossible combination.\nAborting"
-  exit 1
-fi
 #################
 
 if [ -e /etc/os-release ]; then
@@ -328,47 +324,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     # generate plain (no Hadoop components) image for testing
     disk-image-create $centos_plain_elements_sequence -n -o $centos_image_name_plain
     mv $centos_image_name_plain.qcow2 ../
-  fi
-fi
-
-########################
-# Image for IDH plugin #
-########################
-
-if [ -z "$PLUGIN" -o "$PLUGIN" = "idh" ]; then
-  # Ignoring image type and hadoop version options
-  echo "For idh plugin option -i is ignored"
-
-  export DIB_IMAGE_SIZE=${IMAGE_SIZE:-"10"}
-  export BASE_IMAGE_FILE="CentOS-6.4-cloud-init.qcow2"
-  export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
-
-  centos_elements_sequence="vm rhel hadoop-idh"
-
-  if [ "$platform" = 'NAME="Ubuntu"' ]; then
-      echo "**************************************************************"
-      echo "WARNING: As a workaround for DIB bug 1204824, you are about to"
-      echo "         create a CentOS image that has SELinux               "
-      echo "         disabled. Do not use these images in production.     "
-      echo "**************************************************************"
-      centos_elements_sequence="$centos_elements_sequence selinux-permissive"
-      suffix=".selinux-permissive"
-  fi
-
-  if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
-    export HADOOP_VERSION="1"
-    export DIB_HADOOP_VERSION="2.5.1"
-    export centos_image_name_idh="centos_sahara_idh_${DIB_HADOOP_VERSION}${suffix}"
-    disk-image-create $centos_elements_sequence -o $centos_image_name_idh
-    mv $centos_image_name_idh.qcow2 ../
-  fi
-
-  if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
-    export HADOOP_VERSION="2"
-    export DIB_HADOOP_VERSION="3.0.2"
-    export centos_image_name_idh="centos_sahara_idh_${DIB_HADOOP_VERSION}${suffix}"
-    disk-image-create $centos_elements_sequence -o $centos_image_name_idh
-    mv $centos_image_name_idh.qcow2 ../
   fi
 fi
 
