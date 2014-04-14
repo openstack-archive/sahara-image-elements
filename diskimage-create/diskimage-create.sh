@@ -84,7 +84,7 @@ if [ -e /etc/os-release ]; then
     yum install qemu kpartx git -y
   fi
 else
-  platform=$(head -1 /etc/system-release | grep CentOS || :)
+  platform=$(head -1 /etc/system-release | grep -e CentOS -e 'Red Hat Enterprise Linux' || :)
   if [ -n "$platform" ]; then
     yum update -y
     yum install qemu-kvm qemu-img kpartx git -y
