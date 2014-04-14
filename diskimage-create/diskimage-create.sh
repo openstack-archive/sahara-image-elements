@@ -25,13 +25,22 @@ while getopts "p:i:v:d:" opt; do
     ;;
     *)
       echo
-      echo "Usage: $(basename $0) [-p vanilla|spark|hdp|idh] [-i ubuntu|fedora|centos] [-v 1|2|plain] [-d true|false]"
-      echo "'-p' is plugin version, '-i' is image type, '-v' is hadoop version, '-d controls the debug mode for image generation (false by default)"
+      echo "Usage: $(basename $0)"
+      echo "         [-p vanilla|spark|hdp|idh]"
+      echo "         [-i ubuntu|fedora|centos]"
+      echo "         [-v 1|2|plain]"
+      echo "         [-d true|false]"
+      echo "   '-p' is plugin version (default: vanilla)"
+      echo "   '-i' is image type (default: all supported by plugin)"
+      echo "   '-v' is hadoop version (default: all supported by plugin)"
+      echo "   '-d' controls the debug mode for image generation (false by default)"
+      echo
       echo "You shouldn't specify hadoop version and image type for spark plugin"
       echo "You shouldn't specify image type for hdp plugin"
       echo "Version 'plain' could be specified for hdp plugin only"
       echo "Debug mode should only be enabled for local debugging purposes, not for production systems"
       echo "By default all images for all plugins will be created"
+      echo
       exit 1
     ;;
   esac
