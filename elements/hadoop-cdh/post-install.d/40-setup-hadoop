@@ -46,13 +46,6 @@ case "$distro" in
       sudo apt-get update
       # Here the script could be expanded to install all CDH packages and not only HDFS.
       install-packages hadoop-hdfs-namenode hadoop-hdfs-datanode
-      # pietro: small hack to fix install problems on ubuntu
-      # the CDH package contains a broken symlink instead of the log4j jar file
-      # these 4 lines should go away once Cloudera fixes the package
-      echo "Fixing install problem for CDH: log4j";
-      wget http://repo1.maven.org/maven2/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar;
-      sudo rm /usr/lib/hadoop/lib/slf4j-log4j12-1.6.1.jar;
-      sudo mv slf4j-log4j12-1.6.1.jar /usr/lib/hadoop/lib/
    ;;
 esac
 rm -r $tmp_dir
@@ -74,18 +67,8 @@ cat >> /home/hadoop/.bashrc <<EOF
 PATH=$PATH:/usr/sbin:$JAVA_HOME/bin
 JAVA_HOME=$JAVA_HOME
 EOF
-sed -i -e "s,export JAVA_HOME=.*,export JAVA_HOME=$JAVA_HOME," \
-       -e "s,export HADOOP_LOG_DIR=.*,export HADOOP_LOG_DIR=/mnt/log/hadoop/\$USER," \
-       -e "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=/mnt/log/hadoop/hdfs," \
-    /etc/hadoop/hadoop-env.sh
-
-echo "Applying firstboot script"
-
-if [ "$distro" == "Ubuntu" ]; then
-  # File '/etc/rc.local' may not exist
-  if [ -f "/etc/rc.local" ]; then
-    mv /etc/rc.local /etc/rc.local.old
-  fi
-  install -D -g root -o root -m 0755 $(dirname $0)/firstboot /etc/rc.local
-fi
-
+cat >> /etc/hadoop/hadoop-env.sh <<EOF
+export JAVA_HOME=$JAVA_HOME
+export HADOOP_LOG_DIR=/mnt/log/hadoop/\$USER
+export HADOOP_SECURE_DN_LOG_DIR=/mnt/log/hadoop/hdfs
+EOF
