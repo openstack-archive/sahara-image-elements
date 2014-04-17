@@ -316,7 +316,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "plain" ]; then
     export centos_image_name_plain=${centos_hdp_plain_image_name:-"centos-6_4-64-plain"}
     # Elements for a plain CentOS image that does not contain HDP or Apache Hadoop
-    centos_plain_elements_sequence="vm rhel redhat-lsb sahara-version yum"
+    centos_plain_elements_sequence="vm rhel redhat-lsb disable-firewall ssh sahara-version yum"
     if [ "$DEBUG_MODE" = "true" ]; then
         # enable the root-pwd element, for simpler local debugging of images
         centos_elements_sequence=$centos_elements_sequence" root-passwd"
