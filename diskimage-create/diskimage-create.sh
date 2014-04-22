@@ -46,6 +46,15 @@ while getopts "p:i:v:d" opt; do
   esac
 done
 
+if [ -e /etc/os-release ]; then
+  platform=$(head -1 /etc/os-release)
+else
+  platform=$(head -1 /etc/system-release | grep -e CentOS -e 'Red Hat Enterprise Linux' || :)
+  if [ -z "$platform" ]; then
+    echo -e "Unknown Host OS. Impossible to build images.\nAborting"
+    exit 2
+  fi
+fi
 
 # Checks of input
 if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" ]; then
@@ -70,24 +79,16 @@ fi
 
 #################
 
-if [ -e /etc/os-release ]; then
-  platform=$(head -1 /etc/os-release)
-  if [ $platform = 'NAME="Ubuntu"' ]; then
-    apt-get update -y
-    apt-get install qemu kpartx git -y
-  elif [ $platform = 'NAME=Fedora' ]; then
-    yum update -y
-    yum install qemu kpartx git -y
-  fi
+if [ "$platform" = 'NAME="Ubuntu"' ]; then
+  apt-get update -y
+  apt-get install qemu kpartx git -y
+elif [ "$platform" = 'NAME=Fedora' ]; then
+  yum update -y
+  yum install qemu kpartx git -y
 else
-  platform=$(head -1 /etc/system-release | grep -e CentOS -e 'Red Hat Enterprise Linux' || :)
-  if [ -n "$platform" ]; then
-    yum update -y
-    yum install qemu-kvm qemu-img kpartx git -y
-  else
-    echo -e "Unknown Host OS. Impossible to build images.\nAborting"
-    exit 2
-  fi
+  # centos or rhel
+  yum update -y
+  yum install qemu-kvm qemu-img kpartx git -y
 fi
 
 base_dir="$(dirname $(readlink -e $0))"
