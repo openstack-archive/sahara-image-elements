@@ -6,7 +6,7 @@ mkdir -p $tmp_dir
 cd $tmp_dir
 
 if [ -z $HIVE_DOWNLOAD_URL ]; then
-  HIVE_DOWNLOAD_URL=http://www.apache.org/dist/hive/hive-$HIVE_VERSION/hive-$HIVE_VERSION-bin.tar.gz
+  HIVE_DOWNLOAD_URL=http://archive.apache.org/dist/hive/hive-$HIVE_VERSION/hive-$HIVE_VERSION-bin.tar.gz
 fi
 wget $HIVE_DOWNLOAD_URL
 if [ $? -ne 0 ]; then
