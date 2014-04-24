@@ -325,7 +325,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     centos_plain_elements_sequence="vm rhel redhat-lsb sahara-version yum"
     if [ "$DEBUG_MODE" = "true" ]; then
         # enable the root-pwd element, for simpler local debugging of images
-        centos_elements_sequence=$centos_elements_sequence" root-passwd"
+        centos_plain_elements_sequence=$centos_plain_elements_sequence" root-passwd"
     fi
 
     # generate plain (no Hadoop components) image for testing
