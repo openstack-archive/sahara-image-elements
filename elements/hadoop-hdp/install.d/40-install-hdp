@@ -36,19 +36,52 @@ function install_mysql()
     install-packages mysql mysql-server mysql-connector-java
 }
 
+
+function install_nagios()
+{
+    install-packages nagios hdp_mon_nagios_addons
+}
+
+
+function install_fping()
+{
+    install-packages fping
+}
+
+
+function install_perl_libraries()
+{
+    install-packages perl-Digest-SHA1 perl-Digest-HMAC perl-Crypt-DES perl-Net-SNMP
+}
+
+function install_ambari()
+{
+    install-packages ambari-server ambari-agent ambari-log4j
+}
+
+
+function install_nss()
+{
+    install-packages nss-softokn-freebl
+}
+
+
 function installHDP_1_3 ()
 {
     # ====== INSTALL Ambari =======
     cd /tmp
-    wget -nv http://s3.amazonaws.com/public-repo-1.hortonworks.com/ambari/centos6/1.x/updates/1.2.5.17/ambari.repo -O /etc/yum.repos.d/ambari.repo
-    install-packages ambari-server ambari-agent
+    wget -nv http://s3.amazonaws.com/public-repo-1.hortonworks.com/ambari/centos6/1.x/updates/1.4.3.38/ambari.repo -O /etc/yum.repos.d/ambari.repo
 
-    install-packages ambari-log4j
+    install_ambari
 
     # ====== INSTALL HDP =======
     wget -nv http://s3.amazonaws.com/public-repo-1.hortonworks.com/HDP/centos6/1.x/updates/1.3.2.0/hdp.repo -O /etc/yum.repos.d/hdp.repo
 
     install_mysql
+
+    install_perl_libraries
+
+    install_nss
 
     install-packages net-snmp net-snmp-utils
 
@@ -61,6 +94,10 @@ function installHDP_1_3 ()
     install-packages python-rrdtool rrdtool-devel rrdtool
 
     install_ganglia
+
+    install_nagios
+
+    install_fping
 }
 
 
@@ -72,14 +109,23 @@ function installHDP_2_0 ()
     cd /tmp
     wget -nv http://public-repo-1.hortonworks.com/ambari/centos6/1.x/GA/ambari.repo -O /etc/yum.repos.d/ambari.repo
 
-    install-packages ambari-server ambari-agent
+    install_ambari
 
     # ====== INSTALL HDP =======
     wget -nv http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.0.6.0/hdp.repo -O /etc/yum.repos.d/hdp.repo
 
+    install_perl_libraries
+
+    install-packages python-rrdtool
+
+    install-packages extjs
+
+    install_nss
+
     install_mysql
 
-    install-packages hadoop hadoop-libhdfs hadoop-hdfs hadoop-lzo hadoop-lzo-native hadoop-mapreduce hadoop-mapreduce-historyserver hadoop-client oozie oozie-client zookeeper hbase pig webhcat-tar-hive webhcat-tar-pig
+    # install Hadoop packages
+    install-packages hadoop hadoop-libhdfs hadoop-hdfs hadoop-lzo hadoop-lzo-native hadoop-mapreduce hadoop-mapreduce-historyserver hadoop-client oozie oozie-client zookeeper hbase pig webhcat-tar-hive webhcat-tar-pig hive hcatalog
 
     # Install Yarn
     install-packages hadoop-yarn hadoop-yarn-nodemanager hadoop-yarn-proxyserver hadoop-yarn-resourcemanager
@@ -94,6 +140,10 @@ function installHDP_2_0 ()
     install-packages openssl
 
     install_ganglia
+
+    install_nagios
+
+    install_fping
 
     # install compression libraries
     install-packages snappy snappy-devel lzo lzo-devel
