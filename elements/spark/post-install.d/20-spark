@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# We have to chown the Spark directories to make it usable for the default user
+# Unfortunately the Ubuntu user does not exists when DIB is creating the image
+# and we need to execute this code the first time the VM boots.
+
+sed -i -e 's,^exit 0$,[ -f /opt/spark/firstboot.sh ] \&\& sh /opt/spark/firstboot.sh; exit 0,' /etc/rc.local
+
+cat >> /opt/spark/firstboot.sh <<EOF
+#!/bin/sh
+chown -R ubuntu:ubuntu /opt/spark
+chown -R ubuntu:ubuntu /etc/hadoop
+rm $0
+EOF
+

@@ -8,21 +8,14 @@ tmp_dir=/tmp/spark
 mkdir -p $tmp_dir
 pushd $tmp_dir
 
-echo "Creating spark user & group"
-addgroup spark
-adduser --ingroup spark --disabled-password --gecos GECOS spark
-adduser spark sudo
-
 # The user is not providing his own Spark distribution package
 if [ -z "$SPARK_DOWNLOAD_URL" ]; then
   # Check hadoop version
-  # pietro: we know for sure that spark 0.8.1 works on CDH 4.5.0 mr1,
-  # other combinations need testing
   # INFO on hadoop versions: http://spark.incubator.apache.org/docs/latest/hadoop-third-party-distributions.html
   if [ -z "$DIB_SPARK_VERSION" ]; then
     case "$DIB_HADOOP_VERSION" in
-      2.0.0-mr1-cdh4.5.0)
-        DIB_SPARK_VERSION=0.8.1
+      CDH4)
+        DIB_SPARK_VERSION=0.9.1
         SPARK_HADOOP_DL=cdh4
         ;;
       *)
@@ -32,30 +25,27 @@ if [ -z "$SPARK_DOWNLOAD_URL" ]; then
     esac
   fi
 
-  SPARK_DOWNLOAD_URL="http://www.apache.org/dist/incubator/spark/spark-$DIB_SPARK_VERSION-incubating/spark-$DIB_SPARK_VERSION-incubating-bin-$SPARK_HADOOP_DL.tgz"
+  SPARK_DOWNLOAD_URL="http://www.apache.org/dist/incubator/spark/spark-$DIB_SPARK_VERSION/spark-$DIB_SPARK_VERSION-bin-$SPARK_HADOOP_DL.tgz"
 fi
 
+echo "Downloading SPARK"
 wget "$SPARK_DOWNLOAD_URL"
 if [ $? -ne 0 ]; then
    echo -e "Could not download spark.\nAborting"
    exit 1
 fi
 
+echo "Extracting SPARK"
 spark_file=$(basename "$SPARK_DOWNLOAD_URL")
 extract_folder=$(tar tzf $spark_file | sed -e 's@/.*@@' | uniq)
 echo "Decompressing Spark..."
 tar xzf $spark_file
 rm $spark_file
-echo "$SPARK_DOWNLOAD_URL" > ~spark/spark_url.txt
 
-if [ -z "$SPARK_CUSTOM_DISTRO" ]; then
-  mv $extract_folder ~spark/spark-bin
-  chown -R spark:spark ~spark/spark-bin
-else
-  mv $extract_folder/dist ~spark/spark-dist
-  rm -Rf $extract_folder
-  chown -R spark:spark ~spark/spark-dist
-fi
+echo "Moving SPARK to /opt/"
+# Placing spark in /opt/spark
+mv $extract_folder /opt/spark
+echo "$SPARK_DOWNLOAD_URL" > /opt/spark/spark_url.txt
 
 popd
 rm -Rf $tmp_dir
