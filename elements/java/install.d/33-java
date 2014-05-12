@@ -5,8 +5,10 @@ set -e
 
 distro=$(lsb_release -is || :)
 
+: ${JAVA_TARGET_LOCATION:="/usr/java"}
+
 # NOTE: $(dirname $0) is read-only, use space under $TARGET_ROOT
-JAVA_HOME=$TARGET_ROOT/usr/java
+JAVA_HOME=$TARGET_ROOT$JAVA_TARGET_LOCATION
 mkdir -p $JAVA_HOME
 
 if [ -n "$JAVA_DOWNLOAD_URL" ]; then
