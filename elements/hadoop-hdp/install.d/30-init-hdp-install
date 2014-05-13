@@ -50,9 +50,3 @@ if [ ! -d /root/.ssh ]; then
   mkdir -p /root/.ssh
   chmod 700 /root/.ssh
 fi
-
-# Disable SE Linux
-setenforce 0
-echo "setenforce 0" >> /etc/yum/pluginconf.d/refresh-packagekit.conf
-
-
