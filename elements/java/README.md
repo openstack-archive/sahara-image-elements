@@ -17,5 +17,3 @@ pointing to a file that will be placed in JAVA_FILE (see 1.)
 configured to install to a specific location.  Set the JAVA_TARGET_LOCATION
 variable in order to customize the top-level directory that will
 contain the JDK install.  By default, this variable is set to "/usr/java".
-
-Note: setting the install location will currently only work for .bin install types.
