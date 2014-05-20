@@ -1,4 +1,5 @@
 sahara-version
+java
 disable-selinux
 disable-firewall
 source-repositories

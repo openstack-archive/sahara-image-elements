@@ -294,6 +294,10 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   export BASE_IMAGE_FILE="CentOS-6.4-cloud-init.qcow2"
   export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
 
+  # Setup Java Install configuration for the HDP images
+  export JAVA_TARGET_LOCATION=/opt
+  export JAVA_DOWNLOAD_URL=https://s3.amazonaws.com/public-repo-1.hortonworks.com/ARTIFACTS/jdk-6u31-linux-x64.bin
+
   # Ignoring image type option
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
     export centos_image_name_hdp_1_3=${centos_hdp_hadoop_1_image_name:-"centos-6_4-64-hdp-1-3"}
