@@ -20,7 +20,7 @@ function download_hadoop_package()
 
 function find_java_home()
 {
-    JAVA_HOME=$(find $TARGET_ROOT/usr/java/ -maxdepth 1 -name "jdk*")
+    JAVA_HOME=$(find $TARGET_ROOT$JAVA_TARGET_LOCATION/ -maxdepth 1 -name "jdk*")
 
     if [ -z "$JAVA_HOME" ]; then
         case "$distro" in
@@ -150,6 +150,8 @@ case "$distro" in
       adduser -G adm,wheel hadoop
    ;;
 esac
+
+: ${JAVA_TARGET_LOCATION:="/usr/java"}
 
 if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]]; then
     install_hadoop_v1
