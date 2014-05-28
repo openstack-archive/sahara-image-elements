@@ -9,7 +9,10 @@ unset DIB_IMAGE_SIZE
 # DEBUG_MODE is set by the -d flag, debug is enabled if the value is "true"
 DEBUG_MODE="false"
 
-while getopts "p:i:v:d" opt; do
+# The default tag to use for the DIB repo
+DEFAULT_DIB_REPO_BRANCH="0.1.17"
+
+while getopts "p:i:v:d:m" opt; do
   case $opt in
     p)
       PLUGIN=$OPTARG
@@ -23,6 +26,14 @@ while getopts "p:i:v:d" opt; do
     d)
       DEBUG_MODE="true"
     ;;
+    m)
+      if [ -n "$DIB_REPO_BRANCH" ]; then
+          echo "Error: DIB_REPO_BRANCH set and -m requested, please choose one."
+          exit 3
+      else
+          DIB_REPO_BRANCH="master"
+      fi
+    ;;
     *)
       echo
       echo "Usage: $(basename $0)"
@@ -30,10 +41,12 @@ while getopts "p:i:v:d" opt; do
       echo "         [-i ubuntu|fedora|centos]"
       echo "         [-v 1|2|plain]"
       echo "         [-d]"
+      echo "         [-m]"
       echo "   '-p' is plugin version (default: vanilla)"
       echo "   '-i' is image type (default: all supported by plugin)"
       echo "   '-v' is hadoop version (default: all supported by plugin)"
       echo "   '-d' enable debug mode, root account will have password 'hadoop'"
+      echo "   '-m' set the diskimage-builder repo to the master branch (default: $DEFAULT_DIB_REPO_BRANCH)"
       echo
       echo "You shouldn't specify hadoop version and image type for spark plugin"
       echo "You shouldn't specify image type for hdp plugin"
@@ -45,6 +58,10 @@ while getopts "p:i:v:d" opt; do
     ;;
   esac
 done
+
+if [ -z $DIB_REPO_BRANCH ]; then
+    DIB_REPO_BRANCH=$DEFAULT_DIB_REPO_BRANCH
+fi
 
 if [ -e /etc/os-release ]; then
   platform=$(head -1 /etc/os-release)
@@ -117,6 +134,7 @@ export DIB_IMAGE_CACHE=$TEMP/.cache-image-create
 if [ -z $DIB_REPO_PATH ]; then
   git clone https://git.openstack.org/openstack/diskimage-builder
   DIB_REPO_PATH="$(pwd)/diskimage-builder"
+  git --git-dir=$DIB_REPO_PATH/.git --work-tree=$DIB_REPO_PATH checkout $DIB_REPO_BRANCH
 fi
 
 export PATH=$PATH:$DIB_REPO_PATH/bin
