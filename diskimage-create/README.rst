@@ -66,3 +66,9 @@ For developers:
 .. sourcecode:: bash
 
   sudo SIM_REPO_PATH="$(pwd)/sahara-image-elements" DIB_REPO_PATH="$(pwd)/diskimage-builder" bash sahara-image-elements/diskimage-create/diskimage-create.sh
+
+3. If you want to specify the diskimage-builder repository branch, or tag, that is used during the diskimage-create script there are two methods. The '-m' option of diskimage-create.sh will always use the 'master' branch of diskimage-builder. Alternatively exporting 'DIB_REPO_BRANCH' will allow the use of an arbitrary branch or tag. By default diskimage-create will use a known good tag from the upstream repository.
+
+.. sourcecode:: bash
+
+  sudo DIB_REPO_BRANCH="custom-branch" bash sahara-image-elements/diskimage-create/diskimage-create.sh
