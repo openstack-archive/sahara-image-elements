@@ -248,6 +248,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
       disk-image-create $centos_elements_sequence -n -o $centos_image_name
       mv $centos_image_name.qcow2 ../
     fi
+    unset BASE_IMAGE_FILE DIB_IMAGE_SIZE DIB_CLOUD_IMAGES
   fi
 fi
 
@@ -261,7 +262,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
 
   export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz"}
   export DIB_HADOOP_VERSION="CDH4"
-  unset DIB_IMAGE_SIZE
   export ubuntu_image_name=${ubuntu_spark_image_name:-"ubuntu_sahara_spark_latest"}
 
   ubuntu_elements_sequence="base vm ubuntu java hadoop-cdh spark"
@@ -342,6 +342,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     disk-image-create $centos_plain_elements_sequence -n -o $centos_image_name_plain
     mv $centos_image_name_plain.qcow2 ../
   fi
+  unset BASE_IMAGE_FILE DIB_IMAGE_SIZE DIB_CLOUD_IMAGES
 fi
 
 popd # out of $TEMP
