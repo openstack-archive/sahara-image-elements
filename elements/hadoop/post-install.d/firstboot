@@ -33,7 +33,6 @@ function firstboot_common()
        ;;
     esac
 
-    chown root:root /mnt
     mkdir -p /mnt/log/hadoop
     chown hadoop:hadoop /mnt/log/hadoop
 }
