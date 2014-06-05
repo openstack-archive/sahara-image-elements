@@ -15,7 +15,7 @@ if [ -z "$SPARK_DOWNLOAD_URL" ]; then
   if [ -z "$DIB_SPARK_VERSION" ]; then
     case "$DIB_HADOOP_VERSION" in
       CDH4)
-        DIB_SPARK_VERSION=0.9.1
+        DIB_SPARK_VERSION=1.0.0
         SPARK_HADOOP_DL=cdh4
         ;;
       *)
