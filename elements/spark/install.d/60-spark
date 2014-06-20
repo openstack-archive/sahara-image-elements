@@ -18,7 +18,7 @@ if [ -z "$SPARK_DOWNLOAD_URL" ]; then
   # Check hadoop version
   # pietro: we know for sure that spark 0.8.1 works on CDH 4.5.0 mr1,
   # other combinations need testing
-  # INFO on hadoop versions: http://spark.incubator.apache.org/docs/latest/hadoop-third-party-distributions.html
+  # INFO on hadoop versions: http://spark.apache.org/docs/latest/hadoop-third-party-distributions.html
   if [ -z "$DIB_SPARK_VERSION" ]; then
     case "$DIB_HADOOP_VERSION" in
       2.0.0-mr1-cdh4.5.0)
@@ -32,7 +32,7 @@ if [ -z "$SPARK_DOWNLOAD_URL" ]; then
     esac
   fi
 
-  SPARK_DOWNLOAD_URL="http://www.apache.org/dist/incubator/spark/spark-$DIB_SPARK_VERSION-incubating/spark-$DIB_SPARK_VERSION-incubating-bin-$SPARK_HADOOP_DL.tgz"
+  SPARK_DOWNLOAD_URL="http://archive.apache.org/dist/spark/spark-$DIB_SPARK_VERSION-incubating/spark-$DIB_SPARK_VERSION-incubating-bin-$SPARK_HADOOP_DL.tgz"
 fi
 
 wget "$SPARK_DOWNLOAD_URL"
