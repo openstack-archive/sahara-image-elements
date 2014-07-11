@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -eux
+
+for i in cloudera-scm-agent \
+cloudera-scm-server \
+cloudera-scm-server-db \
+hadoop-hdfs-datanode \
+hadoop-hdfs-namenode \
+hadoop-hdfs-secondarynamenode \
+hadoop-mapreduce-historyserver \
+hadoop-yarn-nodemanager \
+hadoop-yarn-resourcemanager \
+oozie \
+postgresql
+do
+    if [ $(lsb_release -is) = 'Ubuntu' ]; then
+        update-rc.d -f $i remove
+    else
+        chkconfig $i off
+    fi
+done
+
+if [ $(lsb_release -is) = 'CentOS' ]; then
+    chkconfig iptables off
+    chkconfig ip6tables off
+fi

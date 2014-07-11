@@ -1,0 +1,24 @@
+#!/bin/bash
+
+distro=$(lsb_release -is)
+
+case $distro in
+    Ubuntu)
+        # Add repository with postgresql package (it's dependency of cloudera packages)
+        # Base image doesn't contain this repo
+        echo -e 'deb http://nova.clouds.archive.ubuntu.com/ubuntu/ precise universe multiverse main' >> /etc/apt/sources.list
+
+        # Cloudera repositories
+        wget -O /etc/apt/sources.list.d/cdh5.list http://archive-primary.cloudera.com/cdh5/ubuntu/precise/amd64/cdh/cloudera.list
+        wget -qO - http://archive-primary.cloudera.com/cm5/ubuntu/precise/amd64/cm/archive.key | apt-key add -
+
+        wget -O /etc/apt/sources.list.d/cm5.list http://archive-primary.cloudera.com/cm5/ubuntu/precise/amd64/cm/cloudera.list
+        wget -qO - http://archive-primary.cloudera.com/cdh5/ubuntu/precise/amd64/cdh/archive.key | apt-key add -
+
+        apt-get update
+    ;;
+    CentOS)
+        wget -P /etc/yum.repos.d/ http://archive-primary.cloudera.com/cdh5/redhat/6/x86_64/cdh/cloudera-cdh5.repo
+        wget -P /etc/yum.repos.d/ http://archive-primary.cloudera.com/cm5/redhat/6/x86_64/cm/cloudera-manager.repo
+    ;;
+esac
