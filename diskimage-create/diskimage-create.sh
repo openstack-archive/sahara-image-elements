@@ -37,7 +37,7 @@ while getopts "p:i:v:d:m" opt; do
     *)
       echo
       echo "Usage: $(basename $0)"
-      echo "         [-p vanilla|spark|hdp]"
+      echo "         [-p vanilla|spark|hdp|cloudera]"
       echo "         [-i ubuntu|fedora|centos]"
       echo "         [-v 1|2|2.3|2.4|plain]"
       echo "         [-d]"
@@ -81,7 +81,7 @@ if [ "$DEBUG_MODE" = "true" -a "$platform" != 'NAME="Ubuntu"' ]; then
   fi
 fi
 
-if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" ]; then
+if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" -a "$PLUGIN" != "cloudera" ]; then
   echo -e "Unknown plugin selected.\nAborting"
   exit 1
 fi
@@ -99,6 +99,11 @@ if [ -n "$HADOOP_VERSION" -a "$HADOOP_VERSION" != "1" -a "$HADOOP_VERSION" != "2
 fi
 
 if [ "$PLUGIN" = "vanilla" -a "$HADOOP_VERSION" = "plain" ]; then
+  echo "Impossible combination.\nAborting"
+  exit 1
+fi
+
+if [ "$PLUGIN" = "cloudera" -a "$IMAGE_TYPE" = "fedora" ]; then
   echo "Impossible combination.\nAborting"
   exit 1
 fi
@@ -383,6 +388,36 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     mv $centos_image_name_plain.qcow2 ../
   fi
   unset BASE_IMAGE_FILE DIB_IMAGE_SIZE DIB_CLOUD_IMAGES
+fi
+
+if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
+  echo "For cloudera plugin option -v is ignored"
+
+  if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "ubuntu" ]; then
+    cloudera_ubuntu_image_name=${cloudera_ubuntu_image_name:-ubuntu_sahara_cloudera_latest}
+    cloudera_elements_sequence="base vm ubuntu hadoop-cloudera"
+
+    disk-image-create $cloudera_elements_sequence -o $cloudera_ubuntu_image_name
+    mv $cloudera_ubuntu_image_name.qcow2 ../
+  fi
+
+  if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "centos" ]; then
+    export DIB_IMAGE_SIZE=${IMAGE_SIZE:-"20"}
+
+    # CentOS cloud image:
+    # - Disable including 'base' element for CentOS
+    # - Export link and filename for CentOS cloud image to download
+    export BASE_IMAGE_FILE="CentOS-6.5-cloud-init.qcow2"
+    export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
+
+    cloudera_centos_image_name=${cloudera_centos_image_name:-centos_sahara_cloudera_latest}
+    cloudera_elements_sequence="base vm rhel hadoop-cloudera redhat-lsb selinux-permissive"
+
+    disk-image-create $cloudera_elements_sequence -n -o $cloudera_centos_image_name
+    mv $cloudera_centos_image_name.qcow2 ../
+
+    unset BASE_IMAGE_FILE DIB_IMAGE_SIZE DIB_CLOUD_IMAGES
+  fi
 fi
 
 popd # out of $TEMP

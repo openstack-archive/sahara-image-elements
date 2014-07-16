@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -eux
+
+if [ $(lsb_release -is) = 'Ubuntu' ]; then
+   export DEBIAN_FRONTEND=noninteractive
+fi
+
+install-packages cloudera-manager-agent \
+cloudera-manager-daemons \
+oracle-j2sdk1.7 \
+cloudera-manager-server \
+cloudera-manager-server-db-2 \
+hadoop-hdfs-namenode \
+hadoop-hdfs-secondarynamenode \
+hadoop-hdfs-datanode \
+hadoop-yarn-resourcemanager \
+hadoop-yarn-nodemanager \
+hadoop-mapreduce \
+hadoop-mapreduce-historyserver \
+oozie
