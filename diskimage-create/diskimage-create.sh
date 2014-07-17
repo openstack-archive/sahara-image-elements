@@ -183,9 +183,9 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz"}
   export OOZIE_HADOOP_V1_DOWNLOAD_URL=${OOZIE_HADOOP_V1_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/oozie-4.0.0.tar.gz"}
   export OOZIE_HADOOP_V2_3_DOWNLOAD_URL=${OOZIE_HADOOP_V2_3_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/oozie-4.0.0-hadoop-2.3.0.tar.gz"}
-  export OOZIE_HADOOP_V2_4_DOWNLOAD_URL=${OOZIE_HADOOP_V2_4_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/oozie-4.0.1-hadoop-2.4.0.tar.gz"}
+  export OOZIE_HADOOP_V2_4_DOWNLOAD_URL=${OOZIE_HADOOP_V2_4_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/oozie-juno-4.0.1-hadoop-2.4.1.tar.gz"}
   export HADOOP_V2_3_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_3_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-2.3.0-native-libs.tar.gz"}
-  export HADOOP_V2_4_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_4_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-2.4.0-native-libs.tar.gz"}
+  export HADOOP_V2_4_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_4_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-native-libs-juno-2.4.1.tar.gz"}
   export EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://extjs.com/deploy/ext-2.2.zip"}
   export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
 
@@ -235,7 +235,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
       mv $ubuntu_image_name.qcow2 ../
     fi
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.4" ]; then
-      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_4:-"2.4.0"}
+      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_4:-"2.4.1"}
       export ubuntu_image_name=${ubuntu_vanilla_hadoop_2_4_image_name:-"ubuntu_sahara_vanilla_hadoop_2_4_latest"}
       disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
       mv $ubuntu_image_name.qcow2 ../
@@ -258,7 +258,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
       mv $fedora_image_name.qcow2 ../
     fi
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.4" ]; then
-      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_4:-"2.4.0"}
+      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_4:-"2.4.1"}
       export fedora_image_name=${fedora_vanilla_hadoop_2_4_image_name:-"fedora_sahara_vanilla_hadoop_2_4_latest$suffix"}
       disk-image-create $fedora_elements_sequence -o $fedora_image_name
       mv $fedora_image_name.qcow2 ../
@@ -288,7 +288,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
       mv $centos_image_name.qcow2 ../
     fi
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.4" ]; then
-      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_4:-"2.4.0"}
+      export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_4:-"2.4.1"}
       export centos_image_name=${centos_vanilla_hadoop_2_4_image_name:-"centos_sahara_vanilla_hadoop_2_4_latest$suffix"}
       disk-image-create $centos_elements_sequence -n -o $centos_image_name
       mv $centos_image_name.qcow2 ../
