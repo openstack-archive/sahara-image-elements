@@ -396,9 +396,12 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
   if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "ubuntu" ]; then
     cloudera_ubuntu_image_name=${cloudera_ubuntu_image_name:-ubuntu_sahara_cloudera_latest}
     cloudera_elements_sequence="base vm ubuntu hadoop-cloudera"
+    # Cloudera supports only 12.04 Ubuntu
+    export DIB_RELEASE="precise"
 
     disk-image-create $cloudera_elements_sequence -o $cloudera_ubuntu_image_name
     mv $cloudera_ubuntu_image_name.qcow2 ../
+    unset DIB_RELEASE
   fi
 
   if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "centos" ]; then
