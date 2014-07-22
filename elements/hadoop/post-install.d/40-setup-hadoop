@@ -83,6 +83,19 @@ EOF
 
 function install_hadoop_v2()
 {
+    case "$DIB_HADOOP_VERSION" in
+        "2.3.0")
+             hadoop_native_libs_url="${HADOOP_V2_3_NATIVE_LIBS_DOWNLOAD_URL}"
+        ;;
+        "2.4.1")
+             hadoop_native_libs_url="${HADOOP_V2_4_NATIVE_LIBS_DOWNLOAD_URL}"
+        ;;
+        *)
+             echo "Invalid DIB_HADOOP_VERSION: $DIB_HADOOP_VERSION"
+             exit 1
+        ;;
+    esac
+
     package="hadoop-$DIB_HADOOP_VERSION.tar.gz"
 
     download_hadoop_package
@@ -100,8 +113,8 @@ function install_hadoop_v2()
 
     echo "Inject Hadoop native libs"
     rm -r "$HADOOP_HOME/lib/native"
-    wget "$HADOOP_V2_NATIVE_LIBS_DOWNLOAD_URL"
-    native_libs_filename=$(basename "$HADOOP_V2_NATIVE_LIBS_DOWNLOAD_URL")
+    wget "$hadoop_native_libs_url"
+    native_libs_filename=$(basename "$hadoop_native_libs_url")
     tar xvf "$native_libs_filename" -C "$HADOOP_HOME/lib"
     rm "$native_libs_filename"
 
