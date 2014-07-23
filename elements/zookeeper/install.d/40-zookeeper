@@ -1,0 +1,19 @@
+#!/bin/bash
+# This scrip installs zookeeper
+# More documentation on the README.md file
+
+install-packages wget
+
+echo "Downloading Zookeeper"
+
+mkdir -p /opt/zookeeper
+
+cd /opt/zookeeper
+
+wget http://archive.apache.org/dist/zookeeper/stable/zookeeper-3.4.6.tar.gz
+tar -xzf zookeeper-3.4.6.tar.gz
+rm -rf zookeeper-3.4.6.tar.gz
+
+PID_PATH="/var/zookeeper"
+
+mkdir -p $PID_PATH
