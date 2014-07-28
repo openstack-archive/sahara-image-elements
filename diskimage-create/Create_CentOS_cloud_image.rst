@@ -1,23 +1,56 @@
 We have CentOS 6.4 and 6.5 cloud images. Recommended is CentOS 6.5 (http://sahara-files.mirantis.com/CentOS-6.5-cloud-init.qcow2).
 
-For preparing your own CentOS cloud image with pre-installed cloud-init you should follow this guide:
-`CentOS cloud image. <http://docs.openstack.org/image-guide/content/centos-image.html>`_ Use the latest version of cloud-init package from `testing repository <http://pkgs.org/centos-6/epel-testing-i386/cloud-init-0.7.4-2.el6.noarch.rpm.html>`_
+Prepare your own CentOS cloud image:
 
-In the end you should check installation of cloud-init package.
-
-You should mount your image and check some files. Follow this example to mount cloud image using qemu:
+1. Create disk image with qcow2 format
 
 .. sourcecode:: bash
 
-  sudo modprobe nbd max_part=63
-  sudo qemu-nbd -c /dev/nbd0 CentOS_image_name.qcow2
-  sudo partprobe /dev/nbd0
-  sudo mount /dev/nbd0p1 /mnt/qemu
-  sudo chroot /mnt/qemu
+  qemu-img create -f qcow2 -o preallocation=metadata /tmp/centos-6-cloud.qcow2 2G
 
-Check files:
+2. Install CentOS, You should use one partition and no swap. Get netinstall ISO from http://isoredirect.centos.org/centos/6/isos/x86_64/.
 
-1. File '/etc/cloud/cloud.cfg' should contain these lines:
+.. sourcecode:: bash
+
+  virt-install --name=centos-6-cloud --disk path=/tmp/centos-6-cloud.qcow2,format=qcow2 -r 1024 --vcpus=1 --hvm -c /tmp/CentOS-6.5-x86_64-netinstall.iso
+
+3. Login into your new image and modify '/etc/sysconfig/network-scripts/ifcfg-eth0' to look like this
+
+.. sourcecode:: bash
+
+  DEVICE="eth0"
+  BOOTPROTO="dhcp"
+  NM_CONTROLLED="no"
+  ONBOOT="yes"
+  TYPE="Ethernet"
+
+4. Add EPEL repository and update OS
+
+.. sourcecode:: bash
+
+  wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+  rpm -ivh epel-release-6-8.noarch.rpm
+
+5. Install cloud-utils and cloud-init
+
+.. sourcecode:: bash
+
+  yum install cloud-utils, cloud-init
+
+6. Download 'centos-image-mod.sh' and 'init-part' together in same directory, run 'centos-image-mod.sh'. This will modify initrd and grub.conf.
+
+.. sourcecode:: bash
+
+  git clone https://github.com/jaryn/centos-image-resize
+  cd centos-image-resize && ./centos-image-mod.sh
+
+6.1. Edit '/boot/grub/grub.conf', check if everything is OK. Also, may not be a bad idea to set timeout to 0.
+
+7. Delete '/etc/udev/rules.d/70-persistent-net.rules', this will be auto created during boot. Don't forget this, since you won't have functional network when you bring this image up on Openstack.
+
+8. Check files:
+
+  File '/etc/cloud/cloud.cfg' should contain these lines:
 
 .. sourcecode:: cfg
 
@@ -31,4 +64,17 @@ Check files:
 
 Add them if they are not exist.
 
-2. File '/etc/fstab'. Check that fifth and sixth fields contain value '0'.
+  File '/etc/fstab'. Check that fifth and sixth fields contain value '0'.
+
+9. Power down your virtual Centos
+
+10. Compress qcow2 image with
+
+.. sourcecode:: bash
+
+  qemu-img convert -c /tmp/centos-6-cloud.qcow2 -O qcow2 /tmp/centos.qcow2
+
+
+Image /tmp/centos.qcow2 is now ready for upload to Openstack
+
+`Source for this doc <http://lists.openstack.org/pipermail/openstack-operators/2013-June/003131.html>`_

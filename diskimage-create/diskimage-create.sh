@@ -268,9 +268,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   # CentOS cloud image:
   # - Disable including 'base' element for CentOS
   # - Export link and filename for CentOS cloud image to download
-  # - Patameter 'DIB_IMAGE_SIZE' should be specified for CentOS only
   if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "centos" ]; then
-    export DIB_IMAGE_SIZE=${IMAGE_SIZE:-"10"}
     # Read Create_CentOS_cloud_image.rst to know how to create CentOS image in qcow2 format
     export BASE_IMAGE_FILE="CentOS-6.5-cloud-init.qcow2"
     export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
@@ -293,7 +291,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
       disk-image-create $centos_elements_sequence -n -o $centos_image_name
       mv $centos_image_name.qcow2 ../
     fi
-    unset BASE_IMAGE_FILE DIB_IMAGE_SIZE DIB_CLOUD_IMAGES
+    unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
   fi
 fi
 
@@ -405,8 +403,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
   fi
 
   if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "centos" ]; then
-    export DIB_IMAGE_SIZE=${IMAGE_SIZE:-"20"}
-
     # CentOS cloud image:
     # - Disable including 'base' element for CentOS
     # - Export link and filename for CentOS cloud image to download
@@ -419,7 +415,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
     disk-image-create $cloudera_elements_sequence -n -o $cloudera_centos_image_name
     mv $cloudera_centos_image_name.qcow2 ../
 
-    unset BASE_IMAGE_FILE DIB_IMAGE_SIZE DIB_CLOUD_IMAGES
+    unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
   fi
 fi
 
