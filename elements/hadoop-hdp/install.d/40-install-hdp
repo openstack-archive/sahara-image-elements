@@ -107,7 +107,7 @@ function installHDP_2_0 ()
 
     # ====== INSTALL Ambari =======
     cd /tmp
-    wget -nv http://public-repo-1.hortonworks.com/ambari/centos6/1.x/GA/ambari.repo -O /etc/yum.repos.d/ambari.repo
+    wget -nv http://s3.amazonaws.com/public-repo-1.hortonworks.com/ambari/centos6/1.x/updates/1.4.3.38/ambari.repo -O /etc/yum.repos.d/ambari.repo
 
     install_ambari
 
