@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -eux
+
+DISTRO=$(lsb_release -is || :)
+
+if [ "$DISTRO" = 'CentOS' -o "$DISTRO" = 'RedHatEnterpriseServer' ]; then
+    sed '/^Defaults    requiretty*/ s/^/#/' -i /etc/sudoers
+fi
+

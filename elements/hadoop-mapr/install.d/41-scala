@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -eux
+
+echo "START: installing Scala"
+
+DISTRO=$(lsb_release -is || :)
+
+#Current available version
+DEF_VERSION="2.11.2"
+
+RETURN_CODE="$(curl -s -o /dev/null -w "%{http_code}" http://www.scala-lang.org/)"
+
+if [ "$RETURN_CODE" != "200" ]; then
+    echo "http://www.scala-lang.org is unreachable"
+    exit 1
+fi
+
+VERSION="$(curl -s --fail http://www.scala-lang.org|grep 'scala-version'|grep -Eo '([0-9]\.?)+')"
+
+if [ $? != 0 -o -z ${VERSION} ]; then
+    echo "Installing default version $DEF_VERSION"
+    VERSION=${DEF_VERSION}
+fi
+
+PKG=scala-${VERSION}
+
+URL="http://downloads.typesafe.com/scala/${VERSION}"
+
+if [ "$DISTRO" = "Ubuntu" ]; then
+    wget -N ${URL}/${PKG}.deb
+    dpkg -i ${PKG}.deb
+    rm ${PKG}.deb
+elif [ "$DISTRO" = 'CentOS' -o "$DISTRO" = 'RedHatEnterpriseServer' ]; then
+    rpm -Uhv ${URL}/${PKG}.rpm
+fi
+
+echo "END: installing Scala"
+

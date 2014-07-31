@@ -1,0 +1,63 @@
+#!/bin/bash
+
+set -eux
+
+echo "START: installing MapR core repository"
+
+install-packages curl
+
+MAPR_REPO_DIR=/opt/mapr-repository/core
+
+DISTRO=$(lsb_release -is || :)
+
+if [ "$DISTRO" = "Ubuntu" ]; then
+    MAPR_REPO_URL=${DIB_MAPR_CORE_DEB_REPO:-"http://package.mapr.com/releases/v"${DIB_MAPR_VERSION}"/ubuntu/mapr-v"${DIB_MAPR_VERSION}"GA.deb.tgz"}
+elif [ "$DISTRO" = 'CentOS' -o "$DISTRO" = 'RedHatEnterpriseServer' ]; then
+    MAPR_REPO_URL=${DIB_MAPR_CORE_RPM_REPO:-"http://package.mapr.com/releases/v"${DIB_MAPR_VERSION}"/redhat/mapr-v"${DIB_MAPR_VERSION}"GA.rpm.tgz"}
+else
+    echo "Unknown distribution"
+    exit 1
+fi
+
+echo "Downloading MapR repository archive"
+mkdir -p ${MAPR_REPO_DIR}
+sudo curl ${MAPR_REPO_URL} -o ${MAPR_REPO_DIR}/mapr-v"${DIB_MAPR_VERSION}"GA.tgz
+
+if [ $? != 0 ]; then
+    echo "MapR repository archive download failed"
+    exit 1
+fi
+
+echo "Unpacking MapR repository archive"
+tar -zxf ${MAPR_REPO_DIR}/mapr-v${DIB_MAPR_VERSION}GA.tgz -C ${MAPR_REPO_DIR}
+
+echo "Removing MapR repository archive"
+rm -f ${MAPR_REPO_DIR}/mapr-v${DIB_MAPR_VERSION}GA.tgz
+
+if [ "$DISTRO" = "Ubuntu" ]; then
+    mkdir -p "${MAPR_REPO_DIR}"/dists/binary/optional/binary-amd64
+    cd ${MAPR_REPO_DIR}
+    dpkg-scanpackages -m . /dev/null | gzip -9c > dists/binary/optional/binary-amd64/Packages.gz
+elif [ "$DISTRO" = 'CentOS' -o "$DISTRO" = 'RedHatEnterpriseServer' ]; then
+    createrepo "${MAPR_REPO_DIR}"
+fi
+
+echo "Adding MapR repository"
+if [ "$DISTRO" = "Ubuntu" ]; then
+    cat >> /etc/apt/sources.list.d/maprtech.list << EOF
+deb [arch=amd64] file://${MAPR_REPO_DIR} binary optional
+EOF
+
+elif [ "$DISTRO" = 'CentOS' -o "$DISTRO" = 'RedHatEnterpriseServer' ]; then
+    cat >> /etc/yum.repos.d/maprtech.repo << EOF
+[mapr-core]
+name=MapR Technologies
+baseurl=file://${MAPR_REPO_DIR}
+enabled=1
+gpgcheck=0
+protect=1
+EOF
+
+fi
+
+echo "END: installing MapR core repository"

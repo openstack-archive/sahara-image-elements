@@ -12,20 +12,25 @@ DEBUG_MODE="false"
 # The default tag to use for the DIB repo
 DEFAULT_DIB_REPO_BRANCH="0.1.29"
 
+# The default version for a MapR plugin
+DIB_DEFAULT_MAPR_VERSION="4.0.1"
+
 # Default list of datasource modules for ubuntu. Workaround for bug #1375645
 export CLOUD_INIT_DATASOURCES=${DIB_CLOUD_INIT_DATASOURCES:-"NoCloud, ConfigDrive, OVF, MAAS, Ec2"}
 
 usage() {
     echo
     echo "Usage: $(basename $0)"
-    echo "         [-p vanilla|spark|hdp|cloudera|storm]"
+    echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr]"
     echo "         [-i ubuntu|fedora|centos]"
     echo "         [-v 1|2|2.3|2.4|plain]"
+    echo "         [-r 3.1.1|4.0.1]"
     echo "         [-d]"
     echo "         [-m]"
     echo "   '-p' is plugin version (default: all plugins)"
     echo "   '-i' is operating system of the base image (default: all supported by plugin)"
     echo "   '-v' is hadoop version (default: all supported by plugin)"
+    echo "   '-r' is MapR Version (default: ${DIB_DEFAULT_MAPR_VERSION})"
     echo "   '-d' enable debug mode, root account will have password 'hadoop'"
     echo "   '-m' set the diskimage-builder repo to the master branch (default: $DEFAULT_DIB_REPO_BRANCH)"
     echo
@@ -38,7 +43,7 @@ usage() {
     exit 1
 }
 
-while getopts "p:i:v:dm" opt; do
+while getopts "p:i:v:dmr:" opt; do
     case $opt in
         p)
             PLUGIN=$OPTARG
@@ -59,6 +64,9 @@ while getopts "p:i:v:dm" opt; do
             else
                 DIB_REPO_BRANCH="master"
             fi
+        ;;
+        r)
+            DIB_MAPR_VERSION=$OPTARG
         ;;
         *)
             usage
@@ -93,7 +101,7 @@ if [ "$DEBUG_MODE" = "true" -a "$platform" != 'NAME="Ubuntu"' ]; then
     fi
 fi
 
-if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" -a "$PLUGIN" != "cloudera" -a "$PLUGIN" != "storm" ]; then
+if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" -a "$PLUGIN" != "cloudera" -a "$PLUGIN" != "storm" -a "$PLUGIN" != "mapr" ]; then
     echo -e "Unknown plugin selected.\nAborting"
     exit 1
 fi
@@ -117,6 +125,27 @@ fi
 
 if [ "$PLUGIN" = "cloudera" -a "$BASE_IMAGE_OS" = "fedora" ]; then
     echo "Impossible combination.\nAborting"
+    exit 1
+fi
+
+if [ "$PLUGIN" = "mapr" -a "$BASE_IMAGE_OS" = "fedora" ]; then
+    echo "'fedora' image type is not supported by 'mapr' plugin.\nAborting"
+    exit 1
+fi
+
+if [ "$PLUGIN" != "mapr" -a -n "$DIB_MAPR_VERSION" ]; then
+    echo "'-r' parameter should be used only with 'mapr' plugin.\nAborting"
+    exit 1
+fi
+
+if [ "$PLUGIN" = "mapr" -a -z "$DIB_MAPR_VERSION" ]; then
+    echo "MapR version is not specified.\n"
+    echo "${DIB_DEFAULT_MAPR_VERSION} version would be used.\n"
+    DIB_MAPR_VERSION=${DIB_DEFAULT_MAPR_VERSION}
+fi
+
+if [ "$PLUGIN" = "mapr" -a "${DIB_MAPR_VERSION}" != "3.1.1" -a "${DIB_MAPR_VERSION}" != "4.0.1" ]; then
+    echo "Unknown MapR version.\nExit"
     exit 1
 fi
 
@@ -483,6 +512,59 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
         unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
     fi
     unset EXTJS_DOWNLOAD_URL
+fi
+
+##########################
+# Images for MapR plugin #
+##########################
+if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
+    echo "For mapr plugin option -v is ignored"
+    export DIB_MAPR_VERSION=${DIB_MAPR_VERSION:-4.0.1}
+
+    export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
+
+    export DIB_IMAGE_SIZE=${IMAGE_SIZE:-"10"}
+    #MapR repository requires additional space
+    export DIB_MIN_TMPFS=10
+
+    export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz"}
+
+    mapr_ubuntu_elements_sequence="base vm ssh ubuntu hadoop-mapr"
+    mapr_centos_elements_sequence="base vm rhel ssh hadoop-mapr redhat-lsb selinux-permissive"
+
+    if [ "$DEBUG_MODE" = "true" ]; then
+        mapr_ubuntu_elements_sequence="$mapr_ubuntu_elements_sequence root-passwd"
+        mapr_centos_elements_sequence="$mapr_centos_elements_sequence root-passwd"
+    fi
+
+    if [ -n "$USE_MIRRORS" ]; then
+        [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$mapr_ubuntu_elements_sequence apt-mirror"
+        [ -n "$CENTOS_MIRROR" ] && centos_elements_sequence="$mapr_centos_elements_sequence centos-mirror"
+    fi
+
+    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
+        export DIB_RELEASE=${DIB_RELEASE:-trusty}
+
+        mapr_ubuntu_image_name=${mapr_ubuntu_image_name:-ubuntu_${DIB_RELEASE}_mapr_${DIB_MAPR_VERSION}_latest}
+
+        disk-image-create $mapr_ubuntu_elements_sequence -n -o $mapr_ubuntu_image_name
+        mv $mapr_ubuntu_image_name.qcow2 ../
+
+        unset DIB_RELEASE
+    fi
+
+    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
+        export BASE_IMAGE_FILE=${BASE_IMAGE_FILE:-"CentOS-6.6-cloud-init-20141118.qcow2"}
+        export DIB_CLOUD_IMAGES=${DIB_CLOUD_IMAGES:-"http://sahara-files.mirantis.com"}
+
+        mapr_centos_image_name=${mapr_centos_image_name:-centos_6.5_mapr_${DIB_MAPR_VERSION}_latest}
+
+        disk-image-create $mapr_centos_elements_sequence -n -o $mapr_centos_image_name
+        mv $mapr_centos_image_name.qcow2 ../
+
+        unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
+        unset DIB_CLOUD_INIT_DATASOURCES
+    fi
 fi
 
 popd # out of $TEMP

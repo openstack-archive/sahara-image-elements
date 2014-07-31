@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -eux
+
+echo "MapR version ${DIB_MAPR_VERSION}"
+
+if [ -z ${DIB_MAPR_VERSION} ]; then
+    echo "DIB_MAPR_VERSION not set.\nExit"
+    exit 1
+fi

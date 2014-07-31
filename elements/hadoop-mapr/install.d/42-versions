@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -eux
+
+install -D -g root -o root -m 0644 $(dirname $0)/versions.py /tmp/versions.py

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -eux
+
+echo "START: downloading ExtJS library"
+
+install-packages wget
+
+MAPR_REPO_DIR="/opt/mapr-repository/"
+EXT_JS_URL="http://extjs.com/deploy/ext-2.2.zip"
+
+mkdir -p ${MAPR_REPO_DIR}
+sudo wget ${EXT_JS_URL} -P ${MAPR_REPO_DIR}
+
+echo "END: downloading ExtJS library"

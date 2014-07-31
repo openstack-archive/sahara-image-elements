@@ -27,7 +27,7 @@ NOTE: Do not create all images for all plugins with the same mirrors. Different 
 
 .. sourcecode:: bash
 
-  sudo bash sahara-image-elements/diskimage-create/diskimage-create.sh -p [vanilla|spark|hdp|cloudera|storm]
+  sudo bash sahara-image-elements/diskimage-create/diskimage-create.sh -p [vanilla|spark|hdp|cloudera|storm|mapr]
 
 5. To select which hadoop version to target use the '-v' commandline option like this:
 

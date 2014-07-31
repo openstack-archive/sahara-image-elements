@@ -1,0 +1,159 @@
+#!/bin/bash
+
+set -eux
+
+echo "START: installing MapR core dependencies"
+
+DISTRO=$(lsb_release -is || :)
+
+if [ "$DISTRO" = "Ubuntu" ]; then
+    # Required for libicu48
+    cat >> /etc/apt/sources.list.d/security_repo.list << EOF
+deb http://security.ubuntu.com/ubuntu precise-security main
+EOF
+    # Required for libmysqlclient16
+    cat >> /etc/apt/sources.list.d/security_repo.list << EOF
+deb http://security.ubuntu.com/ubuntu lucid-security main
+EOF
+    apt-get update
+    install-packages binutils \
+    daemon \
+    dpkg-dev \
+    dpkg-repack \
+    gcc \
+    gcc-4.8 \
+    gcc-doc \
+    gcc-multilib \
+    iputils-arping \
+    libasan0 \
+    libatomic1 \
+    libc-dev-bin \
+    libc6 \
+    libc6-dev \
+    libcrypt-passwdmd5-perl \
+    libevent-1.4-2 \
+    libevent-2.0-5 \
+    libgcc-4.8-dev \
+    libgomp1 \
+    libgssglue1 \
+    libicu48 \
+    libitm1 \
+    libmysqlclient-dev \
+    libmysqlclient16 \
+    libmysqlclient18 \
+    libnfsidmap2 \
+    libquadmath0 \
+    libsasl2-dev \
+    libsasl2-modules-gssapi-mit \
+    libssl0.9.8 \
+    libtirpc1 \
+    libtsan0 \
+    libxslt1.1 \
+    linux-libc-dev \
+    manpages-dev \
+    mtools \
+    mysql-common \
+    nfs-common \
+    open-iscsi \
+    openjdk-6-jre \
+    rpcbind \
+    sdparm \
+    syslinux \
+    syslinux-common \
+    unzip \
+    watchdog \
+    zlib1g-dev \
+    zip
+elif [ "$DISTRO" = 'CentOS' -o "$DISTRO" = 'RedHatEnterpriseServer' ]; then
+    install-packages cdparanoia-libs \
+    cups \
+    cups-libs \
+    createrepo \
+    cvs \
+    cyrus-sasl-gssapi \
+    cyrus-sasl-plain \
+    db4-cxx \
+    db4-devel \
+    foomatic \
+    foomatic-db \
+    foomatic-db-filesystem \
+    foomatic-db-ppds \
+    gdbm-devel \
+    gettext \
+    ghostscript \
+    ghostscript-fonts \
+    glibc \
+    glibc-common \
+    glibc-devel \
+    glibc-headers \
+    gstreamer \
+    gstreamer-plugins-base \
+    gstreamer-tools \
+    hdparm \
+    irqbalance \
+    iso-codes \
+    kernel-headers \
+    lcms-libs \
+    libXt \
+    libXv \
+    libXxf86vm \
+    libgomp \
+    libgssglue \
+    libgudev1 \
+    libicu \
+    libmng \
+    liboil \
+    libtheora \
+    libtirpc \
+    libvisual \
+    libxslt \
+    mesa-dri-drivers \
+    mesa-dri-filesystem \
+    mesa-dri1-drivers \
+    mesa-libGL \
+    mesa-libGLU \
+    mesa-private-llvm \
+    mtools \
+    nc \
+    numactl \
+    openjpeg-libs \
+    patch \
+    pax \
+    perl-CGI \
+    perl-ExtUtils-MakeMaker \
+    perl-ExtUtils-ParseXS \
+    perl-Test-Harness \
+    perl-Test-Simple \
+    perl-devel \
+    phonon-backend-gstreamer \
+    poppler \
+    poppler-data \
+    poppler-utils \
+    portreserve \
+    qt \
+    qt-sqlite \
+    qt-x11 \
+    qt3 \
+    redhat-lsb \
+    redhat-lsb-compat \
+    redhat-lsb-core \
+    redhat-lsb-graphics \
+    redhat-lsb-printing \
+    rpcbind \
+    sdparm \
+    soci \
+    soci-mysql \
+    syslinux \
+    syslinux-nonlinux \
+    unzip \
+    urw-fonts \
+    xml-common \
+    zip
+fi
+
+if [ "$?" != "0" ]; then
+    echo "Installation failed. Exit"
+    exit 1
+fi
+
+echo "END: installing MapR core dependencies"

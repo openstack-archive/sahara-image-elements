@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -eux
+
+echo "/etc/profile.d/java.sh" >> /etc/ssh/sshrc
+chmod 775 /etc/profile.d/java.sh

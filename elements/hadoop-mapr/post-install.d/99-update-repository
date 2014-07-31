@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -eux
+
+DISTRO=$(lsb_release -is || :)
+
+if [ "$DISTRO" = "Ubuntu" ]; then
+    apt-get update
+elif [ "$DISTRO" = 'CentOS' -o "$DISTRO" = 'RedHatEnterpriseServer' ]; then
+    yum clean all && yum repolist
+fi
