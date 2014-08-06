@@ -189,9 +189,9 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   export EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://extjs.com/deploy/ext-2.2.zip"}
   export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
 
-  ubuntu_elements_sequence="base vm ubuntu hadoop oozie mysql hive"
-  fedora_elements_sequence="base vm fedora hadoop oozie mysql hive disable-firewall"
-  centos_elements_sequence="vm rhel hadoop oozie mysql hive redhat-lsb disable-firewall"
+  ubuntu_elements_sequence="base vm ubuntu hadoop oozie mysql"
+  fedora_elements_sequence="base vm fedora hadoop oozie mysql disable-firewall"
+  centos_elements_sequence="vm rhel hadoop oozie mysql redhat-lsb disable-firewall"
 
   if [ "$DEBUG_MODE" = "true" ]; then
     ubuntu_elements_sequence="$ubuntu_elements_sequence root-passwd"
@@ -224,7 +224,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
       export ubuntu_image_name=${ubuntu_vanilla_hadoop_1_image_name:-"ubuntu_sahara_vanilla_hadoop_1_latest"}
-      elements_sequence="$ubuntu_elements_sequence swift_hadoop"
+      elements_sequence="$ubuntu_elements_sequence swift_hadoop hive"
       disk-image-create $elements_sequence -o $ubuntu_image_name
       mv $ubuntu_image_name.qcow2 ../
     fi
@@ -247,7 +247,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
       export fedora_image_name=${fedora_vanilla_hadoop_1_image_name:-"fedora_sahara_vanilla_hadoop_1_latest$suffix"}
-      elements_sequence="$fedora_elements_sequence swift_hadoop"
+      elements_sequence="$fedora_elements_sequence swift_hadoop hive"
       disk-image-create $elements_sequence -o $fedora_image_name
       mv $fedora_image_name.qcow2 ../
     fi
@@ -275,7 +275,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
       export centos_image_name=${centos_vanilla_hadoop_1_image_name:-"centos_sahara_vanilla_hadoop_1_latest$suffix"}
-      elements_sequence="$centos_elements_sequence swift_hadoop"
+      elements_sequence="$centos_elements_sequence swift_hadoop hive"
       disk-image-create $elements_sequence -n -o $centos_image_name
       mv $centos_image_name.qcow2 ../
     fi
