@@ -213,10 +213,9 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   fi
 
   if [ -n "$USE_MIRRORS" ]; then
-    mirror_element=" apt-mirror"
-    ubuntu_elements_sequence=$ubuntu_elements_sequence$mirror_element
-    mirror_element=" yum-mirror"
-    fedora_elements_sequence=$fedora_elements_sequence$mirror_element
+    [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
+    [ -n "$FEDORA_MIRROR" ] && fedora_elements_sequence="$fedora_elements_sequence fedora-mirror"
+    [ -n "$CENTOS_MIRROR" ] && centos_elements_sequence="$centos_elements_sequence centos-mirror"
   fi
 
   # Ubuntu cloud image
@@ -310,8 +309,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
   ubuntu_elements_sequence="base vm ubuntu java hadoop-cdh spark"
 
   if [ -n "$USE_MIRRORS" ]; then
-    mirror_element=" apt-mirror"
-    ubuntu_elements_sequence=$ubuntu_elements_sequence$mirror_element
+    [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
   fi
 
   # Creating Ubuntu cloud image
@@ -335,8 +333,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "storm" ]; then
   ubuntu_elements_sequence="base vm ubuntu java zookeeper storm"
 
   if [ -n "$USE_MIRRORS" ]; then
-    mirror_element=" apt-mirror"
-    ubuntu_elements_sequence=$ubuntu_elements_sequence$mirror_element
+    [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
   fi
 
   # Creating Ubuntu cloud image
@@ -375,6 +372,10 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
         centos_elements_sequence=$centos_elements_sequence" root-passwd"
     fi
 
+    if [ -n "$USE_MIRRORS"]; then
+        [ -n "$CENTOS_MIRROR" ] && centos_elements_sequence="$centos_elements_sequence centos-mirror"
+    fi
+
     # generate image with HDP 1.3
     export DIB_HDP_VERSION="1.3"
     disk-image-create $centos_elements_sequence -n -o $centos_image_name_hdp_1_3
@@ -388,6 +389,10 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     if  [ "$DEBUG_MODE" = "true" ]; then
         # enable the root-pwd element, for simpler local debugging of images
         centos_elements_sequence=$centos_elements_sequence" root-passwd"
+    fi
+
+    if [ -n "$USE_MIRRORS"]; then
+        [ -n "$CENTOS_MIRROR" ] && centos_elements_sequence="$centos_elements_sequence centos-mirror"
     fi
 
     # generate image with HDP 2.0
@@ -405,6 +410,10 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
         centos_plain_elements_sequence=$centos_plain_elements_sequence" root-passwd"
     fi
 
+    if [ -n "$USE_MIRRORS"]; then
+        [ -n "$CENTOS_MIRROR" ] && centos_plain_elements_sequence="$centos_plain_elements_sequence centos-mirror"
+    fi
+
     # generate plain (no Hadoop components) image for testing
     disk-image-create $centos_plain_elements_sequence -n -o $centos_image_name_plain
     mv $centos_image_name_plain.qcow2 ../
@@ -418,6 +427,11 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
   if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "ubuntu" ]; then
     cloudera_ubuntu_image_name=${cloudera_ubuntu_image_name:-ubuntu_sahara_cloudera_latest}
     cloudera_elements_sequence="base vm ubuntu hadoop-cloudera"
+
+    if [ -n "$USE_MIRRORS" ]; then
+      [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
+    fi
+
     # Cloudera supports only 12.04 Ubuntu
     export DIB_RELEASE="precise"
 
@@ -435,6 +449,10 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
 
     cloudera_centos_image_name=${cloudera_centos_image_name:-centos_sahara_cloudera_latest}
     cloudera_elements_sequence="base vm rhel hadoop-cloudera redhat-lsb selinux-permissive"
+
+    if [ -n "$USE_MIRRORS"]; then
+        [ -n "$CENTOS_MIRROR" ] && cloudera_elements_sequence="$cloudera_elements_sequence centos-mirror"
+    fi
 
     disk-image-create $cloudera_elements_sequence -n -o $cloudera_centos_image_name
     mv $cloudera_centos_image_name.qcow2 ../

@@ -15,11 +15,13 @@ For users:
 
   sudo bash sahara-image-elements/diskimage-create/diskimage-create.sh
 
-3. If you want to use your local mirrors, you should specify http urls for Fedora and Ubuntu mirrors using parameters 'FEDORA_MIRROR' and 'UBUNTU_MIRROR' like this:
+3. If you want to use your local mirrors, you should specify http urls for Fedora, CentOS and Ubuntu mirrors using parameters 'FEDORA_MIRROR', 'CENTOS_MIRROR' and 'UBUNTU_MIRROR' like this:
 
 .. sourcecode:: bash
 
-  sudo USE_MIRRORS=true FEDORA_MIRROR="url_for_fedora_mirror" UBUNTU_MIRROR="url_for_ubuntu_mirror" bash sahara-image-elements/diskimage-create/diskimage-create.sh
+  sudo USE_MIRRORS=true FEDORA_MIRROR="url_for_fedora_mirror" CENTOS_MIRROR="url_for_centos_mirror" UBUNTU_MIRROR="url_for_ubuntu_mirror" bash sahara-image-elements/diskimage-create/diskimage-create.sh
+
+NOTE: Do not create all images for all plugins with the same mirrors. Different plugins use different OS version.
 
 4. To select which plugin to target use the '-p' commandline option like this:
 
