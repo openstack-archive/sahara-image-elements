@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# We have to chown the Zookeeper directories to make it usable for the default user
+# Unfortunately the Ubuntu user does not exists when DIB is creating the image
+# and we need to execute this code the first time the VM boots.
+
+sed -i -e 's,^exit 0$,[ -f /opt/zookeeper/firstboot.sh ] \&\& sh /opt/zookeeper/firstboot.sh; exit 0,' /etc/rc.local
+
+cat >> /opt/zookeeper/firstboot.sh <<EOF
+#!/bin/sh
+chown -R ubuntu:ubuntu /opt/zookeeper
+chown -R ubuntu:ubuntu /var/zookeeper
+rm \$0
+EOF
+

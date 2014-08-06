@@ -1,0 +1,76 @@
+#!/bin/bash
+# This script installs storm and its dependencies
+# More documentation on the README.md file
+
+install-packages wget unzip build-essential uuid-dev git libtool autoconf pkg-config tar
+
+tmp_dir=/tmp
+
+cd $tmp_dir
+echo "Installing ZeroMQ"
+wget http://download.zeromq.org/zeromq-2.1.7.tar.gz
+tar -xzf zeromq-2.1.7.tar.gz
+cd zeromq-2.1.7
+./configure
+make
+make install
+cd ..
+
+echo "Installing JZMQ"
+git clone https://github.com/nathanmarz/jzmq.git
+
+cd jzmq/src
+touch classdist_noinst.stamp
+CLASSPATH=.:./.:$CLASSPATH javac -d . org/zeromq/ZMQ.java org/zeromq/ZMQException.java org/zeromq/ZMQQueue.java org/zeromq/ZMQForwarder.java org/zeromq/ZMQStreamer.java
+cd ..
+
+cd $tmp_dir/jzmq
+./autogen.sh
+./configure
+make
+make install
+
+echo "Creating Storm User"
+groupadd -g 53001 storm
+mkdir -p /app/home/storm
+useradd -u 53001 -g 53001 -d /app/home/storm -s /bin/bash storm -c "Storm service account"
+chmod 700 /app/home/storm
+chage -I -1 -E -1 -m -1 -M -1 -W -1 -E -1 storm
+
+cd $tmp_dir
+echo "Downloading Storm"
+# The user is not providing his own Spark distribution package
+if [ -z "$STORM_DOWNLOAD_URL" ]; then
+# Check storm version
+    case "$DIB_STORM_VERSION" in
+      0.9.*)
+        STORM_DOWNLOAD_URL="http://archive.apache.org/dist/incubator/storm/apache-storm-$DIB_STORM_VERSION-incubating/apache-storm-$DIB_STORM_VERSION-incubating.tar.gz"
+        ;;
+      *)
+        echo -e "WARNING: Storm version $DIB_STORM_VERSION not supported."
+        echo -e "WARNING: make sure STORM_DOWNLOAD_URL points to a compatible Storm version."
+        exit 1
+        ;;
+    esac
+fi
+
+wget $STORM_DOWNLOAD_URL
+cd /usr/local
+tar -xvf /tmp/apache-storm-$DIB_STORM_VERSION-incubating.tar.gz
+chown -R storm:storm apache-storm-$DIB_STORM_VERSION-incubating
+ln -s apache-storm-$DIB_STORM_VERSION-incubating storm
+
+
+echo "Configuring Storm home"
+mkdir -p /app/storm
+chown -R storm:storm /app/storm
+chmod 750 /app/storm
+
+echo "Installing Supervisor Deamon"
+
+install-packages supervisor
+update-rc.d supervisor defaults
+chmod 600 /etc/supervisord.conf
+
+mkdir -p /var/log/storm
+chown -R storm:storm /var/log/storm

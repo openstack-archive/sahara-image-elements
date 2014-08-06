@@ -37,7 +37,7 @@ while getopts "p:i:v:d:m" opt; do
     *)
       echo
       echo "Usage: $(basename $0)"
-      echo "         [-p vanilla|spark|hdp|cloudera]"
+      echo "         [-p vanilla|spark|hdp|cloudera|storm]"
       echo "         [-i ubuntu|fedora|centos]"
       echo "         [-v 1|2|2.3|2.4|plain]"
       echo "         [-d]"
@@ -81,7 +81,7 @@ if [ "$DEBUG_MODE" = "true" -a "$platform" != 'NAME="Ubuntu"' ]; then
   fi
 fi
 
-if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" -a "$PLUGIN" != "cloudera" ]; then
+if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" -a "$PLUGIN" != "cloudera" -a "$PLUGIN" != "storm" ]; then
   echo -e "Unknown plugin selected.\nAborting"
   exit 1
 fi
@@ -319,6 +319,30 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
   mv $ubuntu_image_name.qcow2 ../
 fi
 
+
+##########################
+# Image for Storm plugin #
+##########################
+
+if [ -z "$PLUGIN" -o "$PLUGIN" = "storm" ]; then
+  # Ignoring image type and hadoop version options
+  echo "For storm plugin options -i and -v are ignored"
+
+  export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz"}
+  export DIB_STORM_VERSION=${DIB_STORM_VERSION:-0.9.1}
+  export ubuntu_image_name=${ubuntu_storm_image_name:-"ubuntu_sahara_storm_latest"}
+
+  ubuntu_elements_sequence="base vm ubuntu java zookeeper storm"
+
+  if [ -n "$USE_MIRRORS" ]; then
+    mirror_element=" apt-mirror"
+    ubuntu_elements_sequence=$ubuntu_elements_sequence$mirror_element
+  fi
+
+  # Creating Ubuntu cloud image
+  disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
+  mv $ubuntu_image_name.qcow2 ../
+fi
 #########################
 # Images for HDP plugin #
 #########################
