@@ -22,7 +22,7 @@ echo $distro
 case "$distro" in
    Ubuntu )
       augtool -s set /files/etc/ssh/sshd_config/GSSAPICleanupCredentials yes
-      augtool -s set /files/etc/ssh/sshd_config/AuthorizedKeysFile .ssh/authorized_keys
+      augtool -s set /files/etc/ssh/sshd_config/AuthorizedKeysFile %h/.ssh/authorized_keys
    ;;
    Fedora )
       sed -i 's/ssh_pwauth:   0/ssh_pwauth:   1/' /etc/cloud/cloud.cfg
