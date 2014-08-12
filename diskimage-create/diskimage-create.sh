@@ -12,6 +12,29 @@ DEBUG_MODE="false"
 # The default tag to use for the DIB repo
 DEFAULT_DIB_REPO_BRANCH="0.1.17"
 
+usage() {
+  echo
+  echo "Usage: $(basename $0)"
+  echo "         [-p vanilla|spark|hdp|cloudera|storm]"
+  echo "         [-i ubuntu|fedora|centos]"
+  echo "         [-v 1|2|2.3|2.4|plain]"
+  echo "         [-d]"
+  echo "         [-m]"
+  echo "   '-p' is plugin version (default: vanilla)"
+  echo "   '-i' is image type (default: all supported by plugin)"
+  echo "   '-v' is hadoop version (default: all supported by plugin)"
+  echo "   '-d' enable debug mode, root account will have password 'hadoop'"
+  echo "   '-m' set the diskimage-builder repo to the master branch (default: $DEFAULT_DIB_REPO_BRANCH)"
+  echo
+  echo "You shouldn't specify hadoop version and image type for spark plugin"
+  echo "You shouldn't specify image type for hdp plugin"
+  echo "Version 'plain' could be specified for hdp plugin only"
+  echo "Debug mode should only be enabled for local debugging purposes, not for production systems"
+  echo "By default all images for all plugins will be created"
+  echo
+  exit 1
+}
+
 while getopts "p:i:v:dm" opt; do
   case $opt in
     p)
@@ -35,29 +58,15 @@ while getopts "p:i:v:dm" opt; do
       fi
     ;;
     *)
-      echo
-      echo "Usage: $(basename $0)"
-      echo "         [-p vanilla|spark|hdp|cloudera|storm]"
-      echo "         [-i ubuntu|fedora|centos]"
-      echo "         [-v 1|2|2.3|2.4|plain]"
-      echo "         [-d]"
-      echo "         [-m]"
-      echo "   '-p' is plugin version (default: vanilla)"
-      echo "   '-i' is image type (default: all supported by plugin)"
-      echo "   '-v' is hadoop version (default: all supported by plugin)"
-      echo "   '-d' enable debug mode, root account will have password 'hadoop'"
-      echo "   '-m' set the diskimage-builder repo to the master branch (default: $DEFAULT_DIB_REPO_BRANCH)"
-      echo
-      echo "You shouldn't specify hadoop version and image type for spark plugin"
-      echo "You shouldn't specify image type for hdp plugin"
-      echo "Version 'plain' could be specified for hdp plugin only"
-      echo "Debug mode should only be enabled for local debugging purposes, not for production systems"
-      echo "By default all images for all plugins will be created"
-      echo
-      exit 1
+      usage
     ;;
   esac
 done
+
+shift $((OPTIND-1))
+if [ "$1" ]; then
+  usage
+fi
 
 if [ -z $DIB_REPO_BRANCH ]; then
     DIB_REPO_BRANCH=$DEFAULT_DIB_REPO_BRANCH
