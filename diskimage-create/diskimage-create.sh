@@ -12,7 +12,7 @@ DEBUG_MODE="false"
 # The default tag to use for the DIB repo
 DEFAULT_DIB_REPO_BRANCH="0.1.17"
 
-while getopts "p:i:v:d:m" opt; do
+while getopts "p:i:v:dm" opt; do
   case $opt in
     p)
       PLUGIN=$OPTARG
