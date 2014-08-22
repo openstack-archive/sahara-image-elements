@@ -1,6 +1,7 @@
 #!/bin/bash
 
-mv /etc/yum.repos.d/fedora.repo /etc/yum.repos.d/tempfile
+mkdir -p /opt/repos
+mv /etc/yum.repos.d/* /opt/repos
 cat >> /etc/yum.repos.d/fedora.repo <<EOF
 [Local-Repository]
 name=Fedora \$releasever - \$basearch - Local
