@@ -10,7 +10,7 @@ unset DIB_IMAGE_SIZE
 DEBUG_MODE="false"
 
 # The default tag to use for the DIB repo
-DEFAULT_DIB_REPO_BRANCH="0.1.17"
+DEFAULT_DIB_REPO_BRANCH="0.1.29"
 
 usage() {
   echo
