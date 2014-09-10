@@ -4,6 +4,7 @@ set -eux
 
 if [ $(lsb_release -is) = 'Ubuntu' ]; then
    export DEBIAN_FRONTEND=noninteractive
+   export RUNLEVEL=1
 fi
 
 install-packages cloudera-manager-agent \
@@ -19,3 +20,7 @@ hadoop-yarn-nodemanager \
 hadoop-mapreduce \
 hadoop-mapreduce-historyserver \
 oozie
+
+if [ $(lsb_release -is) = 'Ubuntu' ]; then
+    unset RUNLEVEL
+fi
