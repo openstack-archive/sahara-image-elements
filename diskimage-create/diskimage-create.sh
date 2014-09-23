@@ -364,7 +364,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   # CentOS cloud image:
   # - Disable including 'base' element for CentOS
   # - Export link and filename for CentOS cloud image to download
-  export BASE_IMAGE_FILE="CentOS-6.4-cloud-init.qcow2"
+  export BASE_IMAGE_FILE="CentOS-6.5-cloud-init.qcow2"
   export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
 
   # Setup Java Install configuration for the HDP images
@@ -373,7 +373,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
 
   # Ignoring image type option
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
-    export centos_image_name_hdp_1_3=${centos_hdp_hadoop_1_image_name:-"centos-6_4-64-hdp-1-3"}
+    export centos_image_name_hdp_1_3=${centos_hdp_hadoop_1_image_name:-"centos-6_5-64-hdp-1-3"}
     # Elements to include in an HDP-based image
     centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb yum"
     if [ "$DEBUG_MODE" = "true" ]; then
@@ -392,7 +392,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   fi
 
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
-    export centos_image_name_hdp_2_0=${centos_hdp_hadoop_2_image_name:-"centos-6_4-64-hdp-2-0"}
+    export centos_image_name_hdp_2_0=${centos_hdp_hadoop_2_image_name:-"centos-6_5-64-hdp-2-0"}
     # Elements to include in an HDP-based image
     centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb yum"
     if  [ "$DEBUG_MODE" = "true" ]; then
@@ -411,7 +411,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
   fi
 
   if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "plain" ]; then
-    export centos_image_name_plain=${centos_hdp_plain_image_name:-"centos-6_4-64-plain"}
+    export centos_image_name_plain=${centos_hdp_plain_image_name:-"centos-6_5-64-plain"}
     # Elements for a plain CentOS image that does not contain HDP or Apache Hadoop
     centos_plain_elements_sequence="vm rhel redhat-lsb disable-firewall disable-selinux ssh sahara-version yum"
     if [ "$DEBUG_MODE" = "true" ]; then
