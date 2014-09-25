@@ -20,7 +20,7 @@ usage() {
   echo "         [-v 1|2|2.3|2.4|plain]"
   echo "         [-d]"
   echo "         [-m]"
-  echo "   '-p' is plugin version (default: vanilla)"
+  echo "   '-p' is plugin version (default: all plugins)"
   echo "   '-i' is image type (default: all supported by plugin)"
   echo "   '-v' is hadoop version (default: all supported by plugin)"
   echo "   '-d' enable debug mode, root account will have password 'hadoop'"
