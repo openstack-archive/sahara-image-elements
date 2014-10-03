@@ -6,14 +6,14 @@ HDFS_LIB_DIR="/usr/share/hadoop/lib"
 SWIFT_LIB_URI="http://sahara-files.mirantis.com/hadoop-swift/hadoop-swift-latest.jar"
 
 if [ -z "$swift_url" ]; then
-   wget -O $HDFS_LIB_DIR/hadoop-swift.jar $SWIFT_LIB_URI
+    wget -O $HDFS_LIB_DIR/hadoop-swift.jar $SWIFT_LIB_URI
 else
-   wget -O $HDFS_LIB_DIR/hadoop-swift.jar $swift_url
+    wget -O $HDFS_LIB_DIR/hadoop-swift.jar $swift_url
 fi
 
 if [ $? -ne 0 ]; then
-   echo -e "Could not download Swift Hadoop FS implementation.\nAborting"
-   exit 1
+    echo -e "Could not download Swift Hadoop FS implementation.\nAborting"
+    exit 1
 fi
 
 chmod 0644 $HDFS_LIB_DIR/hadoop-swift.jar

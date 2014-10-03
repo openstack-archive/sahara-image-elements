@@ -1,8 +1,8 @@
 #!/bin/bash
 if [ -z "$HIVE_DOWNLOAD_URL" ]; then
-  version_check=$(echo $HIVE_VERSION | sed -e '/[0-9]\.[0-9][0-9]\.[0-9]/d')
-  if [ ! -z $version_check ]; then
-    echo -e "Unable to install Hive: You should specify HIVE_DOWNLOAD_URL or HIVE_VERSION.\nAborting"
-    exit 1
-  fi
+    version_check=$(echo $HIVE_VERSION | sed -e '/[0-9]\.[0-9][0-9]\.[0-9]/d')
+    if [ ! -z $version_check ]; then
+        echo -e "Unable to install Hive: You should specify HIVE_DOWNLOAD_URL or HIVE_VERSION.\nAborting"
+        exit 1
+    fi
 fi

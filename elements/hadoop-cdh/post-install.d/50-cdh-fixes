@@ -4,20 +4,19 @@
 # packages up and running
 
 case "$distro" in
-   Ubuntu )
-      # pietro: small hack to fix install problems on ubuntu
-      # the CDH package contains a broken symlink instead of the log4j jar file
-      # these 4 lines should go away once Cloudera fixes the package
-      echo "Fixing install problem for CDH: log4j";
-      wget http://repo1.maven.org/maven2/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar;
-      sudo rm /usr/lib/hadoop/lib/slf4j-log4j12-1.6.1.jar;
-      sudo mv slf4j-log4j12-1.6.1.jar /usr/lib/hadoop/lib/
+    Ubuntu )
+        # pietro: small hack to fix install problems on ubuntu
+        # the CDH package contains a broken symlink instead of the log4j jar file
+        # these 4 lines should go away once Cloudera fixes the package
+        echo "Fixing install problem for CDH: log4j";
+        wget http://repo1.maven.org/maven2/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar;
+        sudo rm /usr/lib/hadoop/lib/slf4j-log4j12-1.6.1.jar;
+        sudo mv slf4j-log4j12-1.6.1.jar /usr/lib/hadoop/lib/
 
-      mkdir /run/hadoop
-      chown hadoop:hadoop /run/hadoop/
+        mkdir /run/hadoop
+        chown hadoop:hadoop /run/hadoop/
 
-      mkdir -p /var/run/hadoop ; chown hadoop:hadoop /var/run/hadoop
-      mkdir -p /mnt/log/hadoop ; chown hadoop:hadoop /mnt/log/hadoop
-   ;;
+        mkdir -p /var/run/hadoop ; chown hadoop:hadoop /var/run/hadoop
+        mkdir -p /mnt/log/hadoop ; chown hadoop:hadoop /mnt/log/hadoop
+    ;;
 esac
-

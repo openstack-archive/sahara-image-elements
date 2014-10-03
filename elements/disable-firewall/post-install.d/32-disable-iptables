@@ -1,8 +1,8 @@
 #!/bin/bash
 
 if which service; then
-   service iptables save
-   chkconfig iptables off
+    service iptables save
+    chkconfig iptables off
 fi
 
 : # continue without error

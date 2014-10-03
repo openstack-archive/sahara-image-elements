@@ -1,5 +1,5 @@
 #!/bin/bash
 if [ -z "$STORM_DOWNLOAD_URL" -a -z "$DIB_STORM_VERSION"]; then
-  echo -e "Neither DIB_STORM_VERSION nor STORM_DOWNLOAD_URL are set. Impossible to install Storm.\nAborting"
-  exit 1
+    echo -e "Neither DIB_STORM_VERSION nor STORM_DOWNLOAD_URL are set. Impossible to install Storm.\nAborting"
+    exit 1
 fi

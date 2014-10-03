@@ -10,29 +10,29 @@ pushd $tmp_dir
 
 # The user is not providing his own Spark distribution package
 if [ -z "$SPARK_DOWNLOAD_URL" ]; then
-  # Check hadoop version
-  # INFO on hadoop versions: http://spark.apache.org/docs/latest/hadoop-third-party-distributions.html
-  if [ -z "$DIB_SPARK_VERSION" ]; then
-    case "$DIB_HADOOP_VERSION" in
-      CDH4)
-        DIB_SPARK_VERSION=1.0.0
-        SPARK_HADOOP_DL=cdh4
-        ;;
-      *)
-        echo -e "WARNING: Hadoop version $DIB_HADOOP_VERSION not supported."
-        echo -e "WARNING: make sure SPARK_DOWNLOAD_URL points to a compatible Spark version."
-        ;;
-    esac
-  fi
+    # Check hadoop version
+    # INFO on hadoop versions: http://spark.apache.org/docs/latest/hadoop-third-party-distributions.html
+    if [ -z "$DIB_SPARK_VERSION" ]; then
+        case "$DIB_HADOOP_VERSION" in
+            CDH4)
+                DIB_SPARK_VERSION=1.0.0
+                SPARK_HADOOP_DL=cdh4
+                ;;
+            *)
+                echo -e "WARNING: Hadoop version $DIB_HADOOP_VERSION not supported."
+                echo -e "WARNING: make sure SPARK_DOWNLOAD_URL points to a compatible Spark version."
+                ;;
+        esac
+    fi
 
-  SPARK_DOWNLOAD_URL="http://archive.apache.org/dist/spark/spark-$DIB_SPARK_VERSION/spark-$DIB_SPARK_VERSION-bin-$SPARK_HADOOP_DL.tgz"
+    SPARK_DOWNLOAD_URL="http://archive.apache.org/dist/spark/spark-$DIB_SPARK_VERSION/spark-$DIB_SPARK_VERSION-bin-$SPARK_HADOOP_DL.tgz"
 fi
 
 echo "Downloading SPARK"
 wget "$SPARK_DOWNLOAD_URL"
 if [ $? -ne 0 ]; then
-   echo -e "Could not download spark.\nAborting"
-   exit 1
+    echo -e "Could not download spark.\nAborting"
+    exit 1
 fi
 
 echo "Extracting SPARK"

@@ -2,18 +2,18 @@
 set -e
 
 if [ -z "$JAVA_DOWNLOAD_URL" ]; then
-   if [ -z "$JAVA_FILE" ]; then
-      echo "JAVA_FILE and JAVA_DOWNLOAD_URL are not set. Proceeding with distro native Java."
-   fi
+    if [ -z "$JAVA_FILE" ]; then
+        echo "JAVA_FILE and JAVA_DOWNLOAD_URL are not set. Proceeding with distro native Java."
+    fi
 fi
 if [ -z "$DIB_HADOOP_VERSION" ]; then
-   echo "DIB_HADOOP_VERSION is not set. Impossible to install hadoop. Exit"
-   exit 1
+    echo "DIB_HADOOP_VERSION is not set. Impossible to install hadoop. Exit"
+    exit 1
 fi
 version_check=$(echo $DIB_HADOOP_VERSION | sed -e '/[0-9]\.[0-9]\.[0-9]/d')
 if [[ -z $version_check ]]; then
-   echo "All variables are set, continue."
+    echo "All variables are set, continue."
 else
-   echo "Version error. Exit"
-   exit 1
+    echo "Version error. Exit"
+    exit 1
 fi

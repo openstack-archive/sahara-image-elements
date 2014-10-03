@@ -47,6 +47,6 @@ chmod 700 /etc/skel/.ssh
 
 # Create .ssh directory in case it does not already exist
 if [ ! -d /root/.ssh ]; then
-  mkdir -p /root/.ssh
-  chmod 700 /root/.ssh
+    mkdir -p /root/.ssh
+    chmod 700 /root/.ssh
 fi

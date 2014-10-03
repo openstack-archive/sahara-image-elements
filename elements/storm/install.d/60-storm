@@ -43,13 +43,13 @@ echo "Downloading Storm"
 if [ -z "$STORM_DOWNLOAD_URL" ]; then
 # Check storm version
     case "$DIB_STORM_VERSION" in
-      0.9.*)
-        STORM_DOWNLOAD_URL="http://archive.apache.org/dist/incubator/storm/apache-storm-$DIB_STORM_VERSION-incubating/apache-storm-$DIB_STORM_VERSION-incubating.tar.gz"
+        0.9.*)
+            STORM_DOWNLOAD_URL="http://archive.apache.org/dist/incubator/storm/apache-storm-$DIB_STORM_VERSION-incubating/apache-storm-$DIB_STORM_VERSION-incubating.tar.gz"
         ;;
-      *)
-        echo -e "WARNING: Storm version $DIB_STORM_VERSION not supported."
-        echo -e "WARNING: make sure STORM_DOWNLOAD_URL points to a compatible Storm version."
-        exit 1
+        *)
+            echo -e "WARNING: Storm version $DIB_STORM_VERSION not supported."
+            echo -e "WARNING: make sure STORM_DOWNLOAD_URL points to a compatible Storm version."
+            exit 1
         ;;
     esac
 fi

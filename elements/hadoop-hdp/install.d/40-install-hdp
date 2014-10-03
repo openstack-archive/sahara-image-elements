@@ -24,50 +24,42 @@
 # HDP.
 ##########################################################
 
-function install_ganglia ()
-{
+function install_ganglia {
     # Install ganglia
     install-packages libganglia ganglia-gmond ganglia-gmond-modules-python ganglia-devel ganglia-gmetad ganglia-web
 }
 
-function install_mysql()
-{
+function install_mysql {
     # install mysql
     install-packages mysql mysql-server mysql-connector-java
 }
 
 
-function install_nagios()
-{
+function install_nagios {
     install-packages nagios hdp_mon_nagios_addons
 }
 
 
-function install_fping()
-{
+function install_fping {
     install-packages fping
 }
 
 
-function install_perl_libraries()
-{
+function install_perl_libraries {
     install-packages perl-Digest-SHA1 perl-Digest-HMAC perl-Crypt-DES perl-Net-SNMP
 }
 
-function install_ambari()
-{
+function install_ambari {
     install-packages ambari-server ambari-agent ambari-log4j
 }
 
 
-function install_nss()
-{
+function install_nss {
     install-packages nss-softokn-freebl
 }
 
 
-function installHDP_1_3 ()
-{
+function installHDP_1_3 {
     # ====== INSTALL Ambari =======
     cd /tmp
     wget -nv http://s3.amazonaws.com/public-repo-1.hortonworks.com/ambari/centos6/1.x/updates/1.4.3.38/ambari.repo -O /etc/yum.repos.d/ambari.repo
@@ -101,8 +93,7 @@ function installHDP_1_3 ()
 }
 
 
-function installHDP_2_0 ()
-{
+function installHDP_2_0 {
     install-packages net-snmp net-snmp-utils
 
     # ====== INSTALL Ambari =======
@@ -169,4 +160,3 @@ else
         exit 1
     fi
 fi
-

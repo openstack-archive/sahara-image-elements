@@ -3,8 +3,8 @@
 set -eux
 
 if [ $(lsb_release -is) = 'Ubuntu' ]; then
-   export DEBIAN_FRONTEND=noninteractive
-   export RUNLEVEL=1
+    export DEBIAN_FRONTEND=noninteractive
+    export RUNLEVEL=1
 fi
 
 install-packages cloudera-manager-agent \

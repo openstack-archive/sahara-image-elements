@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ -z "$DIB_PASSWORD" ]; then
-   echo "Error during setup password for root"
-   exit 1
+    echo "Error during setup password for root"
+    exit 1
 fi
 sed -i "s/disable_root: true/disable_root: false/" /etc/cloud/cloud.cfg
 install-packages augeas-tools openssh-server openssh-client

@@ -1,7 +1,6 @@
 #!/bin/bash
 
-if [ -z "$SAHARA_ELEMENTS_COMMIT_ID" -o -z "$DIB_COMMIT_ID" ]
-then
+if [ -z "$SAHARA_ELEMENTS_COMMIT_ID" -o -z "$DIB_COMMIT_ID" ]; then
     echo "Both SAHARA_ELEMENTS_COMMIT_ID and DIB_COMMIT_ID must be specified, exiting"
     exit 3
 else

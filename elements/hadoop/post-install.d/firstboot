@@ -1,44 +1,41 @@
 #!/bin/bash
 
-function firstboot_common()
-{
+function firstboot_common {
     distro=$(lsb_release -is || :)
     case "$distro" in
-       Ubuntu )
-          mkdir -p /home/ubuntu/.ssh
-          touch /home/ubuntu/.ssh/authorized_keys
-          chown -R ubuntu:ubuntu /home/ubuntu
-       ;;
-       Fedora )
-          sleep 20
-          rm /etc/resolv.conf
-          service network restart
-          if [ $(lsb_release -rs) -ge '19' ]; then
-             user=fedora
-          else
-             user=ec2-user
-          fi
-          until [[ -n $(grep "$user:" /etc/passwd) && -n $(cat /etc/group | grep "$user:") ]];
-          do
-             sleep 1
-          done
-          chown -R $user:$user /home/$user
-       ;;
-       CentOS )
-          chown -R cloud-user:cloud-user /home/cloud-user
-       ;;
-       * )
-          echo "Unknown distro: $distro. Exiting."
-          exit 1
-       ;;
+        Ubuntu )
+            mkdir -p /home/ubuntu/.ssh
+            touch /home/ubuntu/.ssh/authorized_keys
+            chown -R ubuntu:ubuntu /home/ubuntu
+        ;;
+        Fedora )
+            sleep 20
+            rm /etc/resolv.conf
+            service network restart
+            if [ $(lsb_release -rs) -ge '19' ]; then
+                user=fedora
+            else
+                user=ec2-user
+            fi
+            until [[ -n $(grep "$user:" /etc/passwd) && -n $(cat /etc/group | grep "$user:") ]]; do
+                sleep 1
+            done
+            chown -R $user:$user /home/$user
+        ;;
+        CentOS )
+            chown -R cloud-user:cloud-user /home/cloud-user
+        ;;
+        * )
+            echo "Unknown distro: $distro. Exiting."
+            exit 1
+        ;;
     esac
 
     mkdir -p /mnt/log/hadoop
     chown hadoop:hadoop /mnt/log/hadoop
 }
 
-function firstboot_hadoop_v1()
-{
+function firstboot_hadoop_v1 {
     distro=$(lsb_release -is || :)
     case "$distro" in
         Ubuntu )
@@ -71,20 +68,19 @@ DIB_HADOOP_VERSION=$(hadoop version | head -1 | awk '{print $2}')
 
 firstboot_common
 
-if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]];
-then
+if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]]; then
     firstboot_hadoop_v1
 fi
 
 # Clean
 if [ "$distro" == "Ubuntu" ]; then
-  if [ -f /etc/rc.local.old ]; then
-    mv /etc/rc.local.old /etc/rc.local
-  fi
+    if [ -f /etc/rc.local.old ]; then
+        mv /etc/rc.local.old /etc/rc.local
+    fi
 else
-  if [ -f /etc/rc.d/rc.local.old ]; then
-    mv /etc/rc.d/rc.local.old /etc/rc.d/rc.local
-  fi
+    if [ -f /etc/rc.d/rc.local.old ]; then
+        mv /etc/rc.d/rc.local.old /etc/rc.d/rc.local
+    fi
 fi
 
 exit 0

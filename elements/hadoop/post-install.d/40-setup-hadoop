@@ -7,8 +7,7 @@
 # HADOOP-9777 is resolved.
 #   https://issues.apache.org/jira/browse/HADOOP-9777
 
-function download_hadoop_package()
-{
+function download_hadoop_package {
     echo "Hadoop version $DIB_HADOOP_VERSION will be injected into image. Starting the download"
     install-packages wget
     wget -P $tmp_dir "http://archive.apache.org/dist/hadoop/core/hadoop-$DIB_HADOOP_VERSION/$package"
@@ -18,8 +17,7 @@ function download_hadoop_package()
     fi
 }
 
-function find_java_home()
-{
+function find_java_home {
     JAVA_HOME=$(find $TARGET_ROOT$JAVA_TARGET_LOCATION/ -maxdepth 1 -name "jdk*")
 
     if [ -z "$JAVA_HOME" ]; then
@@ -34,8 +32,7 @@ function find_java_home()
     fi
 }
 
-function install_hadoop_v1()
-{
+function install_hadoop_v1 {
     case "$distro" in
         Ubuntu )
             package="hadoop_$DIB_HADOOP_VERSION-1_x86_64.deb"
@@ -75,24 +72,23 @@ HADOOP_HOME=/usr/share/hadoop/
 EOF
 
     sed -i -e "s,export JAVA_HOME=.*,export JAVA_HOME=$JAVA_HOME," \
-           -e "s,export HADOOP_LOG_DIR=.*,export HADOOP_LOG_DIR=/mnt/log/hadoop/\$USER," \
-           -e "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=/mnt/log/hadoop/hdfs," \
+        -e "s,export HADOOP_LOG_DIR=.*,export HADOOP_LOG_DIR=/mnt/log/hadoop/\$USER," \
+        -e "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=/mnt/log/hadoop/hdfs," \
         /etc/hadoop/hadoop-env.sh
 }
 
 
-function install_hadoop_v2()
-{
+function install_hadoop_v2 {
     case "$DIB_HADOOP_VERSION" in
         "2.3.0")
-             hadoop_native_libs_url="${HADOOP_V2_3_NATIVE_LIBS_DOWNLOAD_URL}"
+            hadoop_native_libs_url="${HADOOP_V2_3_NATIVE_LIBS_DOWNLOAD_URL}"
         ;;
         "2.4.1")
-             hadoop_native_libs_url="${HADOOP_V2_4_NATIVE_LIBS_DOWNLOAD_URL}"
+            hadoop_native_libs_url="${HADOOP_V2_4_NATIVE_LIBS_DOWNLOAD_URL}"
         ;;
         *)
-             echo "Invalid DIB_HADOOP_VERSION: $DIB_HADOOP_VERSION"
-             exit 1
+            echo "Invalid DIB_HADOOP_VERSION: $DIB_HADOOP_VERSION"
+            exit 1
         ;;
     esac
 
@@ -131,12 +127,12 @@ export HADOOP_MAPRED_HOME=\$HADOOP_COMMON_HOME
 EOF
 
     sed -i -e "s,export JAVA_HOME=.*,export JAVA_HOME=$JAVA_HOME," \
-           -e "s,\#export HADOOP_LOG_DIR=.*,export HADOOP_LOG_DIR=/mnt/log/hadoop/\$USER," \
-           -e "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=/mnt/log/hadoop/hdfs," \
+        -e "s,\#export HADOOP_LOG_DIR=.*,export HADOOP_LOG_DIR=/mnt/log/hadoop/\$USER," \
+        -e "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=/mnt/log/hadoop/hdfs," \
         $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 
     sed -i -e "s,\# export JAVA_HOME=.*,export JAVA_HOME=$JAVA_HOME," \
-           -e "s,YARN_LOG_DIR=.*,YARN_LOG_DIR=/mnt/log/hadoop/yarn," \
+        -e "s,YARN_LOG_DIR=.*,YARN_LOG_DIR=/mnt/log/hadoop/yarn," \
         $HADOOP_HOME/etc/hadoop/yarn-env.sh
 
     # enable swiftfs
@@ -145,8 +141,8 @@ EOF
 
 distro=$(lsb_release -is || :)
 if [ ! "$distro" == "Fedora" -a ! "$distro" == "Ubuntu" -a ! "$distro" == "RedHatEnterpriseServer" -a ! "$distro" == "CentOS" ]; then
-   echo "Unknown distro: $distro. Exiting."
-   exit 1
+    echo "Unknown distro: $distro. Exiting."
+    exit 1
 fi
 
 echo "Hadoop setup begins for $distro"
@@ -154,14 +150,14 @@ tmp_dir=/tmp/hadoop
 
 echo "Creating hadoop user & group"
 case "$distro" in
-   Ubuntu )
-      addgroup hadoop
-      adduser --ingroup hadoop --disabled-password --gecos GECOS hadoop
-      adduser hadoop sudo
-   ;;
-   Fedora | RedHatEnterpriseServer | CentOS )
-      adduser -G adm,wheel hadoop
-   ;;
+    Ubuntu )
+        addgroup hadoop
+        adduser --ingroup hadoop --disabled-password --gecos GECOS hadoop
+        adduser hadoop sudo
+    ;;
+    Fedora | RedHatEnterpriseServer | CentOS )
+        adduser -G adm,wheel hadoop
+    ;;
 esac
 
 : ${JAVA_TARGET_LOCATION:="/usr/java"}
@@ -176,17 +172,17 @@ echo "Applying firstboot script"
 
 RC_SCRIPT_DIR=""
 if [ "$distro" == "Ubuntu" ]; then
-  # File '/etc/rc.local' may not exist
-  if [ -f "/etc/rc.local" ]; then
-    mv /etc/rc.local /etc/rc.local.old
-  fi
-  RC_SCRIPT_DIR="/etc"
+    # File '/etc/rc.local' may not exist
+    if [ -f "/etc/rc.local" ]; then
+        mv /etc/rc.local /etc/rc.local.old
+    fi
+    RC_SCRIPT_DIR="/etc"
 else
-  # File '/etc/rc.d/rc.local' may not exist
-  if [ -f "/etc/rc.d/rc.local" ]; then
-    mv /etc/rc.d/rc.local /etc/rc.d/rc.local.old
-  fi
-  RC_SCRIPT_DIR="/etc/rc.d"
+    # File '/etc/rc.d/rc.local' may not exist
+    if [ -f "/etc/rc.d/rc.local" ]; then
+        mv /etc/rc.d/rc.local /etc/rc.d/rc.local.old
+    fi
+    RC_SCRIPT_DIR="/etc/rc.d"
 fi
 
 install -D -g root -o root -m 0755 $(dirname $0)/firstboot $RC_SCRIPT_DIR/rc.local

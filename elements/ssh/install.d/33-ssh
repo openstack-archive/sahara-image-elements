@@ -20,28 +20,28 @@ augtool -s set /files/etc/ssh/ssh_config/Host/GSSAPIAuthentication no
 distro=$(lsb_release -is || :)
 echo $distro
 case "$distro" in
-   Ubuntu )
-      augtool -s set /files/etc/ssh/sshd_config/GSSAPICleanupCredentials yes
-      augtool -s set /files/etc/ssh/sshd_config/AuthorizedKeysFile %h/.ssh/authorized_keys
-   ;;
-   Fedora )
-      sed -i 's/ssh_pwauth:   0/ssh_pwauth:   1/' /etc/cloud/cloud.cfg
-      augtool -s clear /files/etc/sudoers/Defaults[type=':nrpe']/requiretty/negate
-      augtool -s set /files/etc/ssh/sshd_config/SyslogFacility AUTH
-      augtool -s set /files/etc/ssh/sshd_config/StrictModes yes
-      augtool -s set /files/etc/ssh/sshd_config/RSAAuthentication yes
-      augtool -s set /files/etc/ssh/sshd_config/PubkeyAuthentication yes
-   ;;
-   RedHatEnterpriseServer | CentOS )
-      sed -i 's/ssh_pwauth:   0/ssh_pwauth:   1/' /etc/cloud/cloud.cfg
-      augtool -s clear /files/etc/sudoers/Defaults[type=':nrpe']/requiretty/negate
-      augtool -s set /files/etc/ssh/sshd_config/SyslogFacility AUTH
-      augtool -s set /files/etc/ssh/sshd_config/PubkeyAuthentication yes
-   ;;
-   * )
-      echo "Unknown distro: $distro, exiting"
-      exit 1
-   ;;
+    Ubuntu )
+        augtool -s set /files/etc/ssh/sshd_config/GSSAPICleanupCredentials yes
+        augtool -s set /files/etc/ssh/sshd_config/AuthorizedKeysFile %h/.ssh/authorized_keys
+    ;;
+    Fedora )
+        sed -i 's/ssh_pwauth:    0/ssh_pwauth:    1/' /etc/cloud/cloud.cfg
+        augtool -s clear /files/etc/sudoers/Defaults[type=':nrpe']/requiretty/negate
+        augtool -s set /files/etc/ssh/sshd_config/SyslogFacility AUTH
+        augtool -s set /files/etc/ssh/sshd_config/StrictModes yes
+        augtool -s set /files/etc/ssh/sshd_config/RSAAuthentication yes
+        augtool -s set /files/etc/ssh/sshd_config/PubkeyAuthentication yes
+    ;;
+    RedHatEnterpriseServer | CentOS )
+        sed -i 's/ssh_pwauth:    0/ssh_pwauth:    1/' /etc/cloud/cloud.cfg
+        augtool -s clear /files/etc/sudoers/Defaults[type=':nrpe']/requiretty/negate
+        augtool -s set /files/etc/ssh/sshd_config/SyslogFacility AUTH
+        augtool -s set /files/etc/ssh/sshd_config/PubkeyAuthentication yes
+    ;;
+    * )
+        echo "Unknown distro: $distro, exiting"
+        exit 1
+    ;;
 esac
 
 echo "End: install and configure SSH"

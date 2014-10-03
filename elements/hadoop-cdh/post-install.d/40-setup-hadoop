@@ -6,8 +6,8 @@
 
 distro=$(lsb_release -is || :)
 if [ "$distro" != "Ubuntu" ]; then
-   echo "Distro $distro not supported by CDH. Exiting."
-   exit 1
+    echo "Distro $distro not supported by CDH. Exiting."
+    exit 1
 fi
 
 echo "Hadoop CDH setup begins for $distro"
@@ -15,11 +15,11 @@ tmp_dir=/tmp/hadoop
 
 echo "Creating hadoop user & group"
 case "$distro" in
-   Ubuntu )
-      addgroup hadoop
-      adduser --ingroup hadoop --disabled-password --gecos GECOS hadoop
-      adduser hadoop sudo
-   ;;
+    Ubuntu )
+        addgroup hadoop
+        adduser --ingroup hadoop --disabled-password --gecos GECOS hadoop
+        adduser hadoop sudo
+    ;;
 esac
 
 echo "CDH 4 will be injected into image. Starting the download"
@@ -28,8 +28,8 @@ install-packages wget
 # Here more versions of CDH could be supported by downloading the right repository package.
 wget -P $tmp_dir "http://archive.cloudera.com/cdh4/one-click-install/precise/amd64/cdh4-repository_1.0_all.deb"
 if [ $? -ne 0 ]; then
-   echo -e "Could not find CDH 4.\nAborting"
-   exit 1
+    echo -e "Could not find CDH 4.\nAborting"
+    exit 1
 fi
 
 # Pin packages from cloudera repository
@@ -40,13 +40,13 @@ Pin-Priority: 800
 EOF
 
 case "$distro" in
-   Ubuntu )
-      dpkg -i $tmp_dir/cdh4-repository_1.0_all.deb
-      curl -s http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh/archive.key | sudo apt-key add -
-      sudo apt-get update
-      # Here the script could be expanded to install all CDH packages and not only HDFS.
-      install-packages hadoop-hdfs-namenode hadoop-hdfs-datanode
-   ;;
+    Ubuntu )
+        dpkg -i $tmp_dir/cdh4-repository_1.0_all.deb
+        curl -s http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh/archive.key | sudo apt-key add -
+        sudo apt-get update
+        # Here the script could be expanded to install all CDH packages and not only HDFS.
+        install-packages hadoop-hdfs-namenode hadoop-hdfs-datanode
+    ;;
 esac
 rm -r $tmp_dir
 
@@ -57,11 +57,11 @@ echo "Pre-configuring Hadoop"
 JAVA_HOME=$(find $TARGET_ROOT$JAVA_TARGET_LOCATION/ -maxdepth 1 -name "jdk*")
 
 if [ -z "$JAVA_HOME" ]; then
-   case "$distro" in
-      Ubuntu)
-         JAVA_HOME=$(readlink -e /usr/bin/java | sed "s:bin/java::")
-      ;;
-   esac
+    case "$distro" in
+        Ubuntu)
+            JAVA_HOME=$(readlink -e /usr/bin/java | sed "s:bin/java::")
+        ;;
+    esac
 fi
 
 cat >> /home/hadoop/.bashrc <<EOF
