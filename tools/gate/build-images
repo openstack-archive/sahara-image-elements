@@ -1,0 +1,5 @@
+#!/bin/bash -xe
+
+PLUGIN=$1
+
+sudo ./diskimage-create/diskimage-create.sh -p $PLUGIN
