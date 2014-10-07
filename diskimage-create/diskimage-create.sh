@@ -21,7 +21,7 @@ usage() {
   echo "         [-d]"
   echo "         [-m]"
   echo "   '-p' is plugin version (default: all plugins)"
-  echo "   '-i' is image type (default: all supported by plugin)"
+  echo "   '-i' is operating system of the base image (default: all supported by plugin)"
   echo "   '-v' is hadoop version (default: all supported by plugin)"
   echo "   '-d' enable debug mode, root account will have password 'hadoop'"
   echo "   '-m' set the diskimage-builder repo to the master branch (default: $DEFAULT_DIB_REPO_BRANCH)"
@@ -41,7 +41,7 @@ while getopts "p:i:v:dm" opt; do
       PLUGIN=$OPTARG
     ;;
     i)
-      IMAGE_TYPE=$OPTARG
+      BASE_IMAGE_OS=$OPTARG
      ;;
     v)
       HADOOP_VERSION=$OPTARG
@@ -95,7 +95,7 @@ if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN"
   exit 1
 fi
 
-if [ -n "$IMAGE_TYPE" -a "$IMAGE_TYPE" != "ubuntu" -a "$IMAGE_TYPE" != "fedora" -a "$IMAGE_TYPE" != "centos" ]; then
+if [ -n "$BASE_IMAGE_OS" -a "$BASE_IMAGE_OS" != "ubuntu" -a "$BASE_IMAGE_OS" != "fedora" -a "$BASE_IMAGE_OS" != "centos" ]; then
   echo -e "Unknown image type selected.\nAborting"
   exit 1
 fi
@@ -112,7 +112,7 @@ if [ "$PLUGIN" = "vanilla" -a "$HADOOP_VERSION" = "plain" ]; then
   exit 1
 fi
 
-if [ "$PLUGIN" = "cloudera" -a "$IMAGE_TYPE" = "fedora" ]; then
+if [ "$PLUGIN" = "cloudera" -a "$BASE_IMAGE_OS" = "fedora" ]; then
   echo "Impossible combination.\nAborting"
   exit 1
 fi
@@ -228,7 +228,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   fi
 
   # Ubuntu cloud image
-  if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "ubuntu" ]; then
+  if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
       export ubuntu_image_name=${ubuntu_vanilla_hadoop_1_image_name:-"ubuntu_sahara_vanilla_hadoop_1_latest"}
@@ -251,7 +251,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   fi
 
   # Fedora cloud image
-  if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "fedora" ]; then
+  if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "fedora" ]; then
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
       export fedora_image_name=${fedora_vanilla_hadoop_1_image_name:-"fedora_sahara_vanilla_hadoop_1_latest$suffix"}
@@ -276,7 +276,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   # CentOS cloud image:
   # - Disable including 'base' element for CentOS
   # - Export link and filename for CentOS cloud image to download
-  if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "centos" ]; then
+  if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
     # Read Create_CentOS_cloud_image.rst to know how to create CentOS image in qcow2 format
     export BASE_IMAGE_FILE="CentOS-6.5-cloud-init-20140930.qcow2"
     export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
@@ -433,7 +433,7 @@ fi
 if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
   echo "For cloudera plugin option -v is ignored"
 
-  if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "ubuntu" ]; then
+  if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
     cloudera_ubuntu_image_name=${cloudera_ubuntu_image_name:-ubuntu_sahara_cloudera_latest}
     cloudera_elements_sequence="base vm ubuntu hadoop-cloudera"
 
@@ -449,7 +449,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
     unset DIB_RELEASE
   fi
 
-  if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "centos" ]; then
+  if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
     # CentOS cloud image:
     # - Disable including 'base' element for CentOS
     # - Export link and filename for CentOS cloud image to download

@@ -35,7 +35,7 @@ NOTE: Do not create all images for all plugins with the same mirrors. Different 
 
   sudo bash sahara-image-elements/diskimage-create/diskimage-create.sh -v [1|2|plain]
 
-6. To select which image type to target use the '-i' commandline option like this:
+6. To select which operating system to target use the '-i' commandline option like this:
 
 .. sourcecode:: bash
 
