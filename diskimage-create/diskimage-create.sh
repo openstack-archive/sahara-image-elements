@@ -12,6 +12,9 @@ DEBUG_MODE="false"
 # The default tag to use for the DIB repo
 DEFAULT_DIB_REPO_BRANCH="0.1.29"
 
+# Default list of datasource modules for ubuntu. Workaround for bug #1375645
+export CLOUD_INIT_DATASOURCES=${DIB_CLOUD_INIT_DATASOURCES:-"NoCloud, ConfigDrive, OVF, MAAS, Ec2"}
+
 usage() {
   echo
   echo "Usage: $(basename $0)"
@@ -229,6 +232,8 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
 
   # Ubuntu cloud image
   if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
+    export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
+
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
       export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
       export ubuntu_image_name=${ubuntu_vanilla_hadoop_1_image_name:-"ubuntu_sahara_vanilla_hadoop_1_latest"}
@@ -248,6 +253,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
       disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
       mv $ubuntu_image_name.qcow2 ../
     fi
+    unset DIB_CLOUD_INIT_DATASOURCES
   fi
 
   # Fedora cloud image
@@ -308,6 +314,8 @@ fi
 ##########################
 
 if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
+  export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
+
   # Ignoring image type and hadoop version options
   echo "For spark plugin options -i and -v are ignored"
 
@@ -324,6 +332,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
   # Creating Ubuntu cloud image
   disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
   mv $ubuntu_image_name.qcow2 ../
+  unset DIB_CLOUD_INIT_DATASOURCES
 fi
 
 
@@ -332,6 +341,8 @@ fi
 ##########################
 
 if [ -z "$PLUGIN" -o "$PLUGIN" = "storm" ]; then
+  export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
+
   # Ignoring image type and hadoop version options
   echo "For storm plugin options -i and -v are ignored"
 
@@ -348,6 +359,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "storm" ]; then
   # Creating Ubuntu cloud image
   disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
   mv $ubuntu_image_name.qcow2 ../
+  unset DIB_CLOUD_INIT_DATASOURCES
 fi
 #########################
 # Images for HDP plugin #

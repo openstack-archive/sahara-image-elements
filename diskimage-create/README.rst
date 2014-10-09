@@ -58,6 +58,10 @@ Resizing disk space during firstboot on that images fails with errors (https://b
 
 For all another images parameter DIB_IMAGE_SIZE will be unset.
 
+`DIB_CLOUD_INIT_DATASOURCES` contains a growing collection of data source modules and most are enabled by default.  This causes cloud-init to query each data source
+on first boot.  This can cause delays or even boot problems depending on your environment.
+You must define `DIB_CLOUD_INIT_DATASOURCES` as a comma-separated list of valid data sources to limit the data sources that will be queried for metadata on first boot.
+
 
 For developers:
 
