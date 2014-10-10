@@ -19,7 +19,9 @@ hadoop-yarn-resourcemanager \
 hadoop-yarn-nodemanager \
 hadoop-mapreduce \
 hadoop-mapreduce-historyserver \
-oozie
+oozie \
+hive-metastore \
+hive-server2
 
 if [ $(lsb_release -is) = 'Ubuntu' ]; then
     unset RUNLEVEL
