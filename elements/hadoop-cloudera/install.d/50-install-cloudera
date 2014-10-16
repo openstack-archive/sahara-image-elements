@@ -7,21 +7,23 @@ if [ $(lsb_release -is) = 'Ubuntu' ]; then
     export RUNLEVEL=1
 fi
 
-install-packages cloudera-manager-agent \
-cloudera-manager-daemons \
-oracle-j2sdk1.7 \
-cloudera-manager-server \
-cloudera-manager-server-db-2 \
-hadoop-hdfs-namenode \
-hadoop-hdfs-secondarynamenode \
-hadoop-hdfs-datanode \
-hadoop-yarn-resourcemanager \
-hadoop-yarn-nodemanager \
-hadoop-mapreduce \
-hadoop-mapreduce-historyserver \
-oozie \
-hive-metastore \
-hive-server2
+install-packages \
+    cloudera-manager-agent \
+    cloudera-manager-daemons \
+    cloudera-manager-server \
+    cloudera-manager-server-db-2 \
+    hadoop-hdfs-datanode \
+    hadoop-hdfs-namenode \
+    hadoop-hdfs-secondarynamenode \
+    hadoop-mapreduce \
+    hadoop-mapreduce-historyserver \
+    hadoop-yarn-nodemanager \
+    hadoop-yarn-resourcemanager \
+    hive-metastore \
+    hive-server2 \
+    hue \
+    oozie \
+    oracle-j2sdk1.7
 
 if [ $(lsb_release -is) = 'Ubuntu' ]; then
     unset RUNLEVEL
