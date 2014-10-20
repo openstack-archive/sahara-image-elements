@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+install-packages wget unzip
+
+OOZIE_WEBAPP_DIRECTORY="${TARGET_ROOT}/var/lib/oozie"
+EXTJS_FILENAME=$(basename $EXTJS_DOWNLOAD_URL)
+pushd $OOZIE_WEBAPP_DIRECTORY
+wget "$EXTJS_DOWNLOAD_URL"
+unzip $EXTJS_FILENAME
+popd

@@ -444,7 +444,7 @@ fi
 
 if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
     echo "For cloudera plugin option -v is ignored"
-
+    export EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://extjs.com/deploy/ext-2.2.zip"}
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         cloudera_ubuntu_image_name=${cloudera_ubuntu_image_name:-ubuntu_sahara_cloudera_latest}
         cloudera_elements_sequence="base vm ubuntu hadoop-cloudera"
@@ -480,6 +480,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
 
         unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
     fi
+    unset EXTJS_DOWNLOAD_URL
 fi
 
 popd # out of $TEMP
