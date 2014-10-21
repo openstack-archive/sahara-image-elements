@@ -257,7 +257,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     fi
 
     # Fedora cloud image
-    if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "fedora" ]; then
+    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "fedora" ]; then
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
             export fedora_image_name=${fedora_vanilla_hadoop_1_image_name:-"fedora_sahara_vanilla_hadoop_1_latest$suffix"}
@@ -282,7 +282,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     # CentOS cloud image:
     # - Disable including 'base' element for CentOS
     # - Export link and filename for CentOS cloud image to download
-    if [ -z "$IMAGE_TYPE" -o "$IMAGE_TYPE" = "centos" ]; then
+    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
         # Read Create_CentOS_cloud_image.rst to know how to create CentOS image in qcow2 format
         export BASE_IMAGE_FILE="CentOS-6.5-cloud-init-20140930.qcow2"
         export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
