@@ -23,7 +23,8 @@ install-packages \
     hive-server2 \
     hue \
     oozie \
-    oracle-j2sdk1.7
+    oracle-j2sdk1.7 \
+    spark-history-server
 
 if [ $(lsb_release -is) = 'Ubuntu' ]; then
     unset RUNLEVEL
