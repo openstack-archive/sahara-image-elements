@@ -6,30 +6,6 @@ install-packages wget unzip build-essential uuid-dev git libtool autoconf pkg-co
 
 tmp_dir=/tmp
 
-cd $tmp_dir
-echo "Installing ZeroMQ"
-wget http://download.zeromq.org/zeromq-2.1.7.tar.gz
-tar -xzf zeromq-2.1.7.tar.gz
-cd zeromq-2.1.7
-./configure
-make
-make install
-cd ..
-
-echo "Installing JZMQ"
-git clone https://github.com/nathanmarz/jzmq.git
-
-cd jzmq/src
-touch classdist_noinst.stamp
-CLASSPATH=.:./.:$CLASSPATH javac -d . org/zeromq/ZMQ.java org/zeromq/ZMQException.java org/zeromq/ZMQQueue.java org/zeromq/ZMQForwarder.java org/zeromq/ZMQStreamer.java
-cd ..
-
-cd $tmp_dir/jzmq
-./autogen.sh
-./configure
-make
-make install
-
 echo "Creating Storm User"
 groupadd -g 53001 storm
 mkdir -p /app/home/storm
