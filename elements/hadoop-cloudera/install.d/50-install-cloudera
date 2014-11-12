@@ -19,6 +19,7 @@ install-packages \
     hadoop-mapreduce-historyserver \
     hadoop-yarn-nodemanager \
     hadoop-yarn-resourcemanager \
+    hbase \
     hive-metastore \
     hive-server2 \
     hue \
