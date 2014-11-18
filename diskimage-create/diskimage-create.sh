@@ -128,6 +128,8 @@ if [ "$platform" = 'NAME="Ubuntu"' ]; then
 elif [ "$platform" = 'NAME=Fedora' ]; then
     yum update -y
     yum install qemu kpartx git -y
+elif [ "$platform" = 'NAME=openSUSE' ]; then
+    zypper --non-interactive --gpg-auto-import-keys in kpartx qemu git-core
 else
     # centos or rhel
     yum update -y
