@@ -350,7 +350,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "storm" ]; then
 
     export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz"}
     export DIB_STORM_VERSION=${DIB_STORM_VERSION:-0.9.1}
-    export ubuntu_image_name=${ubuntu_storm_image_name:-"ubuntu_sahara_storm_latest"}
+    export ubuntu_image_name=${ubuntu_storm_image_name:-"ubuntu_sahara_storm_latest_$DIB_STORM_VERSION"}
 
     ubuntu_elements_sequence="base vm ubuntu java zookeeper storm"
 
