@@ -204,7 +204,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
 
     ubuntu_elements_sequence="base vm ubuntu hadoop oozie mysql"
-    fedora_elements_sequence="base vm fedora hadoop oozie mysql disable-firewall"
+    fedora_elements_sequence="base vm fedora redhat-lsb hadoop oozie mysql disable-firewall"
     centos_elements_sequence="vm rhel hadoop oozie mysql redhat-lsb disable-firewall"
 
     if [ "$DEBUG_MODE" = "true" ]; then
