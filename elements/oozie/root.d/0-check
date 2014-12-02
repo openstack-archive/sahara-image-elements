@@ -16,6 +16,11 @@ elif [ "$DIB_HADOOP_VERSION" == "2.4.1" ]; then
         echo "OOZIE_HADOOP_V2_4_FILE and OOZIE_HADOOP_V2_4_DOWNLOAD_URL are not set. Impossible to install Oozie. Exit"
         exit 1
     fi
+elif [ "$DIB_HADOOP_VERSION" == "2.6.0" ]; then
+    if [ -z "$OOZIE_HADOOP_V2_6_DOWNLOAD_URL" -a -z "$OOZIE_HADOOP_V2_6_FILE" ]; then
+        echo "OOZIE_HADOOP_V2_6_FILE and OOZIE_HADOOP_V2_6_DOWNLOAD_URL are not set. Impossible to install Oozie. Exit"
+        exit 1
+    fi
 else
     echo "Unknown Hadoop version selected. Aborting"
     exit 1
