@@ -165,7 +165,7 @@ else
     yum install qemu-kvm qemu-img kpartx git -y
     if [ ${platform:0:6} = "CentOS" ]; then
         # install EPEL repo, in order to install argparse
-        sudo rpm -Uvh --force http://mirrors.kernel.org/fedora-epel/6/i386/epel-release-6-8.noarch.rpm
+        sudo rpm -Uvh --force http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
         # CentOS requires the python-argparse package be installed separately
         yum install python-argparse -y
     fi
