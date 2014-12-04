@@ -28,8 +28,7 @@ install-packages bind-utils
 
 cd /tmp
 # ====== EPEL =======
-wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-rpm -Uvh epel-release-6*.rpm
+rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 
 #install cloud-inint which is necessary for all images
 install-packages cloud-init
