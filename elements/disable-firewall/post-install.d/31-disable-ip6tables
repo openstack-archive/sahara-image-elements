@@ -4,5 +4,3 @@ if which service; then
     service ip6tables save
     chkconfig ip6tables off
 fi
-
-: # continue without error
