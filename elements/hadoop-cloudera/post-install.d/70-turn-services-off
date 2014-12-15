@@ -13,9 +13,11 @@ hadoop-yarn-nodemanager \
 hadoop-yarn-resourcemanager \
 hive-metastore \
 hive-server2 \
+hive-webhcat-server \
 hue \
 oozie \
 postgresql \
+solr-server \
 spark-history-server
 do
     if [ $(lsb_release -is) = 'Ubuntu' ]; then

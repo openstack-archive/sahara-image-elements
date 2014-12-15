@@ -12,6 +12,7 @@ install-packages \
     cloudera-manager-daemons \
     cloudera-manager-server \
     cloudera-manager-server-db-2 \
+    flume-ng \
     hadoop-hdfs-datanode \
     hadoop-hdfs-namenode \
     hadoop-hdfs-secondarynamenode \
@@ -20,13 +21,24 @@ install-packages \
     hadoop-yarn-nodemanager \
     hadoop-yarn-resourcemanager \
     hbase \
+    hbase-solr \
+    hive-hcatalog \
     hive-metastore \
     hive-server2 \
+    hive-webhcat-server \
     hue \
+    impala \
+    impala-server \
+    impala-state-store \
+    impala-catalog \
     ntp \
     oozie \
     oracle-j2sdk1.7 \
-    spark-history-server
+    sentry \
+    solr-server \
+    spark-history-server \
+    sqoop2 \
+    zookeeper
 
 if [ $(lsb_release -is) = 'Ubuntu' ]; then
     unset RUNLEVEL
