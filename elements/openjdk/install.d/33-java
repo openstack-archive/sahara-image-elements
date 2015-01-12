@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -e
+
+echo "Installing OpenJDK"
+
+distro=$(lsb_release -is || :)
+
+case "$distro" in
+    Ubuntu )
+        install-packages openjdk-7-jre
+        JAVA_PATH=$(update-alternatives --list java)
+        JAVA_HOME=${JAVA_PATH%/bin/java}
+    ;;
+    Fedora | RedHatEnterpriseServer | CentOS )
+        install-packages java-1.7.0-openjdk
+        JAVA_HOME=$(rpm -E "%{java_home}")
+    ;;
+esac
+
+echo "JAVA_HOME=$JAVA_HOME" >> $TARGET_ROOT/etc/environment
+
+echo "OpenJDK has been installed"
