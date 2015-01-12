@@ -55,24 +55,10 @@ rm -r $tmp_dir
 
 echo "Pre-configuring Hadoop"
 
-: ${JAVA_TARGET_LOCATION:="/usr/java"}
-# Find JAVA_HOME...
-JAVA_HOME=$(find $TARGET_ROOT$JAVA_TARGET_LOCATION/ -maxdepth 1 -name "jdk*")
-
-if [ -z "$JAVA_HOME" ]; then
-    case "$DISTRO_NAME" in
-        ubuntu)
-            JAVA_HOME=$(readlink -e /usr/bin/java | sed "s:bin/java::")
-        ;;
-    esac
-fi
-
 cat >> /home/hadoop/.bashrc <<EOF
-PATH=$PATH:/usr/sbin:$JAVA_HOME/bin
-JAVA_HOME=$JAVA_HOME
+PATH=$PATH:/usr/sbin
 EOF
 cat >> /etc/hadoop/hadoop-env.sh <<EOF
-export JAVA_HOME=$JAVA_HOME
 export HADOOP_LOG_DIR=/mnt/log/hadoop/\$USER
 export HADOOP_SECURE_DN_LOG_DIR=/mnt/log/hadoop/hdfs
 EOF

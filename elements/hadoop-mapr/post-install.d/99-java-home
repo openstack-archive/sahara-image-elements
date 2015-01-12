@@ -1,9 +1,0 @@
-#!/bin/bash
-
-if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
-    set -x
-fi
-set -eu
-
-echo "/etc/profile.d/java.sh" >> /etc/ssh/sshrc
-chmod 775 /etc/profile.d/java.sh

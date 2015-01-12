@@ -292,16 +292,15 @@ fi
 #############################
 
 if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
-    export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz"}
     export OOZIE_HADOOP_V1_DOWNLOAD_URL=${OOZIE_HADOOP_V1_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/oozie-4.0.0.tar.gz"}
     export OOZIE_HADOOP_V2_6_DOWNLOAD_URL=${OOZIE_HADOOP_V2_6_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/oozie-4.0.1-hadoop-2.6.0.tar.gz"}
     export HADOOP_V2_6_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_6_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-native-libs-2.6.0.tar.gz"}
     export EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://extjs.com/deploy/ext-2.2.zip"}
     export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
 
-    ubuntu_elements_sequence="base vm ubuntu hadoop oozie mysql hive"
-    fedora_elements_sequence="base vm fedora redhat-lsb hadoop oozie mysql disable-firewall hive updater"
-    centos_elements_sequence="vm rhel hadoop oozie mysql redhat-lsb disable-firewall hive updater"
+    ubuntu_elements_sequence="base vm ubuntu hadoop oozie mysql hive oracle-java"
+    fedora_elements_sequence="base vm fedora redhat-lsb hadoop oozie mysql disable-firewall hive oracle-java updater"
+    centos_elements_sequence="vm rhel hadoop oozie mysql redhat-lsb disable-firewall hive oracle-java updater"
 
     if [ "$DEBUG_MODE" = "true" ]; then
         ubuntu_elements_sequence="$ubuntu_elements_sequence root-passwd"
@@ -404,11 +403,10 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
     # Ignoring image type and hadoop version options
     echo "For spark plugin options -i and -v are ignored"
 
-    export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz"}
     export DIB_HADOOP_VERSION="CDH4"
     export ubuntu_image_name=${ubuntu_spark_image_name:-"ubuntu_sahara_spark_latest"}
 
-    ubuntu_elements_sequence="base vm ubuntu java hadoop-cdh swift_hadoop spark"
+    ubuntu_elements_sequence="base vm ubuntu oracle-java hadoop-cdh swift_hadoop spark"
 
     if [ -n "$USE_MIRRORS" ]; then
         [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
@@ -432,11 +430,10 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "storm" ]; then
     # Ignoring image type and hadoop version options
     echo "For storm plugin options -i and -v are ignored"
 
-    export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz"}
     export DIB_STORM_VERSION=${DIB_STORM_VERSION:-0.9.1}
     export ubuntu_image_name=${ubuntu_storm_image_name:-"ubuntu_sahara_storm_latest_$DIB_STORM_VERSION"}
 
-    ubuntu_elements_sequence="base vm ubuntu java zookeeper storm"
+    ubuntu_elements_sequence="base vm ubuntu oracle-java zookeeper storm"
 
     if [ -n "$USE_MIRRORS" ]; then
         [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
@@ -465,10 +462,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20141118.qcow2"
     export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
 
-    # Setup Java Install configuration for the HDP images
-    export JAVA_TARGET_LOCATION=/opt
-    export JAVA_DOWNLOAD_URL=https://s3.amazonaws.com/public-repo-1.hortonworks.com/ARTIFACTS/jdk-6u31-linux-x64.bin
-
     # No registration for RHEL-based distros
     export REG_METHOD=disable
     # Workaround for https://review.openstack.org/#/c/162239/
@@ -478,7 +471,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
         export centos_image_name_hdp_1_3=${centos_hdp_hadoop_1_image_name:-"centos-6_5-64-hdp-1-3"}
         # Elements to include in an HDP-based image
-        centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb yum updater"
+        centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb yum oracle-java updater"
         if [ "$DEBUG_MODE" = "true" ]; then
             # enable the root-pwd element, for simpler local debugging of images
             centos_elements_sequence=$centos_elements_sequence" root-passwd"
@@ -497,7 +490,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
         export centos_image_name_hdp_2_0=${centos_hdp_hadoop_2_image_name:-"centos-6_5-64-hdp-2-0"}
         # Elements to include in an HDP-based image
-        centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb yum updater"
+        centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb yum oracle-java updater"
         if    [ "$DEBUG_MODE" = "true" ]; then
             # enable the root-pwd element, for simpler local debugging of images
             centos_elements_sequence=$centos_elements_sequence" root-passwd"
@@ -516,7 +509,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "plain" ]; then
         export centos_image_name_plain=${centos_hdp_plain_image_name:-"centos-6_5-64-plain"}
         # Elements for a plain CentOS image that does not contain HDP or Apache Hadoop
-        centos_plain_elements_sequence="vm rhel redhat-lsb disable-firewall disable-selinux ssh sahara-version yum"
+        centos_plain_elements_sequence="vm rhel redhat-lsb disable-firewall disable-selinux ssh sahara-version yum oracle-java"
         if [ "$DEBUG_MODE" = "true" ]; then
             # enable the root-pwd element, for simpler local debugging of images
             centos_plain_elements_sequence=$centos_plain_elements_sequence" root-passwd"
@@ -635,10 +628,8 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
     #MapR repository requires additional space
     export DIB_MIN_TMPFS=10
 
-    export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz"}
-
-    mapr_ubuntu_elements_sequence="base vm ssh ubuntu hadoop-mapr"
-    mapr_centos_elements_sequence="base vm rhel ssh hadoop-mapr redhat-lsb selinux-permissive updater disable-firewall"
+    mapr_ubuntu_elements_sequence="base vm ssh ubuntu hadoop-mapr oracle-java"
+    mapr_centos_elements_sequence="base vm rhel ssh hadoop-mapr redhat-lsb selinux-permissive oracle-java updater disable-firewall"
 
     if [ "$DEBUG_MODE" = "true" ]; then
         mapr_ubuntu_elements_sequence="$mapr_ubuntu_elements_sequence root-passwd"

@@ -1,0 +1,39 @@
+#!/bin/bash
+
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+SCRIPTNAME=$(basename $0)
+function usage {
+    echo "Usage: $SCRIPTNAME <jre_home> <jdk_home>"
+}
+
+if [[ $# != 2 ]]; then
+    usage
+    exit 1
+fi
+
+JRE_HOME=$1
+JDK_HOME=$2
+
+echo "JAVA_HOME=$JRE_HOME" >> $JAVA_RC
+chmod +x $JAVA_RC
+
+echo "Setting up alternatives for Java"
+
+case "$DISTRO_NAME" in
+    ubuntu )
+        update-alternatives --install "/usr/bin/java" "java" "$JRE_HOME/bin/java" 1
+        update-alternatives --install "/usr/bin/javac" "javac" "$JDK_HOME/bin/javac" 1
+
+        update-alternatives --set java $JRE_HOME/bin/java
+        update-alternatives --set javac $JDK_HOME/bin/javac
+    ;;
+    fedora | rhel | centos )
+        alternatives --install /usr/bin/java java $JRE_HOME/bin/java 200000
+        alternatives --install /usr/bin/javac javac $JDK_HOME/bin/javac 200000
+    ;;
+esac
