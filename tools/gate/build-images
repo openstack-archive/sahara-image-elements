@@ -1,5 +1,6 @@
 #!/bin/bash -xe
 
 PLUGIN=$1
+export SIM_REPO_PATH=$(pwd)
 
-sudo ./diskimage-create/diskimage-create.sh -p $PLUGIN
+sudo -E ./diskimage-create/diskimage-create.sh -p $PLUGIN
