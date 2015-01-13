@@ -1,5 +1,13 @@
 #!/bin/bash
 
+set -e
+
+distro=$(lsb_release -is)
+
+if [ "$distro" = "Fedora" ]; then
+    install-packages iptables-services
+fi
+
 if which service; then
     service iptables save
     chkconfig iptables off
