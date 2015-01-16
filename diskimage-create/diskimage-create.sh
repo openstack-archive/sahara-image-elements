@@ -365,6 +365,7 @@ fi
 ##########################
 
 if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
+    export DIB_HDFS_LIB_DIR="/usr/lib/hadoop"
     export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
 
     # Ignoring image type and hadoop version options
@@ -374,7 +375,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
     export DIB_HADOOP_VERSION="CDH4"
     export ubuntu_image_name=${ubuntu_spark_image_name:-"ubuntu_sahara_spark_latest"}
 
-    ubuntu_elements_sequence="base vm ubuntu java hadoop-cdh spark"
+    ubuntu_elements_sequence="base vm ubuntu java hadoop-cdh swift_hadoop spark"
 
     if [ -n "$USE_MIRRORS" ]; then
         [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
@@ -384,6 +385,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
     disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
     mv $ubuntu_image_name.qcow2 ../
     unset DIB_CLOUD_INIT_DATASOURCES
+    unset DIB_HDFS_LIB_DIR
 fi
 
 

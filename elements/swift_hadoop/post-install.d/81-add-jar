@@ -2,7 +2,7 @@
 
 install-packages wget
 
-HDFS_LIB_DIR="/usr/share/hadoop/lib"
+HDFS_LIB_DIR=${DIB_HDFS_LIB_DIR:-"/usr/share/hadoop/lib"}
 SWIFT_LIB_URI="http://sahara-files.mirantis.com/hadoop-swift/hadoop-swift-latest.jar"
 
 if [ -z "$swift_url" ]; then
