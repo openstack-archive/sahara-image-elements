@@ -16,9 +16,7 @@ hive-server2 \
 hive-webhcat-server \
 hue \
 oozie \
-postgresql \
-solr-server \
-spark-history-server
+postgresql
 do
     if [ $(lsb_release -is) = 'Ubuntu' ]; then
         update-rc.d -f $i remove
@@ -26,6 +24,21 @@ do
         chkconfig $i off
     fi
 done
+
+if [ $DIB_CDH_VERSION != "5.0" ]; then
+    for i in impala-catalog \
+        impala-server \
+        impala-state-store \
+        solr-server \
+        spark-history-server
+    do
+        if [ $(lsb_release -is) = 'Ubuntu' ]; then
+            update-rc.d -f $i remove
+        else
+            chkconfig $i off
+        fi
+    done
+fi
 
 if [ $(lsb_release -is) = 'CentOS' ]; then
     chkconfig iptables off
