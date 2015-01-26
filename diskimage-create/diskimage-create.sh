@@ -23,7 +23,7 @@ usage() {
     echo "Usage: $(basename $0)"
     echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr]"
     echo "         [-i ubuntu|fedora|centos]"
-    echo "         [-v 1|2|2.3|2.4|2.6|plain]"
+    echo "         [-v 1|2|2.3|2.4|2.6|5.0|5.3|plain]"
     echo "         [-r 3.1.1|4.0.1]"
     echo "         [-d]"
     echo "         [-m]"
@@ -113,8 +113,10 @@ fi
 
 if [ -n "$HADOOP_VERSION" -a "$HADOOP_VERSION" != "1" -a "$HADOOP_VERSION" != "2" -a "$HADOOP_VERSION" != "plain" ]; then
     if [ "$PLUGIN" = "vanilla" -a "$HADOOP_VERSION" != "1" -a "$HADOOP_VERSION" != "2.3" -a "$HADOOP_VERSION" != "2.4" -a "$HADOOP_VERSION" != "2.6" -a "$HADOOP_VERSION" != "plain" ]; then
-        echo -e "Unknown hadoop version selected.\nAborting"
-        exit 1
+        if [ "$PLUGIN" = "cloudera" -a "$HADOOP_VERSION" != "5.0" -a "$HADOOP_VERSION" != "5.3" ]; then
+            echo -e "Unknown hadoop version selected.\nAborting"
+            exit 1
+        fi
     fi
 fi
 
@@ -495,43 +497,86 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     unset BASE_IMAGE_FILE DIB_IMAGE_SIZE DIB_CLOUD_IMAGES
 fi
 
+#########################
+# Images for CDH plugin #
+#########################
+
 if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
-    echo "For cloudera plugin option -v is ignored"
     export EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://extjs.com/deploy/ext-2.2.zip"}
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
-        cloudera_ubuntu_image_name=${cloudera_ubuntu_image_name:-ubuntu_sahara_cloudera_latest}
-        cloudera_elements_sequence="base vm ubuntu hadoop-cloudera"
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.0" ]; then
+            cloudera_5_0_ubuntu_image_name=${cloudera_5_0_ubuntu_image_name:-ubuntu_sahara_cloudera_5_0_0}
+            cloudera_elements_sequence="base vm ubuntu hadoop-cloudera"
 
-        if [ -n "$USE_MIRRORS" ]; then
-            [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
+            if [ -n "$USE_MIRRORS" ]; then
+                [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
+            fi
+
+            # Cloudera supports only 12.04 Ubuntu
+            export DIB_CDH_VERSION="5.0"
+            export DIB_RELEASE="precise"
+            disk-image-create $cloudera_elements_sequence -o $cloudera_5_0_ubuntu_image_name
+            mv $cloudera_5_0_ubuntu_image_name.qcow2 ../
+            unset DIB_CDH_VERSION DIB_RELEASE
         fi
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.3" ]; then
+            cloudera_5_3_ubuntu_image_name=${cloudera_5_3_ubuntu_image_name:-ubuntu_sahara_cloudera_5_3_0}
+            cloudera_elements_sequence="base vm ubuntu hadoop-cloudera"
 
-        # Cloudera supports only 12.04 Ubuntu
-        export DIB_RELEASE="precise"
+            if [ -n "$USE_MIRRORS" ]; then
+                [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
+            fi
 
-        disk-image-create $cloudera_elements_sequence -o $cloudera_ubuntu_image_name
-        mv $cloudera_ubuntu_image_name.qcow2 ../
-        unset DIB_RELEASE
+            # Cloudera supports only 12.04 Ubuntu
+            export DIB_CDH_VERSION="5.3"
+            export DIB_RELEASE="precise"
+            disk-image-create $cloudera_elements_sequence -o $cloudera_5_3_ubuntu_image_name
+            mv $cloudera_5_3_ubuntu_image_name.qcow2 ../
+            unset DIB_CDH_VERSION DIB_RELEASE
+        fi
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
-        # CentOS cloud image:
-        # - Disable including 'base' element for CentOS
-        # - Export link and filename for CentOS cloud image to download
-        export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20141118.qcow2"
-        export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.0" ]; then
+            # CentOS cloud image:
+            # - Disable including 'base' element for CentOS
+            # - Export link and filename for CentOS cloud image to download
+            export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20141118.qcow2"
+            export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
+            export DIB_CDH_VERSION="5.0"
 
-        cloudera_centos_image_name=${cloudera_centos_image_name:-centos_sahara_cloudera_latest}
-        cloudera_elements_sequence="base vm rhel hadoop-cloudera redhat-lsb selinux-permissive"
+            cloudera_5_0_centos_image_name=${cloudera_5_0_centos_image_name:-centos_sahara_cloudera_5_0_0}
+            cloudera_elements_sequence="base vm rhel hadoop-cloudera redhat-lsb selinux-permissive"
 
-        if [ -n "$USE_MIRRORS"]; then
-            [ -n "$CENTOS_MIRROR" ] && cloudera_elements_sequence="$cloudera_elements_sequence centos-mirror"
+            if [ -n "$USE_MIRRORS"]; then
+                [ -n "$CENTOS_MIRROR" ] && cloudera_elements_sequence="$cloudera_elements_sequence centos-mirror"
+            fi
+
+            disk-image-create $cloudera_elements_sequence -n -o $cloudera_5_0_centos_image_name
+            mv $cloudera_5_0_centos_image_name.qcow2 ../
+
+            unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES DIB_CDH_VERSION
         fi
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.3" ]; then
+            # CentOS cloud image:
+            # - Disable including 'base' element for CentOS
+            # - Export link and filename for CentOS cloud image to download
+            export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20141118.qcow2"
+            export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
+            export DIB_CDH_VERSION="5.3"
 
-        disk-image-create $cloudera_elements_sequence -n -o $cloudera_centos_image_name
-        mv $cloudera_centos_image_name.qcow2 ../
+            cloudera_5_3_centos_image_name=${cloudera_5_3_centos_image_name:-centos_sahara_cloudera_5_3_0}
+            cloudera_elements_sequence="base vm rhel hadoop-cloudera redhat-lsb selinux-permissive"
 
-        unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
+            if [ -n "$USE_MIRRORS"]; then
+                [ -n "$CENTOS_MIRROR" ] && cloudera_elements_sequence="$cloudera_elements_sequence centos-mirror"
+            fi
+
+            disk-image-create $cloudera_elements_sequence -n -o $cloudera_5_3_centos_image_name
+            mv $cloudera_5_3_centos_image_name.qcow2 ../
+
+            unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES DIB_CDH_VERSION
+        fi
     fi
     unset EXTJS_DOWNLOAD_URL
 fi
