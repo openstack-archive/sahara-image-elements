@@ -23,7 +23,7 @@ usage() {
     echo "Usage: $(basename $0)"
     echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr]"
     echo "         [-i ubuntu|fedora|centos]"
-    echo "         [-v 1|2|2.3|2.4|2.6|5.0|5.3|plain]"
+    echo "         [-v 1|2|2.6|5.0|5.3|plain]"
     echo "         [-r 3.1.1|4.0.1]"
     echo "         [-d]"
     echo "         [-m]"
@@ -112,7 +112,7 @@ if [ -n "$BASE_IMAGE_OS" -a "$BASE_IMAGE_OS" != "ubuntu" -a "$BASE_IMAGE_OS" != 
 fi
 
 if [ -n "$HADOOP_VERSION" -a "$HADOOP_VERSION" != "1" -a "$HADOOP_VERSION" != "2" -a "$HADOOP_VERSION" != "plain" ]; then
-    if [ "$PLUGIN" = "vanilla" -a "$HADOOP_VERSION" != "1" -a "$HADOOP_VERSION" != "2.3" -a "$HADOOP_VERSION" != "2.4" -a "$HADOOP_VERSION" != "2.6" -a "$HADOOP_VERSION" != "plain" ]; then
+    if [ "$PLUGIN" = "vanilla" -a "$HADOOP_VERSION" != "1" -a "$HADOOP_VERSION" != "2.6" -a "$HADOOP_VERSION" != "plain" ]; then
         if [ "$PLUGIN" = "cloudera" -a "$HADOOP_VERSION" != "5.0" -a "$HADOOP_VERSION" != "5.3" ]; then
             echo -e "Unknown hadoop version selected.\nAborting"
             exit 1
@@ -227,11 +227,7 @@ fi
 if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz"}
     export OOZIE_HADOOP_V1_DOWNLOAD_URL=${OOZIE_HADOOP_V1_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/oozie-4.0.0.tar.gz"}
-    export OOZIE_HADOOP_V2_3_DOWNLOAD_URL=${OOZIE_HADOOP_V2_3_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/oozie-4.0.0-hadoop-2.3.0.tar.gz"}
-    export OOZIE_HADOOP_V2_4_DOWNLOAD_URL=${OOZIE_HADOOP_V2_4_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/oozie-juno-4.0.1-hadoop-2.4.1.tar.gz"}
     export OOZIE_HADOOP_V2_6_DOWNLOAD_URL=${OOZIE_HADOOP_V2_6_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/oozie-4.0.1-hadoop-2.6.0.tar.gz"}
-    export HADOOP_V2_3_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_3_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-2.3.0-native-libs.tar.gz"}
-    export HADOOP_V2_4_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_4_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-native-libs-juno-2.4.1.tar.gz"}
     export HADOOP_V2_6_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_6_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-native-libs-2.6.0.tar.gz"}
     export EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://extjs.com/deploy/ext-2.2.zip"}
     export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
@@ -276,18 +272,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             disk-image-create $elements_sequence -o $ubuntu_image_name
             mv $ubuntu_image_name.qcow2 ../
         fi
-        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.3" ]; then
-            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_3:-"2.3.0"}
-            export ubuntu_image_name=${ubuntu_vanilla_hadoop_2_3_image_name:-"ubuntu_sahara_vanilla_hadoop_2_3_latest"}
-            disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
-            mv $ubuntu_image_name.qcow2 ../
-        fi
-        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.4" ]; then
-            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_4:-"2.4.1"}
-            export ubuntu_image_name=${ubuntu_vanilla_hadoop_2_4_image_name:-"ubuntu_sahara_vanilla_hadoop_2_4_latest"}
-            disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
-            mv $ubuntu_image_name.qcow2 ../
-        fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export ubuntu_image_name=${ubuntu_vanilla_hadoop_2_6_image_name:-"ubuntu_sahara_vanilla_hadoop_2_6_latest"}
@@ -304,18 +288,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             export fedora_image_name=${fedora_vanilla_hadoop_1_image_name:-"fedora_sahara_vanilla_hadoop_1_latest$suffix"}
             elements_sequence="$fedora_elements_sequence swift_hadoop"
             disk-image-create $elements_sequence -o $fedora_image_name
-            mv $fedora_image_name.qcow2 ../
-        fi
-        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.3" ]; then
-            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_3:-"2.3.0"}
-            export fedora_image_name=${fedora_vanilla_hadoop_2_3_image_name:-"fedora_sahara_vanilla_hadoop_2_3_latest$suffix"}
-            disk-image-create $fedora_elements_sequence -o $fedora_image_name
-            mv $fedora_image_name.qcow2 ../
-        fi
-        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.4" ]; then
-            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_4:-"2.4.1"}
-            export fedora_image_name=${fedora_vanilla_hadoop_2_4_image_name:-"fedora_sahara_vanilla_hadoop_2_4_latest$suffix"}
-            disk-image-create $fedora_elements_sequence -o $fedora_image_name
             mv $fedora_image_name.qcow2 ../
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
@@ -338,18 +310,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             export centos_image_name=${centos_vanilla_hadoop_1_image_name:-"centos_sahara_vanilla_hadoop_1_latest$suffix"}
             elements_sequence="$centos_elements_sequence swift_hadoop"
             disk-image-create $elements_sequence -n -o $centos_image_name
-            mv $centos_image_name.qcow2 ../
-        fi
-        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.3" ]; then
-            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_3:-"2.3.0"}
-            export centos_image_name=${centos_vanilla_hadoop_2_3_image_name:-"centos_sahara_vanilla_hadoop_2_3_latest$suffix"}
-            disk-image-create $centos_elements_sequence -n -o $centos_image_name
-            mv $centos_image_name.qcow2 ../
-        fi
-        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.4" ]; then
-            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_4:-"2.4.1"}
-            export centos_image_name=${centos_vanilla_hadoop_2_4_image_name:-"centos_sahara_vanilla_hadoop_2_4_latest$suffix"}
-            disk-image-create $centos_elements_sequence -n -o $centos_image_name
             mv $centos_image_name.qcow2 ../
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then

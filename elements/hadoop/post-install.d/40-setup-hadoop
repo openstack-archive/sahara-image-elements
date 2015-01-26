@@ -80,12 +80,6 @@ EOF
 
 function install_hadoop_v2 {
     case "$DIB_HADOOP_VERSION" in
-        "2.3.0")
-            hadoop_native_libs_url="${HADOOP_V2_3_NATIVE_LIBS_DOWNLOAD_URL}"
-        ;;
-        "2.4.1")
-            hadoop_native_libs_url="${HADOOP_V2_4_NATIVE_LIBS_DOWNLOAD_URL}"
-        ;;
         "2.6.0")
             hadoop_native_libs_url="${HADOOP_V2_6_NATIVE_LIBS_DOWNLOAD_URL}"
         ;;
