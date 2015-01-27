@@ -40,6 +40,7 @@ if [ $DIB_CDH_VERSION != "5.0" ]; then
         impala-server \
         impala-state-store \
         impala-catalog \
+        impala-shell \
         sentry \
         solr-server \
         spark-history-server \
