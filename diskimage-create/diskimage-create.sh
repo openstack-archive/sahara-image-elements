@@ -27,12 +27,14 @@ usage() {
     echo "         [-r 3.1.1|4.0.1]"
     echo "         [-d]"
     echo "         [-m]"
+    echo "         [-u]"
     echo "   '-p' is plugin version (default: all plugins)"
     echo "   '-i' is operating system of the base image (default: all supported by plugin)"
     echo "   '-v' is hadoop version (default: all supported by plugin)"
     echo "   '-r' is MapR Version (default: ${DIB_DEFAULT_MAPR_VERSION})"
     echo "   '-d' enable debug mode, root account will have password 'hadoop'"
     echo "   '-m' set the diskimage-builder repo to the master branch (default: $DEFAULT_DIB_REPO_BRANCH)"
+    echo "   '-u' install missing packages necessary for building"
     echo
     echo "You shouldn't specify hadoop version and image type for spark plugin"
     echo "You shouldn't specify image type for hdp plugin"
@@ -43,7 +45,7 @@ usage() {
     exit 1
 }
 
-while getopts "p:i:v:dmr:" opt; do
+while getopts "p:i:v:dmur:" opt; do
     case $opt in
         p)
             PLUGIN=$OPTARG
@@ -67,6 +69,9 @@ while getopts "p:i:v:dmr:" opt; do
         ;;
         r)
             DIB_MAPR_VERSION=$OPTARG
+        ;;
+        u)
+            DIB_UPDATE_REQUESTED=true
         ;;
         *)
             usage
@@ -153,23 +158,56 @@ fi
 
 #################
 
-if [ "$platform" = 'NAME="Ubuntu"' ]; then
-    apt-get update -y
-    apt-get install qemu kpartx git -y
-elif [ "$platform" = 'NAME=Fedora' ]; then
-    yum update -y
-    yum install qemu kpartx git -y
-elif [ "$platform" = 'NAME=openSUSE' ]; then
-    zypper --non-interactive --gpg-auto-import-keys in kpartx qemu git-core
-else
-    # centos or rhel
-    yum update -y
-    yum install qemu-kvm qemu-img kpartx git -y
-    if [ ${platform:0:6} = "CentOS" ]; then
-        # install EPEL repo, in order to install argparse
-        sudo rpm -Uvh --force http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-        # CentOS requires the python-argparse package be installed separately
-        yum install python-argparse -y
+is_installed() {
+    if [ "$platform" = 'NAME="Ubuntu"' ]; then
+        dpkg -s "$1" &> /dev/null
+    else
+        # centos, fedora, opensuse, or rhel
+        rpm -q "$1" &> /dev/null
+    fi
+}
+
+need_required_packages() {
+    if [[ "$platform" == 'NAME="Ubuntu"' || "$platform" == 'NAME=Fedora' ]]; then
+        package_list="qemu kpartx git"
+    elif [ "$platform" = 'NAME=openSUSE' ]; then
+        package_list="qemu kpartx git-core"
+    else
+        # centos or rhel
+        package_list="qemu-kvm qemu-img kpartx git"
+        if [ ${platform:0:6} = "CentOS" ]; then
+            # CentOS requires the python-argparse package be installed separately
+            package_list="$package_list python-argparse"
+        fi
+    fi
+
+    for p in `echo $package_list`; do
+        if ! is_installed $p; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+if need_required_packages; then
+    # install required packages if requested
+    if [ -n "$DIB_UPDATE_REQUESTED" ]; then
+        if [ "$platform" = 'NAME="Ubuntu"' ]; then
+            apt-get install $package_list -y
+        elif [ "$platform" = 'NAME=openSUSE' ]; then
+            zypper --non-interactive --gpg-auto-import-keys in $package_list
+        else
+            # fedora, centos,  and rhel share an install command
+            if [ ${platform:0:6} = "CentOS" ]; then
+                # install EPEL repo, in order to install argparse
+                rpm -Uvh --force http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+            fi
+            yum install $package_list -y
+        fi
+    else
+        echo "Missing one of the following packages: $package_list"
+        echo "Please install manually or rerun with the update option (-u)."
+        exit 1
     fi
 fi
 
