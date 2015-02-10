@@ -1,0 +1,107 @@
+{
+  "asynchbase": {
+    "all": [
+      "mapr-asynchbase"
+    ]
+  },
+  "drill": {
+    "all": [
+      "mapr-drill"
+    ]
+  },
+  "flume": {
+    "all": [
+      "mapr-flume"
+    ]
+  },
+  "hbase": {
+    "all": [
+      "mapr-hbase",
+      "mapr-hbase-internal",
+      "mapr-hbase-master",
+      "mapr-hbase-regionserver",
+      "mapr-hbasethrift",
+      "mapr-libhbase"
+    ],
+    "0.94": [
+      "mapr-hbase",
+      "mapr-hbase-internal",
+      "mapr-hbase-master",
+      "mapr-hbase-regionserver",
+      "mapr-hbasethrift"
+    ]
+  },
+  "hive": {
+    "all": [
+      "mapr-hive",
+      "mapr-hivemetastore",
+      "mapr-hiveserver2"
+    ]
+  },
+  "httpfs": {
+    "all": [
+      "mapr-httpfs"
+    ]
+  },
+  "hue": {
+    "all": [
+      "mapr-hue"
+    ]
+  },
+  "impala": {
+    "all": [
+      "mapr-impala",
+      "mapr-impala-catalog",
+      "mapr-impala-server",
+      "mapr-impala-statestore",
+      "mapr-impala-udf"
+    ]
+  },
+  "mahout": {
+    "all": [
+      "mapr-mahout"
+    ]
+  },
+  "oozie": {
+    "all": [
+      "mapr-oozie",
+      "mapr-oozie-internal"
+    ]
+  },
+  "pig": {
+    "all": [
+      "mapr-pig"
+    ]
+  },
+  "sentry": {
+    "all": [
+      "mapr-sentry"
+    ]
+  },
+  "spark": {
+    "all": [
+      "mapr-spark",
+      "mapr-spark-historyserver",
+      "mapr-spark-master"
+    ]
+  },
+  "sqoop": {
+    "all": [
+      "mapr-sqoop2-client",
+      "mapr-sqoop2-server"
+    ]
+  },
+  "storm": {
+    "all": [
+      "mapr-storm",
+      "mapr-storm-ui",
+      "mapr-storm-nimbus",
+      "mapr-storm-supervisor"
+    ]
+  },
+  "tez": {
+    "all": [
+      "mapr-tez"
+    ]
+  }
+}

@@ -149,15 +149,11 @@ elif [ "$DISTRO_NAME" = "centos" -o "$DISTRO_NAME" = "rhel" ]; then
     syslinux-nonlinux \
     unzip \
     urw-fonts \
+    yum-utils \
     xml-common \
     zip
 
     rpm -Uvh ftp://rpmfind.net/linux/centos/6.6/os/x86_64/Packages/libevent-1.4.13-4.el6.x86_64.rpm
-fi
-
-if [ "$?" != "0" ]; then
-    echo "Installation failed. Exit"
-    exit 1
 fi
 
 echo "END: installing MapR core dependencies"
