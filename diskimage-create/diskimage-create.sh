@@ -506,7 +506,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             export DIB_CDH_VERSION="5.0"
 
             cloudera_5_0_centos_image_name=${cloudera_5_0_centos_image_name:-centos_sahara_cloudera_5_0_0}
-            cloudera_elements_sequence="base vm rhel hadoop-cloudera redhat-lsb selinux-permissive"
+            cloudera_elements_sequence="base vm rhel hadoop-cloudera redhat-lsb selinux-permissive disable-firewall"
 
             if [ -n "$USE_MIRRORS"]; then
                 [ -n "$CENTOS_MIRROR" ] && cloudera_elements_sequence="$cloudera_elements_sequence centos-mirror"
@@ -526,7 +526,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             export DIB_CDH_VERSION="5.3"
 
             cloudera_5_3_centos_image_name=${cloudera_5_3_centos_image_name:-centos_sahara_cloudera_5_3_0}
-            cloudera_elements_sequence="base vm rhel hadoop-cloudera redhat-lsb selinux-permissive"
+            cloudera_elements_sequence="base vm rhel hadoop-cloudera redhat-lsb selinux-permissive disable-firewall"
 
             if [ -n "$USE_MIRRORS"]; then
                 [ -n "$CENTOS_MIRROR" ] && cloudera_elements_sequence="$cloudera_elements_sequence centos-mirror"

@@ -39,8 +39,3 @@ if [ $DIB_CDH_VERSION != "5.0" ]; then
         fi
     done
 fi
-
-if [ $(lsb_release -is) = 'CentOS' ]; then
-    chkconfig iptables off
-    chkconfig ip6tables off
-fi
