@@ -11,6 +11,7 @@ mkdir -p /opt/zookeeper
 cd /opt/zookeeper
 
 wget http://archive.apache.org/dist/zookeeper/stable/zookeeper-3.4.6.tar.gz
+ln -s zookeeper-3.4.6 zookeeper
 tar -xzf zookeeper-3.4.6.tar.gz
 rm -rf zookeeper-3.4.6.tar.gz
 
