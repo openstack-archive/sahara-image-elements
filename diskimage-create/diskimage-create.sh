@@ -233,8 +233,8 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
 
     ubuntu_elements_sequence="base vm ubuntu hadoop oozie mysql hive"
-    fedora_elements_sequence="base vm fedora redhat-lsb hadoop oozie mysql disable-firewall hive"
-    centos_elements_sequence="vm rhel hadoop oozie mysql redhat-lsb disable-firewall hive"
+    fedora_elements_sequence="base vm fedora redhat-lsb hadoop oozie mysql disable-firewall hive updater"
+    centos_elements_sequence="vm rhel hadoop oozie mysql redhat-lsb disable-firewall hive updater"
 
     if [ "$DEBUG_MODE" = "true" ]; then
         ubuntu_elements_sequence="$ubuntu_elements_sequence root-passwd"
@@ -402,7 +402,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
         export centos_image_name_hdp_1_3=${centos_hdp_hadoop_1_image_name:-"centos-6_5-64-hdp-1-3"}
         # Elements to include in an HDP-based image
-        centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb yum"
+        centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb yum updater"
         if [ "$DEBUG_MODE" = "true" ]; then
             # enable the root-pwd element, for simpler local debugging of images
             centos_elements_sequence=$centos_elements_sequence" root-passwd"
@@ -421,7 +421,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
         export centos_image_name_hdp_2_0=${centos_hdp_hadoop_2_image_name:-"centos-6_5-64-hdp-2-0"}
         # Elements to include in an HDP-based image
-        centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb yum"
+        centos_elements_sequence="vm rhel hadoop-hdp redhat-lsb yum updater"
         if    [ "$DEBUG_MODE" = "true" ]; then
             # enable the root-pwd element, for simpler local debugging of images
             centos_elements_sequence=$centos_elements_sequence" root-passwd"
@@ -557,7 +557,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
     export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz"}
 
     mapr_ubuntu_elements_sequence="base vm ssh ubuntu hadoop-mapr"
-    mapr_centos_elements_sequence="base vm rhel ssh hadoop-mapr redhat-lsb selinux-permissive"
+    mapr_centos_elements_sequence="base vm rhel ssh hadoop-mapr redhat-lsb selinux-permissive updater"
 
     if [ "$DEBUG_MODE" = "true" ]; then
         mapr_ubuntu_elements_sequence="$mapr_ubuntu_elements_sequence root-passwd"
