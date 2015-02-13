@@ -41,6 +41,8 @@ NOTE: Do not create all images for all plugins with the same mirrors. Different 
 
   sudo bash sahara-image-elements/diskimage-create/diskimage-create.sh -i [ubuntu|fedora|centos]
 
+7. If the host system is missing packages required for diskimage-create.sh, the '-u' commandline option will instruct the script to install them without prompt.
+
 NOTE for 4, 5, 6:
 
 For Vanilla you can create ubuntu, fedora and centos cloud image with hadoop 1.x.x and 2.x.x versions. Use environment variables 'DIB_HADOOP_VERSION_1' and 'DIB_HADOOP_VERSION_2' to change defaults.
