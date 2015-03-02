@@ -8,7 +8,7 @@ distro=$(lsb_release -is || :)
 
 case "$distro" in
     Ubuntu )
-        install-packages openjdk-7-jre
+        install-packages openjdk-7-jdk
         JAVA_PATH=$(update-alternatives --list java)
         JAVA_HOME=${JAVA_PATH%/bin/java}
     ;;
