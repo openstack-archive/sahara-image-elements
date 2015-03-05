@@ -595,7 +595,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
     export JAVA_DOWNLOAD_URL=${JAVA_DOWNLOAD_URL:-"http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz"}
 
     mapr_ubuntu_elements_sequence="base vm ssh ubuntu hadoop-mapr"
-    mapr_centos_elements_sequence="base vm rhel ssh hadoop-mapr redhat-lsb selinux-permissive updater"
+    mapr_centos_elements_sequence="base vm rhel ssh hadoop-mapr redhat-lsb selinux-permissive updater disable-firewall"
 
     if [ "$DEBUG_MODE" = "true" ]; then
         mapr_ubuntu_elements_sequence="$mapr_ubuntu_elements_sequence root-passwd"
