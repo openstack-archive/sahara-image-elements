@@ -5,7 +5,7 @@ distro=$(lsb_release -is)
 
 function add_repo_5_0_0 {
     case $distro in
-        Ubuntu)
+        Ubuntu )
             # Add repository with postgresql package (it's dependency of cloudera packages)
             # Base image doesn't contain this repo
             echo -e 'deb http://nova.clouds.archive.ubuntu.com/ubuntu/ precise universe multiverse main' >> /etc/apt/sources.list
@@ -23,7 +23,7 @@ function add_repo_5_0_0 {
 
             apt-get update
         ;;
-        CentOS)
+        CentOS | RedHatEnterpriseServer )
             echo '[cloudera-cdh5]' > /etc/yum.repos.d/cloudera-cdh5.repo
             echo "name=Cloudera's Distribution for Hadoop, Version 5" >> /etc/yum.repos.d/cloudera-cdh5.repo
             echo 'baseurl=http://archive.cloudera.com/cdh5/redhat/6/x86_64/cdh/5.0.0/' >> /etc/yum.repos.d/cloudera-cdh5.repo
@@ -42,7 +42,7 @@ function add_repo_5_0_0 {
 
 function add_repo_5_3_0 {
     case $distro in
-        Ubuntu)
+        Ubuntu )
             # Add repository with postgresql package (it's dependency of cloudera packages)
             # Base image doesn't contain this repo
             echo -e 'deb http://nova.clouds.archive.ubuntu.com/ubuntu/ precise universe multiverse main' >> /etc/apt/sources.list
@@ -60,7 +60,7 @@ function add_repo_5_3_0 {
 
             apt-get update
         ;;
-        CentOS)
+        CentOS | RedHatEnterpriseServer )
             echo '[cloudera-cdh5]' > /etc/yum.repos.d/cloudera-cdh5.repo
             echo "name=Cloudera's Distribution for Hadoop, Version 5" >> /etc/yum.repos.d/cloudera-cdh5.repo
             echo 'baseurl=http://archive.cloudera.com/cdh5/redhat/6/x86_64/cdh/5.3.0/' >> /etc/yum.repos.d/cloudera-cdh5.repo
