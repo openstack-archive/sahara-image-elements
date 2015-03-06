@@ -74,6 +74,7 @@ EOF
     sed -i -e "s,export JAVA_HOME=.*,export JAVA_HOME=$JAVA_HOME," \
         -e "s,export HADOOP_LOG_DIR=.*,export HADOOP_LOG_DIR=/mnt/log/hadoop/\$USER," \
         -e "s,export HADOOP_SECURE_DN_LOG_DIR=.*,export HADOOP_SECURE_DN_LOG_DIR=/mnt/log/hadoop/hdfs," \
+        -e "s,HADOOP_DATANODE_OPTS=\"-Dhadoop.security.logger=ERROR\,DRFAS \$HADOOP_DATANODE_OPTS\",HADOOP_DATANODE_OPTS=\"-Djava.security.egd=file:/dev/./urandom -Dhadoop.security.logger=ERROR\,DRFAS \$HADOOP_DATANODE_OPTS\"," \
         /etc/hadoop/hadoop-env.sh
 }
 
