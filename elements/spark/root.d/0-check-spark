@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ -z "$SPARK_DOWNLOAD_URL" -a -z "$DIB_HADOOP_VERSION"]; then
+if [ -z "$SPARK_DOWNLOAD_URL" -a -z "$DIB_HADOOP_VERSION" ]; then
     echo -e "Neither DIB_HADOOP_VERSION nor SPARK_DOWNLOAD_URL are set. Impossible to install Spark.\nAborting"
     exit 1
 fi
