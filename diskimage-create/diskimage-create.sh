@@ -168,8 +168,10 @@ is_installed() {
 }
 
 need_required_packages() {
-    if [[ "$platform" == 'NAME="Ubuntu"' || "$platform" == 'NAME=Fedora' ]]; then
+    if [[ "$platform" == 'NAME="Ubuntu"' ]]; then
         package_list="qemu kpartx git"
+    elif [ "$platform" = 'NAME=Fedora' ]; then
+        package_list="qemu-img kpartx git"
     elif [ "$platform" = 'NAME=openSUSE' ]; then
         package_list="qemu kpartx git-core"
     else
