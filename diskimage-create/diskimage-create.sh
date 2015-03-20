@@ -9,6 +9,9 @@ unset DIB_IMAGE_SIZE
 # DEBUG_MODE is set by the -d flag, debug is enabled if the value is "true"
 DEBUG_MODE="false"
 
+# The default tag to use for the dib-utils repo
+DEFAULT_DIB_UTILS_REPO_BRANCH="0.0.9"
+
 # The default tag to use for the DIB repo
 DEFAULT_DIB_REPO_BRANCH="0.1.29"
 
@@ -33,7 +36,7 @@ usage() {
     echo "   '-v' is hadoop version (default: all supported by plugin)"
     echo "   '-r' is MapR Version (default: ${DIB_DEFAULT_MAPR_VERSION})"
     echo "   '-d' enable debug mode, root account will have password 'hadoop'"
-    echo "   '-m' set the diskimage-builder repo to the master branch (default: $DEFAULT_DIB_REPO_BRANCH)"
+    echo "   '-m' set the dib-utils and diskimage-builder repos to their master branches (default: dib-utils=$DEFAULT_DIB_UTILS_REPO_BRANCH, dib=$DEFAULT_DIB_REPO_BRANCH)"
     echo "   '-u' install missing packages necessary for building"
     echo
     echo "You shouldn't specify hadoop version and image type for spark plugin"
@@ -60,6 +63,12 @@ while getopts "p:i:v:dmur:" opt; do
             DEBUG_MODE="true"
         ;;
         m)
+            if [ -n "$DIB_UTILS_REPO_BRANCH" ]; then
+                echo "Error: DIB_UTILS_REPO_BRANCH set and -m requested, please choose one."
+                exit 3
+            else
+                DIB_UTILS_REPO_BRANCH="master"
+            fi
             if [ -n "$DIB_REPO_BRANCH" ]; then
                 echo "Error: DIB_REPO_BRANCH set and -m requested, please choose one."
                 exit 3
@@ -82,6 +91,10 @@ done
 shift $((OPTIND-1))
 if [ "$1" ]; then
     usage
+fi
+
+if [ -z $DIB_UTILS_REPO_BRANCH ]; then
+    DIB_UTILS_REPO_BRANCH=$DEFAULT_DIB_UTILS_REPO_BRANCH
 fi
 
 if [ -z $DIB_REPO_BRANCH ]; then
@@ -221,6 +234,20 @@ pushd $TEMP
 export DIB_IMAGE_CACHE=$TEMP/.cache-image-create
 
 # Working with repositories
+# dib-utils repo
+
+if [ -z $DIB_UTILS_REPO_PATH ]; then
+    git clone https://git.openstack.org/openstack/dib-utils
+    DIB_UTILS_REPO_PATH="$(pwd)/dib-utils"
+    git --git-dir=$DIB_UTILS_REPO_PATH/.git --work-tree=$DIB_UTILS_REPO_PATH checkout $DIB_UTILS_REPO_PATH
+fi
+
+export PATH=$PATH:$DIB_UTILS_REPO_PATH/bin
+
+pushd $DIB_UTILS_REPO_PATH
+export DIB_UTILS_COMMIT_ID=`git rev-parse HEAD`
+popd
+
 # disk-image-builder repo
 
 if [ -z $DIB_REPO_PATH ]; then
