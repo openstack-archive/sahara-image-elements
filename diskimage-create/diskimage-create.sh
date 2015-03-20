@@ -372,6 +372,10 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
         # Read Create_CentOS_cloud_image.rst to know how to create CentOS image in qcow2 format
         export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20141118.qcow2"
         export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
+        # No registration for RHEL-based distros
+        export REG_METHOD=disable
+        # Workaround for https://review.openstack.org/#/c/162239/
+        export REG_HALT_UNREGISTER=1
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
             export centos_image_name=${centos_vanilla_hadoop_1_image_name:-"centos_sahara_vanilla_hadoop_1_latest$suffix"}
@@ -385,7 +389,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             disk-image-create $centos_elements_sequence -n -o $centos_image_name
             mv $centos_image_name.qcow2 ../
         fi
-        unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
+        unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES REG_METHOD REG_HALT_UNREGISTER
     fi
 fi
 
@@ -465,6 +469,11 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     export JAVA_TARGET_LOCATION=/opt
     export JAVA_DOWNLOAD_URL=https://s3.amazonaws.com/public-repo-1.hortonworks.com/ARTIFACTS/jdk-6u31-linux-x64.bin
 
+    # No registration for RHEL-based distros
+    export REG_METHOD=disable
+    # Workaround for https://review.openstack.org/#/c/162239/
+    export REG_HALT_UNREGISTER=1
+
     # Ignoring image type option
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
         export centos_image_name_hdp_1_3=${centos_hdp_hadoop_1_image_name:-"centos-6_5-64-hdp-1-3"}
@@ -521,7 +530,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
         disk-image-create $centos_plain_elements_sequence -n -o $centos_image_name_plain
         mv $centos_image_name_plain.qcow2 ../
     fi
-    unset BASE_IMAGE_FILE DIB_IMAGE_SIZE DIB_CLOUD_IMAGES
+    unset BASE_IMAGE_FILE DIB_IMAGE_SIZE DIB_CLOUD_IMAGES REG_METHOD REG_HALT_UNREGISTER
 fi
 
 #########################
@@ -564,6 +573,10 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
+        # No registration for RHEL-based distros
+        export REG_METHOD=disable
+        # Workaround for https://review.openstack.org/#/c/162239/
+        export REG_HALT_UNREGISTER=1
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.0" ]; then
             # CentOS cloud image:
             # - Disable including 'base' element for CentOS
@@ -604,6 +617,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
 
             unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES DIB_CDH_VERSION
         fi
+        unset REG_METHOD REG_HALT_UNREGISTER
     fi
     unset EXTJS_DOWNLOAD_URL
 fi
@@ -650,6 +664,10 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
         export BASE_IMAGE_FILE=${BASE_IMAGE_FILE:-"CentOS-6.6-cloud-init-20141118.qcow2"}
         export DIB_CLOUD_IMAGES=${DIB_CLOUD_IMAGES:-"http://sahara-files.mirantis.com"}
+        # No registration for RHEL-based distros
+        export REG_METHOD=disable
+        # Workaround for https://review.openstack.org/#/c/162239/
+        export REG_HALT_UNREGISTER=1
 
         mapr_centos_image_name=${mapr_centos_image_name:-centos_6.5_mapr_${DIB_MAPR_VERSION}_latest}
 
@@ -658,6 +676,8 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
 
         unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
         unset DIB_CLOUD_INIT_DATASOURCES
+        unset REG_METHOD
+        unset REG_HALT_UNREGISTER
     fi
 fi
 
