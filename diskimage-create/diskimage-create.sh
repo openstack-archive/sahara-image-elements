@@ -13,7 +13,7 @@ DEBUG_MODE="false"
 DEFAULT_DIB_UTILS_REPO_BRANCH="0.0.9"
 
 # The default tag to use for the DIB repo
-DEFAULT_DIB_REPO_BRANCH="0.1.29"
+DEFAULT_DIB_REPO_BRANCH="0.1.41"
 
 # The default version for a MapR plugin
 DIB_DEFAULT_MAPR_VERSION="4.0.1"
