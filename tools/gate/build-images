@@ -1,6 +1,5 @@
 #!/bin/bash -xe
 
 PLUGIN=$1
-export SIM_REPO_PATH=$(pwd)
 
-./diskimage-create/diskimage-create.sh -u -p $PLUGIN
+tox -e venv -- sahara-image-create -u -p $PLUGIN

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -eu
+set -o pipefail
+
+SCRIPT_HOME=$(dirname $(readlink -f $0))
+if [ -d $SCRIPT_HOME/../share/sahara-elements ]; then
+    _PREFIX=$SCRIPT_HOME/../share/sahara-elements
+elif [ -d $SCRIPT_HOME/../../../elements ]; then
+    _PREFIX=$SCRIPT_HOME/../../..
+else
+    _PREFIX=$SCRIPT_HOME/..
+fi
+export ELEMENTS_PATH=$_PREFIX/elements
+
+diskimage-create.sh $@
