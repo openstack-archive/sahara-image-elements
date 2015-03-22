@@ -9,12 +9,6 @@ unset DIB_IMAGE_SIZE
 # DEBUG_MODE is set by the -d flag, debug is enabled if the value is "true"
 DEBUG_MODE="false"
 
-# The default tag to use for the dib-utils repo
-DEFAULT_DIB_UTILS_REPO_BRANCH="0.0.9"
-
-# The default tag to use for the DIB repo
-DEFAULT_DIB_REPO_BRANCH="0.1.41"
-
 # The default version for a MapR plugin
 DIB_DEFAULT_MAPR_VERSION="4.0.2"
 
@@ -32,7 +26,6 @@ usage() {
     echo "         [-v 1|2|2.6|5.0|5.3]"
     echo "         [-r 3.1.1|4.0.1|4.0.2]"
     echo "         [-d]"
-    echo "         [-m]"
     echo "         [-u]"
     echo "         [-j openjdk|oracle-java]"
     echo "         [-x]"
@@ -41,7 +34,6 @@ usage() {
     echo "   '-v' is hadoop version (default: all supported by plugin)"
     echo "   '-r' is MapR Version (default: ${DIB_DEFAULT_MAPR_VERSION})"
     echo "   '-d' enable debug mode, root account will have password 'hadoop'"
-    echo "   '-m' set the dib-utils and diskimage-builder repos to their master branches (default: dib-utils=$DEFAULT_DIB_UTILS_REPO_BRANCH, dib=$DEFAULT_DIB_REPO_BRANCH)"
     echo "   '-u' install missing packages necessary for building"
     echo "   '-j' is java distribution (default: openjdk)"
     echo "   '-x' turns on tracing"
@@ -55,7 +47,7 @@ usage() {
     exit 1
 }
 
-while getopts "p:i:v:dmur:j:x" opt; do
+while getopts "p:i:v:dur:j:x" opt; do
     case $opt in
         p)
             PLUGIN=$OPTARG
@@ -68,20 +60,6 @@ while getopts "p:i:v:dmur:j:x" opt; do
         ;;
         d)
             DEBUG_MODE="true"
-        ;;
-        m)
-            if [ -n "$DIB_UTILS_REPO_BRANCH" ]; then
-                echo "Error: DIB_UTILS_REPO_BRANCH set and -m requested, please choose one."
-                exit 3
-            else
-                DIB_UTILS_REPO_BRANCH="master"
-            fi
-            if [ -n "$DIB_REPO_BRANCH" ]; then
-                echo "Error: DIB_REPO_BRANCH set and -m requested, please choose one."
-                exit 3
-            else
-                DIB_REPO_BRANCH="master"
-            fi
         ;;
         r)
             DIB_MAPR_VERSION=$OPTARG
@@ -108,14 +86,6 @@ if [ "$1" ]; then
 fi
 
 JAVA_ELEMENT=${JAVA_ELEMENT:-"openjdk"}
-
-if [ -z $DIB_UTILS_REPO_BRANCH ]; then
-    DIB_UTILS_REPO_BRANCH=$DEFAULT_DIB_UTILS_REPO_BRANCH
-fi
-
-if [ -z $DIB_REPO_BRANCH ]; then
-    DIB_REPO_BRANCH=$DEFAULT_DIB_REPO_BRANCH
-fi
 
 if [ -e /etc/os-release ]; then
     platform=$(head -1 /etc/os-release)
@@ -244,59 +214,6 @@ if need_required_packages; then
     fi
 fi
 
-base_dir="$(dirname $(readlink -e $0))"
-
-TEMP=$(mktemp -d diskimage-create.XXXXXX)
-pushd $TEMP
-
-# Working with repositories
-# dib-utils repo
-
-if [ -z $DIB_UTILS_REPO_PATH ]; then
-    git clone https://git.openstack.org/openstack/dib-utils
-    DIB_UTILS_REPO_PATH="$(pwd)/dib-utils"
-    git --git-dir=$DIB_UTILS_REPO_PATH/.git --work-tree=$DIB_UTILS_REPO_PATH checkout $DIB_UTILS_REPO_PATH
-fi
-
-export PATH=$PATH:$DIB_UTILS_REPO_PATH/bin
-
-pushd $DIB_UTILS_REPO_PATH
-export DIB_UTILS_COMMIT_ID=`git rev-parse HEAD`
-popd
-
-# disk-image-builder repo
-
-if [ -z $DIB_REPO_PATH ]; then
-    git clone https://git.openstack.org/openstack/diskimage-builder
-    DIB_REPO_PATH="$(pwd)/diskimage-builder"
-    git --git-dir=$DIB_REPO_PATH/.git --work-tree=$DIB_REPO_PATH checkout $DIB_REPO_BRANCH
-fi
-
-export PATH=$PATH:$DIB_REPO_PATH/bin
-
-pushd $DIB_REPO_PATH
-export DIB_COMMIT_ID=`git rev-parse HEAD`
-popd
-
-export ELEMENTS_PATH="$DIB_REPO_PATH/elements"
-
-# sahara-image-elements repo
-
-if [ -z $SIM_REPO_PATH ]; then
-    SIM_REPO_PATH="$(dirname $base_dir)"
-    if [ $(basename $SIM_REPO_PATH) != "sahara-image-elements" ]; then
-        echo "Can't find Sahara-image-elements repository. Cloning it."
-        git clone https://git.openstack.org/openstack/sahara-image-elements
-        SIM_REPO_PATH="$(pwd)/sahara-image-elements"
-    fi
-fi
-
-ELEMENTS_PATH=$ELEMENTS_PATH:$SIM_REPO_PATH/elements
-
-pushd $SIM_REPO_PATH
-export SAHARA_ELEMENTS_COMMIT_ID=`git rev-parse HEAD`
-popd
-
 if [ "$DEBUG_MODE" = "true" ]; then
     echo "Using Image Debug Mode, using root-pwd in images, NOT FOR PRODUCTION USAGE."
     # Each image has a root login, password is "hadoop"
@@ -352,13 +269,11 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             export ubuntu_image_name=${ubuntu_vanilla_hadoop_1_image_name:-"ubuntu_sahara_vanilla_hadoop_1_latest"}
             elements_sequence="$ubuntu_elements_sequence swift_hadoop"
             disk-image-create $TRACING $elements_sequence -o $ubuntu_image_name
-            mv $ubuntu_image_name.qcow2 ../
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export ubuntu_image_name=${ubuntu_vanilla_hadoop_2_6_image_name:-"ubuntu_sahara_vanilla_hadoop_2_6_latest"}
             disk-image-create $TRACING $ubuntu_elements_sequence -o $ubuntu_image_name
-            mv $ubuntu_image_name.qcow2 ../
         fi
         unset DIB_CLOUD_INIT_DATASOURCES
     fi
@@ -370,13 +285,11 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             export fedora_image_name=${fedora_vanilla_hadoop_1_image_name:-"fedora_sahara_vanilla_hadoop_1_latest$suffix"}
             elements_sequence="$fedora_elements_sequence swift_hadoop"
             disk-image-create $TRACING $elements_sequence -o $fedora_image_name
-            mv $fedora_image_name.qcow2 ../
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export fedora_image_name=${fedora_vanilla_hadoop_2_6_image_name:-"fedora_sahara_vanilla_hadoop_2_6_latest$suffix"}
             disk-image-create $TRACING $fedora_elements_sequence -o $fedora_image_name
-            mv $fedora_image_name.qcow2 ../
         fi
     fi
 
@@ -396,13 +309,11 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             export centos_image_name=${centos_vanilla_hadoop_1_image_name:-"centos_sahara_vanilla_hadoop_1_latest$suffix"}
             elements_sequence="$centos_elements_sequence swift_hadoop"
             disk-image-create $TRACING $elements_sequence -n -o $centos_image_name
-            mv $centos_image_name.qcow2 ../
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export centos_image_name=${centos_vanilla_hadoop_2_6_image_name:-"centos_sahara_vanilla_hadoop_2_6_latest$suffix"}
             disk-image-create $TRACING $centos_elements_sequence -n -o $centos_image_name
-            mv $centos_image_name.qcow2 ../
         fi
         unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES REG_METHOD REG_HALT_UNREGISTER
     fi
@@ -430,7 +341,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
 
     # Creating Ubuntu cloud image
     disk-image-create $TRACING $ubuntu_elements_sequence -o $ubuntu_image_name
-    mv $ubuntu_image_name.qcow2 ../
     unset DIB_CLOUD_INIT_DATASOURCES
     unset DIB_HDFS_LIB_DIR
 fi
@@ -457,7 +367,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "storm" ]; then
 
     # Creating Ubuntu cloud image
     disk-image-create $TRACING $ubuntu_elements_sequence -o $ubuntu_image_name
-    mv $ubuntu_image_name.qcow2 ../
     unset DIB_CLOUD_INIT_DATASOURCES
 fi
 #########################
@@ -500,7 +409,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
         # generate image with HDP 1.3
         export DIB_HDP_VERSION="1.3"
         disk-image-create $TRACING $centos_elements_sequence -n -o $centos_image_name_hdp_1_3
-        mv $centos_image_name_hdp_1_3.qcow2 ../
     fi
 
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
@@ -519,7 +427,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
         # generate image with HDP 2.0
         export DIB_HDP_VERSION="2.0"
         disk-image-create $TRACING $centos_elements_sequence -n -o $centos_image_name_hdp_2_0
-        mv $centos_image_name_hdp_2_0.qcow2 ../
     fi
     unset BASE_IMAGE_FILE DIB_IMAGE_SIZE DIB_CLOUD_IMAGES REG_METHOD REG_HALT_UNREGISTER
 fi
@@ -545,7 +452,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             export DIB_CDH_VERSION="5.0"
             export DIB_RELEASE="precise"
             disk-image-create $TRACING $cloudera_elements_sequence -o $cloudera_5_0_ubuntu_image_name
-            mv $cloudera_5_0_ubuntu_image_name.qcow2 ../
             unset DIB_CDH_VERSION DIB_RELEASE
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.3" ]; then
@@ -560,7 +466,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             export DIB_CDH_VERSION="5.3"
             export DIB_RELEASE="precise"
             disk-image-create $TRACING $cloudera_elements_sequence -o $cloudera_5_3_ubuntu_image_name
-            mv $cloudera_5_3_ubuntu_image_name.qcow2 ../
             unset DIB_CDH_VERSION DIB_RELEASE
         fi
     fi
@@ -586,7 +491,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             fi
 
             disk-image-create $TRACING $cloudera_elements_sequence -n -o $cloudera_5_0_centos_image_name
-            mv $cloudera_5_0_centos_image_name.qcow2 ../
 
             unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES DIB_CDH_VERSION
         fi
@@ -606,7 +510,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             fi
 
             disk-image-create $TRACING $cloudera_elements_sequence -n -o $cloudera_5_3_centos_image_name
-            mv $cloudera_5_3_centos_image_name.qcow2 ../
 
             unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES DIB_CDH_VERSION
         fi
@@ -647,7 +550,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
         mapr_ubuntu_image_name=${mapr_ubuntu_image_name:-ubuntu_${DIB_RELEASE}_mapr_${DIB_MAPR_VERSION}_latest}
 
         disk-image-create $TRACING $mapr_ubuntu_elements_sequence -n -o $mapr_ubuntu_image_name
-        mv $mapr_ubuntu_image_name.qcow2 ../
 
         unset DIB_RELEASE
     fi
@@ -663,7 +565,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
         mapr_centos_image_name=${mapr_centos_image_name:-centos_6.5_mapr_${DIB_MAPR_VERSION}_latest}
 
         disk-image-create $TRACING $mapr_centos_elements_sequence -n -o $mapr_centos_image_name
-        mv $mapr_centos_image_name.qcow2 ../
 
         unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
         unset DIB_CLOUD_INIT_DATASOURCES
@@ -697,14 +598,12 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "plain" ]; then
         plain_image_name=${plain_ubuntu_image_name:-ubuntu_plain}
 
         disk-image-create $TRACING $ubuntu_elements_sequence -o $plain_image_name
-        mv $plain_image_name.qcow2 ../
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "fedora" ]; then
         plain_image_name=${plain_fedora_image_name:-fedora_plain}
 
         disk-image-create $TRACING $fedora_elements_sequence -o $plain_image_name
-        mv $plain_image_name.qcow2 ../
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
@@ -718,13 +617,9 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "plain" ]; then
         plain_image_name=${plain_centos_image_name:-centos_plain}
 
         disk-image-create $TRACING $centos_elements_sequence -o $plain_image_name
-        mv $plain_image_name.qcow2 ../
 
         unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
         unset REG_METHOD
         unset REG_HALT_UNREGISTER
     fi
 fi
-
-popd # out of $TEMP
-rm -rf $TEMP

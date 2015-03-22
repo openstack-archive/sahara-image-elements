@@ -13,13 +13,13 @@ For users:
 
 .. sourcecode:: bash
 
-  bash sahara-image-elements/diskimage-create/diskimage-create.sh
+  tox -e venv -- sahara-image-create
 
 3. If you want to use your local mirrors, you should specify http urls for Fedora, CentOS and Ubuntu mirrors using parameters 'FEDORA_MIRROR', 'CENTOS_MIRROR' and 'UBUNTU_MIRROR' like this:
 
 .. sourcecode:: bash
 
-  USE_MIRRORS=true FEDORA_MIRROR="url_for_fedora_mirror" CENTOS_MIRROR="url_for_centos_mirror" UBUNTU_MIRROR="url_for_ubuntu_mirror" bash sahara-image-elements/diskimage-create/diskimage-create.sh
+  USE_MIRRORS=true FEDORA_MIRROR="url_for_fedora_mirror" CENTOS_MIRROR="url_for_centos_mirror" UBUNTU_MIRROR="url_for_ubuntu_mirror" tox -e venv -- sahara-image-create
 
 NOTE: Do not create all images for all plugins with the same mirrors. Different plugins use different OS version.
 
@@ -27,19 +27,19 @@ NOTE: Do not create all images for all plugins with the same mirrors. Different 
 
 .. sourcecode:: bash
 
-  bash sahara-image-elements/diskimage-create/diskimage-create.sh -p [vanilla|spark|hdp|cloudera|storm|mapr]
+  tox -e venv -- sahara-image-create -p [vanilla|spark|hdp|cloudera|storm|mapr]
 
 5. To select which hadoop version to target use the '-v' commandline option like this:
 
 .. sourcecode:: bash
 
-  bash sahara-image-elements/diskimage-create/diskimage-create.sh -v [1|2|plain]
+  tox -e venv -- sahara-image-create -v [1|2|plain]
 
 6. To select which operating system to target use the '-i' commandline option like this:
 
 .. sourcecode:: bash
 
-  bash sahara-image-elements/diskimage-create/diskimage-create.sh -i [ubuntu|fedora|centos]
+  tox -e venv -- sahara-image-create -i [ubuntu|fedora|centos]
 
 7. If the host system is missing packages required for diskimage-create.sh, the '-u' commandline option will instruct the script to install them without prompt.
 
@@ -56,7 +56,7 @@ Resizing disk space during firstboot on that images fails with errors (https://b
 
 .. sourcecode:: bash
 
-  DIB_IMAGE_SIZE=40 bash sahara-image-elements/diskimage-create/diskimage-create.sh -i centos
+  DIB_IMAGE_SIZE=40 tox -e venv -- sahara-image-create -i centos
 
 For all another images parameter DIB_IMAGE_SIZE will be unset.
 
@@ -67,16 +67,4 @@ You must define `DIB_CLOUD_INIT_DATASOURCES` as a comma-separated list of valid 
 
 For developers:
 
-1. If you want to add your element to this repository, you should edit this script in your commit (you should export variables for your element and add name of element to variables 'element_sequence').
-
-2. If you want to test your Patch Set to sahara-image-elements or diskimage-builder, you can specify 'SIM_REPO_PATH' or 'DIB_REPO_PATH' (this parameters should be a full path to repositories) and run this script like this:
-
-.. sourcecode:: bash
-
-  SIM_REPO_PATH="$(pwd)/sahara-image-elements" DIB_REPO_PATH="$(pwd)/diskimage-builder" bash sahara-image-elements/diskimage-create/diskimage-create.sh
-
-3. If you want to specify the diskimage-builder repository branch, or tag, that is used during the diskimage-create script there are two methods. The '-m' option of diskimage-create.sh will always use the 'master' branch of diskimage-builder. Alternatively exporting 'DIB_REPO_BRANCH' will allow the use of an arbitrary branch or tag. By default diskimage-create will use a known good tag from the upstream repository.
-
-.. sourcecode:: bash
-
-  DIB_REPO_BRANCH="custom-branch" bash sahara-image-elements/diskimage-create/diskimage-create.sh
+If you want to add your element to this repository, you should edit this script in your commit (you should export variables for your element and add name of element to variables 'element_sequence').

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+function _get_version_package {
+    if which pbr > /dev/null; then
+        local version=$(pbr info $1 | awk '{print $2}')
+        echo "${version}"
+    fi
+}
+
+cat << EOF | sudo tee "${TARGET_ROOT}/etc/sahara-extra.version"
+sahara-image-elements version: $(_get_version_package "sahara-image-elements")
+dib-utils version: $(_get_version_package "dib-utils")
+diskimage-builder version: $(_get_version_package "diskimage-builder")
+EOF
