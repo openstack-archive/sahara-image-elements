@@ -208,16 +208,16 @@ if need_required_packages; then
     # install required packages if requested
     if [ -n "$DIB_UPDATE_REQUESTED" ]; then
         if [ "$platform" = 'NAME="Ubuntu"' ]; then
-            apt-get install $package_list -y
+            sudo apt-get install $package_list -y
         elif [ "$platform" = 'NAME=openSUSE' ]; then
-            zypper --non-interactive --gpg-auto-import-keys in $package_list
+            sudo zypper --non-interactive --gpg-auto-import-keys in $package_list
         else
             # fedora, centos,  and rhel share an install command
             if [ ${platform:0:6} = "CentOS" ]; then
                 # install EPEL repo, in order to install argparse
-                rpm -Uvh --force http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+                sudo rpm -Uvh --force http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
             fi
-            yum install $package_list -y
+            sudo yum install $package_list -y
         fi
     else
         echo "Missing one of the following packages: $package_list"
@@ -662,4 +662,4 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
 fi
 
 popd # out of $TEMP
-rm -rf $TEMP
+sudo rm -rf $TEMP

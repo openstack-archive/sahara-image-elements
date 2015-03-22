@@ -3,4 +3,4 @@
 PLUGIN=$1
 export SIM_REPO_PATH=$(pwd)
 
-sudo -E ./diskimage-create/diskimage-create.sh -u -p $PLUGIN
+./diskimage-create/diskimage-create.sh -u -p $PLUGIN
