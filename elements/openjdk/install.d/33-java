@@ -13,7 +13,7 @@ case "$distro" in
         JAVA_HOME=${JAVA_PATH%/bin/java}
     ;;
     Fedora | RedHatEnterpriseServer | CentOS )
-        install-packages java-1.7.0-openjdk
+        install-packages java-1.7.0-openjdk-devel
         JAVA_HOME=$(rpm -E "%{java_home}")
     ;;
 esac
