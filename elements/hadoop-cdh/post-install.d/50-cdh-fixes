@@ -3,6 +3,10 @@
 # This script contains some fixes needed to have the Cloudera Ubuntu
 # packages up and running
 
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+
 case "$distro" in
     Ubuntu )
         # pietro: small hack to fix install problems on ubuntu

@@ -4,6 +4,10 @@
 # Service mysqld doesn't start on boot in Fedora and CentOS
 # Delete config property 'bind-address' for remote mode (0.0.0.0)
 
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+
 if [ $(lsb_release -is) = 'Ubuntu' ]; then
     if [ -e "/etc/init/mysql.conf" ]; then
         sed -i "s/start on runlevel \[.*\]/start on never runlevel [2345]/g" /etc/init/mysql.conf

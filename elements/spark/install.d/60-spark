@@ -2,6 +2,10 @@
 # This script installs Spark
 # More documentation in the README.md file
 
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+
 install-packages wget tar
 
 tmp_dir=/tmp/spark

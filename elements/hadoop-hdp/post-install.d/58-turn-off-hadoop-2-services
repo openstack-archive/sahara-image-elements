@@ -25,6 +25,10 @@
 #  Ambari will configure the environment before the Hadoop
 #  cluster is started.
 
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+
 # This is only necessary for an HDP 2.x install
 if [[ $DIB_HDP_VERSION == "2.0"  ]]; then
     chkconfig hadoop-mapreduce-historyserver off

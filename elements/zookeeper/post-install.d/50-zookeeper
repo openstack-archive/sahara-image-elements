@@ -4,6 +4,10 @@
 # Unfortunately the Ubuntu user does not exists when DIB is creating the image
 # and we need to execute this code the first time the VM boots.
 
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+
 sed -i -e 's,^exit 0$,[ -f /opt/zookeeper/firstboot.sh ] \&\& sh /opt/zookeeper/firstboot.sh; exit 0,' /etc/rc.local
 
 cat >> /opt/zookeeper/firstboot.sh <<EOF
