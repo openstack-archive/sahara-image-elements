@@ -2,6 +2,10 @@
 # This script installs storm and its dependencies
 # More documentation on the README.md file
 
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+
 install-packages wget unzip build-essential uuid-dev git libtool autoconf pkg-config tar
 
 tmp_dir=/tmp
