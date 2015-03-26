@@ -7,9 +7,7 @@ set -eu
 
 echo "START: installing MapR core dependencies"
 
-DISTRO=$(lsb_release -is || :)
-
-if [ "$DISTRO" = "Ubuntu" ]; then
+if [ "$DISTRO_NAME" = "ubuntu" ]; then
     # Required for libicu48
     cat >> /etc/apt/sources.list.d/security_repo.list << EOF
 deb http://security.ubuntu.com/ubuntu precise-security main
@@ -67,7 +65,7 @@ EOF
     watchdog \
     zlib1g-dev \
     zip
-elif [ "$DISTRO" = 'CentOS' -o "$DISTRO" = 'RedHatEnterpriseServer' ]; then
+elif [ "$DISTRO_NAME" = "centos" -o "$DISTRO_NAME" = "rhel" ]; then
     install-packages cdparanoia-libs \
     cups \
     cups-libs \

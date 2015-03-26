@@ -7,9 +7,8 @@ if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
     set -x
 fi
 
-distro=$(lsb_release -is || :)
-case "$distro" in
-    Ubuntu )
+case "$DISTRO_NAME" in
+    ubuntu )
         # pietro: small hack to fix install problems on ubuntu
         # the CDH package contains a broken symlink instead of the log4j jar file
         # these 4 lines should go away once Cloudera fixes the package

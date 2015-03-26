@@ -9,18 +9,16 @@ echo "START: installing MapR ecosystem repository"
 
 MAPR_REPO_DIR=/opt/mapr-repository/ecosystem
 
-DISTRO=$(lsb_release -is || :)
-
 RPM_REPO=${DIB_MAPR_ECO_RPM_REPO:-}
 DEB_REPO=${DIB_MAPR_ECO_DEB_REPO:-}
 
-if [ "$DISTRO" = "Ubuntu" ]; then
+if [ "$DISTRO_NAME" = "ubuntu" ]; then
     if [ "$DIB_MAPR_VERSION" = "3.1.1" ]; then
         MAPR_REPO_URL=${DIB_MAPR_ECO_DEB_REPO:-"http://package.mapr.com/releases/ecosystem/ubuntu/"}
     elif [ "$DIB_MAPR_VERSION" = "4.0.1" ]; then
         MAPR_REPO_URL=${DIB_MAPR_ECO_DEB_REPO:-"http://package.mapr.com/releases/ecosystem-4.x/ubuntu/"}
     fi
-elif [ "$DISTRO" = 'CentOS' -o "$DISTRO" = 'RedHatEnterpriseServer' ]; then
+elif [ "$DISTRO_NAME" = "centos" -o "$DISTRO_NAME" = "rhel" ]; then
     if [ "$DIB_MAPR_VERSION" = "3.1.1" ]; then
         MAPR_REPO_URL=${DIB_MAPR_ECO_RPM_REPO:-"http://package.mapr.com/releases/ecosystem/redhat/"}
     elif [ "$DIB_MAPR_VERSION" = "4.0.1" ]; then
@@ -61,21 +59,21 @@ SCRIPT_FILE="/tmp/versions.py"
 SPEC_FILE="/opt/mapr-repository/version-spec"
 python ${SCRIPT_FILE} --path ${MAPR_REPO_DIR} --spec-file ${SPEC_FILE} | xargs sudo rm -f || echo "Operation failed"
 
-if [ "$DISTRO" = "Ubuntu" ]; then
+if [ "$DISTRO_NAME" = "ubuntu" ]; then
     mkdir -p "${MAPR_REPO_DIR}"/dists/binary/optional/binary-amd64
     cd ${MAPR_REPO_DIR}
     dpkg-scanpackages -m . /dev/null | gzip -9c > dists/binary/optional/binary-amd64/Packages.gz
-elif [ "$DISTRO" = 'CentOS' -o "$DISTRO" = 'RedHatEnterpriseServer' ]; then
+elif [ "$DISTRO_NAME" = "centos" -o "$DISTRO_NAME" = "rhel" ]; then
     createrepo "${MAPR_REPO_DIR}"
 fi
 
 echo "Adding MapR repository"
-if [ "$DISTRO" = "Ubuntu" ]; then
+if [ "$DISTRO_NAME" = "ubuntu" ]; then
     cat >> /etc/apt/sources.list.d/maprtech.list << EOF
 deb [arch=amd64] file://${MAPR_REPO_DIR} binary optional
 EOF
 
-elif [ "$DISTRO" = 'CentOS' -o "$DISTRO" = 'RedHatEnterpriseServer' ]; then
+elif [ "$DISTRO_NAME" = "centos" -o "$DISTRO_NAME" = "rhel" ]; then
     cat >> /etc/yum.repos.d/maprtech.repo << EOF
 [mapr-ecosystem]
 name=MapR Technologies

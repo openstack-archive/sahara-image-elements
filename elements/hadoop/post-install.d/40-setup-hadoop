@@ -25,11 +25,11 @@ function find_java_home {
     JAVA_HOME=$(find $TARGET_ROOT$JAVA_TARGET_LOCATION/ -maxdepth 1 -name "jdk*")
 
     if [ -z "$JAVA_HOME" ]; then
-        case "$distro" in
-            Ubuntu )
+        case "$DISTRO_NAME" in
+            ubuntu )
                 JAVA_HOME=$(readlink -e /usr/bin/java | sed "s:bin/java::")
             ;;
-            Fedora | RedHatEnterpriseServer | CentOS )
+            fedora | rhel | centos )
                 JAVA_HOME=$(rpm --eval '%{?java_home}')
             ;;
         esac
@@ -37,22 +37,22 @@ function find_java_home {
 }
 
 function install_hadoop_v1 {
-    case "$distro" in
-        Ubuntu )
+    case "$DISTRO_NAME" in
+        ubuntu )
             package="hadoop_$DIB_HADOOP_VERSION-1_x86_64.deb"
         ;;
-        Fedora | RedHatEnterpriseServer | CentOS )
+        fedora | rhel | centos )
             package="hadoop-$DIB_HADOOP_VERSION-1.x86_64.rpm"
         ;;
     esac
 
     download_hadoop_package
 
-    case "$distro" in
-        Ubuntu )
+    case "$DISTRO_NAME" in
+        ubuntu )
             dpkg -i $tmp_dir/$package
         ;;
-        Fedora | RedHatEnterpriseServer | CentOS )
+        fedora | rhel | centos )
             if [ $(lsb_release -rs) -ge '19' ]; then
                 rpm -i $tmp_dir/$package --relocate /usr=/usr --replacefiles
             else
@@ -148,23 +148,22 @@ EOF
     ln -s ${HADOOP_HOME}/share/hadoop/tools/lib/hadoop-openstack-${DIB_HADOOP_VERSION}.jar ${HADOOP_HOME}/share/hadoop/common/lib/
 }
 
-distro=$(lsb_release -is || :)
-if [ ! "$distro" == "Fedora" -a ! "$distro" == "Ubuntu" -a ! "$distro" == "RedHatEnterpriseServer" -a ! "$distro" == "CentOS" ]; then
-    echo "Unknown distro: $distro. Exiting."
+if [ ! "$DISTRO_NAME" == "fedora" -a ! "$DISTRO_NAME" == "ubuntu" -a ! "$DISTRO_NAME" == "rhel" -a ! "$DISTRO_NAME" == "centos" ]; then
+    echo "Unknown distro: $DISTRO_NAME. Exiting."
     exit 1
 fi
 
-echo "Hadoop setup begins for $distro"
+echo "Hadoop setup begins for $DISTRO_NAME"
 tmp_dir=/tmp/hadoop
 
 echo "Creating hadoop user & group"
-case "$distro" in
-    Ubuntu )
+case "$DISTRO_NAME" in
+    ubuntu )
         addgroup hadoop
         adduser --ingroup hadoop --disabled-password --gecos GECOS hadoop
         adduser hadoop sudo
     ;;
-    Fedora | RedHatEnterpriseServer | CentOS )
+    fedora | rhel | centos )
         adduser -G adm,wheel hadoop
     ;;
 esac
@@ -180,7 +179,7 @@ fi
 echo "Applying firstboot script"
 
 RC_SCRIPT_DIR=""
-if [ "$distro" == "Ubuntu" ]; then
+if [ "$DISTRO_NAME" == "ubuntu" ]; then
     # File '/etc/rc.local' may not exist
     if [ -f "/etc/rc.local" ]; then
         mv /etc/rc.local /etc/rc.local.old

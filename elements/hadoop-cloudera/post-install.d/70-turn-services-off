@@ -21,7 +21,7 @@ hue \
 oozie \
 postgresql
 do
-    if [ $(lsb_release -is) = 'Ubuntu' ]; then
+    if [ "$DISTRO_NAME" = "ubuntu" ]; then
         update-rc.d -f $i remove
     else
         chkconfig $i off
@@ -35,7 +35,7 @@ if [ $DIB_CDH_VERSION != "5.0" ]; then
         solr-server \
         spark-history-server
     do
-        if [ $(lsb_release -is) = 'Ubuntu' ]; then
+        if [ "$DISTRO_NAME" = "ubuntu" ]; then
             update-rc.d -f $i remove
         else
             chkconfig $i off

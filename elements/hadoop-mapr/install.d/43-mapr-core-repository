@@ -11,12 +11,10 @@ install-packages curl
 
 MAPR_REPO_DIR=/opt/mapr-repository/core
 
-DISTRO=$(lsb_release -is || :)
-
-if [ "$DISTRO" = "Ubuntu" ]; then
-    MAPR_REPO_URL=${DIB_MAPR_CORE_DEB_REPO:-"http://package.mapr.com/releases/v"${DIB_MAPR_VERSION}"/ubuntu/mapr-v"${DIB_MAPR_VERSION}"GA.deb.tgz"}
-elif [ "$DISTRO" = 'CentOS' -o "$DISTRO" = 'RedHatEnterpriseServer' ]; then
-    MAPR_REPO_URL=${DIB_MAPR_CORE_RPM_REPO:-"http://package.mapr.com/releases/v"${DIB_MAPR_VERSION}"/redhat/mapr-v"${DIB_MAPR_VERSION}"GA.rpm.tgz"}
+if [ "$DISTRO_NAME" = "ubuntu" ]; then
+    MAPR_REPO_URL=${DIB_MAPR_CORE_DEB_REPO:-"http://package.mapr.com/releases/v${DIB_MAPR_VERSION}/ubuntu/mapr-v${DIB_MAPR_VERSION}GA.deb.tgz"}
+elif [ "$DISTRO_NAME" = "centos" -o "$DISTRO_NAME" = "rhel" ]; then
+    MAPR_REPO_URL=${DIB_MAPR_CORE_RPM_REPO:-"http://package.mapr.com/releases/v${DIB_MAPR_VERSION}/redhat/mapr-v${DIB_MAPR_VERSION}GA.rpm.tgz"}
 else
     echo "Unknown distribution"
     exit 1
@@ -37,21 +35,21 @@ tar -zxf ${MAPR_REPO_DIR}/mapr-v${DIB_MAPR_VERSION}GA.tgz -C ${MAPR_REPO_DIR}
 echo "Removing MapR repository archive"
 rm -f ${MAPR_REPO_DIR}/mapr-v${DIB_MAPR_VERSION}GA.tgz
 
-if [ "$DISTRO" = "Ubuntu" ]; then
+if [ "$DISTRO_NAME" = "ubuntu" ]; then
     mkdir -p "${MAPR_REPO_DIR}"/dists/binary/optional/binary-amd64
     cd ${MAPR_REPO_DIR}
     dpkg-scanpackages -m . /dev/null | gzip -9c > dists/binary/optional/binary-amd64/Packages.gz
-elif [ "$DISTRO" = 'CentOS' -o "$DISTRO" = 'RedHatEnterpriseServer' ]; then
+elif [ "$DISTRO_NAME" = "centos" -o "$DISTRO_NAME" = "rhel" ]; then
     createrepo "${MAPR_REPO_DIR}"
 fi
 
 echo "Adding MapR repository"
-if [ "$DISTRO" = "Ubuntu" ]; then
+if [ "$DISTRO_NAME" = "ubuntu" ]; then
     cat >> /etc/apt/sources.list.d/maprtech.list << EOF
 deb [arch=amd64] file://${MAPR_REPO_DIR} binary optional
 EOF
 
-elif [ "$DISTRO" = 'CentOS' -o "$DISTRO" = 'RedHatEnterpriseServer' ]; then
+elif [ "$DISTRO_NAME" = "centos" -o "$DISTRO_NAME" = "rhel" ]; then
     cat >> /etc/yum.repos.d/maprtech.repo << EOF
 [mapr-core]
 name=MapR Technologies

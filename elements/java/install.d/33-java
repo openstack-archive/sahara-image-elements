@@ -6,8 +6,6 @@ if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
 fi
 set -e
 
-distro=$(lsb_release -is || :)
-
 : ${JAVA_TARGET_LOCATION:="/usr/java"}
 
 # NOTE: $(dirname $0) is read-only, use space under $TARGET_ROOT
@@ -45,8 +43,8 @@ else
 export JAVA_HOME=$JAVA_TARGET_LOCATION/$JAVA_NAME
 export PATH=\$PATH:$JAVA_TARGET_LOCATION/$JAVA_NAME/bin
 EOF
-        case "$distro" in
-            Ubuntu )
+        case "$DISTRO_NAME" in
+            ubuntu )
                 echo "Setting up alternatives for Java"
                 update-alternatives --install "/usr/bin/java" "java" "$JAVA_TARGET_LOCATION/$JAVA_NAME/bin/java" 1
                 update-alternatives --install "/usr/bin/javac" "javac" "$JAVA_TARGET_LOCATION/$JAVA_NAME/bin/javac" 1
@@ -56,7 +54,7 @@ EOF
                 update-alternatives --set javac $JAVA_TARGET_LOCATION/$JAVA_NAME/bin/javac
                 update-alternatives --set javaws $JAVA_TARGET_LOCATION/$JAVA_NAME/bin/javaws
             ;;
-            Fedora | RedHatEnterpriseServer | CentOS )
+            fedora | rhel | centos )
                 alternatives --install /usr/bin/java java $JAVA_TARGET_LOCATION/$JAVA_NAME/bin/java 200000
                 alternatives --install /usr/bin/javaws javaws $JAVA_TARGET_LOCATION/$JAVA_NAME/bin/javaws 200000
                 alternatives --install /usr/bin/javac javac $JAVA_TARGET_LOCATION/$JAVA_NAME/bin/javac 200000

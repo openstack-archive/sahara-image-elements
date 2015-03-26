@@ -8,18 +8,17 @@ if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
     set -x
 fi
 
-distro=$(lsb_release -is || :)
-if [ "$distro" != "Ubuntu" ]; then
-    echo "Distro $distro not supported by CDH. Exiting."
+if [ "$DISTRO_NAME" != "ubuntu" ]; then
+    echo "Distro $DISTRO_NAME not supported by CDH. Exiting."
     exit 1
 fi
 
-echo "Hadoop CDH setup begins for $distro"
+echo "Hadoop CDH setup begins for $DISTRO_NAME"
 tmp_dir=/tmp/hadoop
 
 echo "Creating hadoop user & group"
-case "$distro" in
-    Ubuntu )
+case "$DISTRO_NAME" in
+    ubuntu )
         addgroup hadoop
         adduser --ingroup hadoop --disabled-password --gecos GECOS hadoop
         adduser hadoop sudo
@@ -43,8 +42,8 @@ Pin: origin "archive.cloudera.com"
 Pin-Priority: 800
 EOF
 
-case "$distro" in
-    Ubuntu )
+case "$DISTRO_NAME" in
+    ubuntu )
         dpkg -i $tmp_dir/cdh4-repository_1.0_all.deb
         curl -s http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh/archive.key | sudo apt-key add -
         sudo apt-get update
@@ -61,8 +60,8 @@ echo "Pre-configuring Hadoop"
 JAVA_HOME=$(find $TARGET_ROOT$JAVA_TARGET_LOCATION/ -maxdepth 1 -name "jdk*")
 
 if [ -z "$JAVA_HOME" ]; then
-    case "$distro" in
-        Ubuntu)
+    case "$DISTRO_NAME" in
+        ubuntu)
             JAVA_HOME=$(readlink -e /usr/bin/java | sed "s:bin/java::")
         ;;
     esac

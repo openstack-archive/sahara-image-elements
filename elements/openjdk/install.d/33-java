@@ -7,15 +7,13 @@ set -e
 
 echo "Installing OpenJDK"
 
-distro=$(lsb_release -is || :)
-
-case "$distro" in
-    Ubuntu )
+case "$DISTRO_NAME" in
+    ubuntu )
         install-packages openjdk-7-jdk
         JAVA_PATH=$(update-alternatives --list java)
         JAVA_HOME=${JAVA_PATH%/bin/java}
     ;;
-    Fedora | RedHatEnterpriseServer | CentOS )
+    fedora | rhel | centos )
         install-packages java-1.7.0-openjdk-devel
         JAVA_HOME=$(rpm -E "%{java_home}")
     ;;
