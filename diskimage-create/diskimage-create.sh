@@ -231,8 +231,6 @@ base_dir="$(dirname $(readlink -e $0))"
 TEMP=$(mktemp -d diskimage-create.XXXXXX)
 pushd $TEMP
 
-export DIB_IMAGE_CACHE=$TEMP/.cache-image-create
-
 # Working with repositories
 # dib-utils repo
 
