@@ -3,3 +3,6 @@
 # process, which may cause wedges in the gate later.
 
 pbr>=0.6,!=0.7,<1.0
+
+dib-utils  # Apache-2.0
+diskimage-builder>=0.1.20
