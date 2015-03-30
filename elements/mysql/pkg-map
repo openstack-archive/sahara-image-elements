@@ -1,0 +1,24 @@
+{
+  "distro": {
+    "fedora": {
+      "mysql_package": "community-mysql",
+      "mysql_libs_package": "community-mysql-libs",
+      "mysql_server_package": "community-mysql-server",
+      "mysql_java_package": "mysql-connector-java"
+    }
+  },
+  "family": {
+    "debian": {
+      "mysql_package": "mysql-client-5.5",
+      "mysql_libs_package": "",
+      "mysql_server_package": "mysql-server-5.5",
+      "mysql_java_package": "libmysql-java"
+    },
+    "redhat": {
+      "mysql_package": "mysql",
+      "mysql_libs_package": "mysql-libs",
+      "mysql_server_package": "mysql-server",
+      "mysql_java_package": "mysql-connector-java"
+    }
+  }
+}
