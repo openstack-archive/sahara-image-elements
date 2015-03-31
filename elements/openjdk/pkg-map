@@ -1,0 +1,10 @@
+{
+    "family": {
+        "debian": {
+            "openjdk-7": "openjdk-7-jdk"
+        },
+        "redhat": {
+            "openjdk-7": "java-1.7.0-openjdk-devel"
+        }
+    }
+}
