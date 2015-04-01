@@ -13,10 +13,10 @@ mkdir -p $tmp_dir
 pushd $tmp_dir
 
 # The user is not providing his own Spark distribution package
-if [ -z "$SPARK_DOWNLOAD_URL" ]; then
+if [ -z "${SPARK_DOWNLOAD_URL:-}" ]; then
     # Check hadoop version
     # INFO on hadoop versions: http://spark.apache.org/docs/latest/hadoop-third-party-distributions.html
-    if [ -z "$DIB_SPARK_VERSION" ]; then
+    if [ -z "${DIB_SPARK_VERSION:-}" ]; then
         case "$DIB_HADOOP_VERSION" in
             CDH4)
                 DIB_SPARK_VERSION=1.0.0
