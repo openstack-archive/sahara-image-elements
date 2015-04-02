@@ -1,4 +1,6 @@
-==Install Java==
+===========
+oracle-java
+===========
 
 This element installs a Java Virtual Machine into the image. There are
 three options for selecting what version of the JVM is installed -
