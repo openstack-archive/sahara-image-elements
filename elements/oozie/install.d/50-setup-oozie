@@ -6,27 +6,25 @@ fi
 
 echo "Oozie setup"
 
-install-packages zip unzip tar wget
+install-packages zip unzip tar
 
 tmp_dir=/tmp/oozie
-mkdir $tmp_dir
 
 if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]]; then
-    OOZIE_DOWNLOAD_URL="${OOZIE_HADOOP_V1_DOWNLOAD_URL:-}"
-    OOZIE_FILE="${OOZIE_HADOOP_V1_FILE:-}"
+    if [ -z "${OOZIE_HADOOP_V1_DOWNLOAD_URL:-}" ]; then
+        OOZIE_FILE=$(basename $OOZIE_HADOOP_V1_FILE)
+    else
+        OOZIE_FILE=$(basename $OOZIE_HADOOP_V1_DOWNLOAD_URL)
+    fi
 elif [[ "$DIB_HADOOP_VERSION" == "2.6.0" ]]; then
-    OOZIE_DOWNLOAD_URL="${OOZIE_HADOOP_V2_6_DOWNLOAD_URL:-}"
-    OOZIE_FILE="${OOZIE_HADOOP_V2_6_FILE:-}"
+    if [ -z "${OOZIE_HADOOP_V2_6_DOWNLOAD_URL:-}" ]; then
+        OOZIE_FILE=$(basename $OOZIE_HADOOP_V2_6_FILE)
+    else
+        OOZIE_FILE=$(basename $OOZIE_HADOOP_V2_6_DOWNLOAD_URL)
+    fi
 else
     echo "Unknown Hadoop version selected. Aborting."
     exit 1
-fi
-
-if [ -n "$OOZIE_DOWNLOAD_URL" ]; then
-    wget -P $tmp_dir $OOZIE_DOWNLOAD_URL
-    OOZIE_FILE=$(basename $OOZIE_DOWNLOAD_URL)
-elif [ -n "$OOZIE_FILE" ]; then
-    install -D -g root -o root -m 0755 $(dirname $0)/$OOZIE_FILE $tmp_dir
 fi
 
 cd $tmp_dir
@@ -40,4 +38,4 @@ else
     mv * /opt/oozie/
 fi
 
-rm -rf tmp_dir
+rm -rf $tmp_dir
