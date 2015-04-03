@@ -4,7 +4,7 @@ if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
     set -x
 fi
 
-if [ -z "$HIVE_DOWNLOAD_URL" ]; then
+if [ -z "${HIVE_DOWNLOAD_URL:-}" ]; then
     version_check=$(echo $HIVE_VERSION | sed -e '/[0-9]\.[0-9][0-9]\.[0-9]/d')
     if [ ! -z $version_check ]; then
         echo -e "Unable to install Hive: You should specify HIVE_DOWNLOAD_URL or HIVE_VERSION.\nAborting"
