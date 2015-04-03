@@ -1,3 +1,7 @@
+=====
+spark
+=====
+
 Installs Spark on Ubuntu. Requires Hadoop CDH 4 (hadoop-cdh element).
 
 It will install a version of Spark known to be compatible with CDH 4

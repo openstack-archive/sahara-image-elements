@@ -1,3 +1,7 @@
+==========
+hadoop-hdp
+==========
+
 Installs the JDK, the Hortonworks Data Platform, and Apache Ambari.
 
 Please set the DIB_HDP_VERSION environment variable to configure the install to use a given version.  The default script (mentioned below) sets this variable for each supported version.

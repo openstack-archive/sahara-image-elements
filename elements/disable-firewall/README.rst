@@ -1,4 +1,6 @@
-==Disable Firewall==
+================
+disable-firewall
+================
 
 This elements disables all firewalls on the image.
 
