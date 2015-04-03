@@ -16,7 +16,7 @@ DEFAULT_DIB_UTILS_REPO_BRANCH="0.0.9"
 DEFAULT_DIB_REPO_BRANCH="0.1.41"
 
 # The default version for a MapR plugin
-DIB_DEFAULT_MAPR_VERSION="4.0.1"
+DIB_DEFAULT_MAPR_VERSION="4.0.2"
 
 # Default list of datasource modules for ubuntu. Workaround for bug #1375645
 export CLOUD_INIT_DATASOURCES=${DIB_CLOUD_INIT_DATASOURCES:-"NoCloud, ConfigDrive, OVF, MAAS, Ec2"}
@@ -27,7 +27,7 @@ usage() {
     echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr]"
     echo "         [-i ubuntu|fedora|centos]"
     echo "         [-v 1|2|2.6|5.0|5.3|plain]"
-    echo "         [-r 3.1.1|4.0.1]"
+    echo "         [-r 3.1.1|4.0.1|4.0.2]"
     echo "         [-d]"
     echo "         [-m]"
     echo "         [-u]"
@@ -146,34 +146,36 @@ if [ -n "$HADOOP_VERSION" -a "$HADOOP_VERSION" != "1" -a "$HADOOP_VERSION" != "2
 fi
 
 if [ "$PLUGIN" = "vanilla" -a "$HADOOP_VERSION" = "plain" ]; then
-    echo "Impossible combination.\nAborting"
+    echo -e "Impossible combination.\nAborting"
     exit 1
 fi
 
 if [ "$PLUGIN" = "cloudera" -a "$BASE_IMAGE_OS" = "fedora" ]; then
-    echo "Impossible combination.\nAborting"
+    echo -e "Impossible combination.\nAborting"
     exit 1
 fi
 
 if [ "$PLUGIN" = "mapr" -a "$BASE_IMAGE_OS" = "fedora" ]; then
-    echo "'fedora' image type is not supported by 'mapr' plugin.\nAborting"
+    echo -e "'fedora' image type is not supported by 'mapr' plugin.\nAborting"
     exit 1
 fi
 
 if [ "$PLUGIN" != "mapr" -a -n "$DIB_MAPR_VERSION" ]; then
-    echo "'-r' parameter should be used only with 'mapr' plugin.\nAborting"
+    echo -e "'-r' parameter should be used only with 'mapr' plugin.\nAborting"
     exit 1
 fi
 
 if [ "$PLUGIN" = "mapr" -a -z "$DIB_MAPR_VERSION" ]; then
-    echo "MapR version is not specified.\n"
-    echo "${DIB_DEFAULT_MAPR_VERSION} version would be used.\n"
+    echo "MapR version is not specified"
+    echo "${DIB_DEFAULT_MAPR_VERSION} version would be used"
     DIB_MAPR_VERSION=${DIB_DEFAULT_MAPR_VERSION}
 fi
 
-if [ "$PLUGIN" = "mapr" -a "${DIB_MAPR_VERSION}" != "3.1.1" -a "${DIB_MAPR_VERSION}" != "4.0.1" ]; then
-    echo "Unknown MapR version.\nExit"
-    exit 1
+if [ "$PLUGIN" = "mapr" ];  then
+    case "$DIB_MAPR_VERSION" in
+        "3.1.1" | "4.0.1" | "4.0.2") ;;
+        *) echo -e "Unknown MapR version.\nExit"; exit 1 ;;
+    esac
 fi
 
 if [ "$JAVA_ELEMENT" != "openjdk" -a "$JAVA_ELEMENT" != "oracle-java" ]; then
@@ -630,7 +632,7 @@ fi
 ##########################
 if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
     echo "For mapr plugin option -v is ignored"
-    export DIB_MAPR_VERSION=${DIB_MAPR_VERSION:-4.0.1}
+    export DIB_MAPR_VERSION=${DIB_MAPR_VERSION:-${DIB_DEFAULT_MAPR_VERSION}}
 
     export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
 

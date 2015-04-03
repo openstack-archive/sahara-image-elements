@@ -8,7 +8,7 @@ set -eu
 echo "START: installing Scala"
 
 #Current available version
-DEF_VERSION="2.11.2"
+DEF_VERSION="2.11.6"
 
 RETURN_CODE="$(curl -s -o /dev/null -w "%{http_code}" http://www.scala-lang.org/)"
 

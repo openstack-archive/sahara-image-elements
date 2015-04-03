@@ -4,7 +4,7 @@ Installs `OpenJDK <http://http://openjdk.java.net/>`_ and `Scala <http://www.sca
 In order to create the MapR images with the diskimage-create.sh script, use the following syntax to select the "MapR" plugin:
 .. sourcecode:: bash
 
-  sudo bash diskimage-create.sh -p mapr [-i ubuntu|centos] [-r 3.1.1|4.0.1]
+  bash diskimage-create.sh -p mapr [-i ubuntu|centos] [-r 3.1.1|4.0.1|4.0.2]
 
 NOTE: By default MapR 4.0.1 version will be used
 
@@ -18,4 +18,4 @@ For example:
   export DIB_MAPR_CORE_RPM_REPO="file://<path-to-archive>/mapr-v4.0.1GA.rpm.tgz"
   export DIB_MAPR_ECO_DEB_REPO="http://<URL>/mapr-ecosystem.deb.tgz"
   export DIB_MAPR_ECO_RPM_REPO="http://<URL>/mapr-ecosystem.rpm.tgz"
-  sudo -E bash diskimage-create.sh -p mapr -r 4.0.1
+  bash diskimage-create.sh -p mapr -r 4.0.1
