@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://extjs.com/deploy/ext-2.2.zip"}
+
+extjs_archive=/tmp/$(basename $EXTJS_DOWNLOAD_URL)
+
+mkdir -p $EXTJS_DESTINATION_DIR
+if [ -z "${EXTJS_NO_UNPACK:-}" ]; then
+    unzip -d "$EXTJS_DESTINATION_DIR" $extjs_archive
+    rm -f $extjs_archive
+else
+    mv $extjs_archive $EXTJS_DESTINATION_DIR
+fi
