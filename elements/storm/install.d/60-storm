@@ -52,7 +52,7 @@ echo "Installing Supervisor Deamon"
 
 install-packages supervisor
 update-rc.d supervisor defaults
-chmod 600 /etc/supervisord.conf
+chmod 600 /etc/supervisor/supervisord.conf
 
 mkdir -p /var/log/storm
 chown -R storm:storm /var/log/storm
