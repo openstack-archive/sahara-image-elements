@@ -3,7 +3,8 @@
 if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
     set -x
 fi
-set -e
+set -eu
+set -o pipefail
 
 if [ "$DISTRO_NAME" = "fedora" ]; then
     install-packages community-mysql community-mysql-libs community-mysql-server mysql-connector-java

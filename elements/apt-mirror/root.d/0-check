@@ -3,6 +3,8 @@
 if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
     set -x
 fi
+set -eu
+set -o pipefail
 
 if [ -z "$UBUNTU_MIRROR" ]; then
     echo "You should specify parameter 'UBUNTU_MIRROR'"
