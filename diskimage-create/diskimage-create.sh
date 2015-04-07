@@ -442,7 +442,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "storm" ]; then
     # Ignoring image type and hadoop version options
     echo "For storm plugin options -i and -v are ignored"
 
-    export DIB_STORM_VERSION=${DIB_STORM_VERSION:-0.9.1}
+    export DIB_STORM_VERSION=${DIB_STORM_VERSION:-0.9.2}
     export ubuntu_image_name=${ubuntu_storm_image_name:-"ubuntu_sahara_storm_latest_$DIB_STORM_VERSION"}
 
     ubuntu_elements_sequence="base vm ubuntu $JAVA_ELEMENT zookeeper storm"
