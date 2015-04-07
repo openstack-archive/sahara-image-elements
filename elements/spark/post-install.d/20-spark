@@ -3,6 +3,8 @@
 if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
     set -x
 fi
+set -eu
+set -o pipefail
 
 # We have to chown the Spark directories to make it usable for the default user
 # Unfortunately the Ubuntu user does not exists when DIB is creating the image

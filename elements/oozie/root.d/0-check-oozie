@@ -3,7 +3,8 @@
 if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
     set -x
 fi
-set -e
+set -eu
+set -o pipefail
 
 if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]]; then
     if [ -z "${OOZIE_HADOOP_V1_DOWNLOAD_URL:-}" -a -z "${OOZIE_HADOOP_V1_FILE:-}" ]; then
