@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+tmp_dir=$TARGET_ROOT/tmp/oozie
+mkdir -p $tmp_dir
+
+if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]]; then
+    OOZIE_DOWNLOAD_URL="${OOZIE_HADOOP_V1_DOWNLOAD_URL:-}"
+    OOZIE_FILE="${OOZIE_HADOOP_V1_FILE:-}"
+elif [[ "$DIB_HADOOP_VERSION" == "2.6.0" ]]; then
+    OOZIE_DOWNLOAD_URL="${OOZIE_HADOOP_V2_6_DOWNLOAD_URL:-}"
+    OOZIE_FILE="${OOZIE_HADOOP_V2_6_FILE:-}"
+else
+    echo "Unknown Hadoop version selected. Aborting."
+    exit 1
+fi
+
+if [ -n "${OOZIE_DOWNLOAD_URL:-}" ]; then
+    OOZIE_FILE=$(basename $OOZIE_DOWNLOAD_URL)
+    cached_tar="$DIB_IMAGE_CACHE/$OOZIE_FILE"
+    $TMP_HOOKS_PATH/bin/cache-url "$OOZIE_DOWNLOAD_URL" $cached_tar
+    sudo install -D -g root -o root -m 0755 $cached_tar $tmp_dir
+elif [ -n "$OOZIE_FILE" ]; then
+    sudo install -D -g root -o root -m 0755 $(dirname $0)/$OOZIE_FILE $tmp_dir
+fi

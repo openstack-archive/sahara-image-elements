@@ -1,15 +1,13 @@
 #!/bin/bash
-# This script installs Spark
-# More documentation in the README.md file
 
 if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
     set -x
 fi
+set -eu
+set -o pipefail
 
-install-packages tar
-
-tmp_dir=/tmp/spark
-pushd $tmp_dir
+tmp_dir=$TARGET_ROOT/tmp/spark
+mkdir -p $tmp_dir
 
 # The user is not providing his own Spark distribution package
 if [ -z "${SPARK_DOWNLOAD_URL:-}" ]; then
@@ -31,17 +29,8 @@ if [ -z "${SPARK_DOWNLOAD_URL:-}" ]; then
     SPARK_DOWNLOAD_URL="http://archive.apache.org/dist/spark/spark-$DIB_SPARK_VERSION/spark-$DIB_SPARK_VERSION-bin-$SPARK_HADOOP_DL.tgz"
 fi
 
-echo "Extracting SPARK"
+echo "Downloading SPARK"
 spark_file=$(basename "$SPARK_DOWNLOAD_URL")
-extract_folder=$(tar tzf $spark_file | sed -e 's@/.*@@' | uniq)
-echo "Decompressing Spark..."
-tar xzf $spark_file
-rm $spark_file
-
-echo "Moving SPARK to /opt/"
-# Placing spark in /opt/spark
-mv $extract_folder /opt/spark
-echo "$SPARK_DOWNLOAD_URL" > /opt/spark/spark_url.txt
-
-popd
-rm -Rf $tmp_dir
+cached_tar="$DIB_IMAGE_CACHE/$spark_file"
+$TMP_HOOKS_PATH/bin/cache-url $SPARK_DOWNLOAD_URL $cached_tar
+sudo install -D -g root -o root -m 0755 $cached_tar $tmp_dir

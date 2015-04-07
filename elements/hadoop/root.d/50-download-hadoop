@@ -1,0 +1,50 @@
+#!/bin/bash
+
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+function download_hadoop_package {
+    package=$1
+    echo "Hadoop version $DIB_HADOOP_VERSION will be downloaded"
+    cached_package="$DIB_IMAGE_CACHE/$package"
+    $TMP_HOOKS_PATH/bin/cache-url "http://archive.apache.org/dist/hadoop/core/hadoop-$DIB_HADOOP_VERSION/$package" $cached_package
+    sudo install -D -g root -o root -m 0644 $cached_package $tmp_dir
+}
+
+function download_hadoop_v1 {
+    case "$DISTRO_NAME" in
+        ubuntu )
+            package="hadoop_$DIB_HADOOP_VERSION-1_x86_64.deb"
+        ;;
+        fedora | rhel | centos )
+            package="hadoop-$DIB_HADOOP_VERSION-1.x86_64.rpm"
+        ;;
+    esac
+
+    download_hadoop_package $package
+}
+
+function download_hadoop_v2 {
+    download_hadoop_package "hadoop-$DIB_HADOOP_VERSION.tar.gz"
+}
+
+case "$DISTRO_NAME" in
+    fedora | ubuntu | rhel | centos )
+    ;;
+    *)
+        echo "Unknown distro: $DISTRO_NAME. Exiting."
+        exit 1
+    ;;
+esac
+
+tmp_dir=$TARGET_ROOT/tmp/hadoop
+mkdir -p $tmp_dir
+
+if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]]; then
+    download_hadoop_v1
+else
+    download_hadoop_v2
+fi

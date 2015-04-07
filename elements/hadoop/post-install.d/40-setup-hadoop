@@ -11,16 +11,6 @@ if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
     set -x
 fi
 
-function download_hadoop_package {
-    echo "Hadoop version $DIB_HADOOP_VERSION will be injected into image. Starting the download"
-    install-packages wget
-    wget -P $tmp_dir "http://archive.apache.org/dist/hadoop/core/hadoop-$DIB_HADOOP_VERSION/$package"
-    if [ $? -ne 0 ]; then
-        echo -e "Could not find Hadoop version $DIB_HADOOP_VERSION.\nAborting"
-        exit 1
-    fi
-}
-
 function install_hadoop_v1 {
     case "$DISTRO_NAME" in
         ubuntu )
@@ -30,8 +20,6 @@ function install_hadoop_v1 {
             package="hadoop-$DIB_HADOOP_VERSION-1.x86_64.rpm"
         ;;
     esac
-
-    download_hadoop_package
 
     case "$DISTRO_NAME" in
         ubuntu )
@@ -79,8 +67,6 @@ function install_hadoop_v2 {
     esac
 
     package="hadoop-$DIB_HADOOP_VERSION.tar.gz"
-
-    download_hadoop_package
 
     echo "Installing hadoop"
 

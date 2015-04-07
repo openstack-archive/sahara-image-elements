@@ -1,0 +1,33 @@
+#!/bin/bash
+# This script installs storm and its dependencies
+# More documentation on the README.md file
+
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+tmp_dir=$TARGET_ROOT/tmp/storm
+mkdir -p $tmp_dir
+
+echo "Downloading Storm"
+# The user is not providing his own Spark distribution package
+if [ -z "${STORM_DOWNLOAD_URL:-}" ]; then
+# Check storm version
+    case "$DIB_STORM_VERSION" in
+        0.9.*)
+            STORM_DOWNLOAD_URL="http://archive.apache.org/dist/incubator/storm/apache-storm-$DIB_STORM_VERSION-incubating/apache-storm-$DIB_STORM_VERSION-incubating.tar.gz"
+        ;;
+        *)
+            echo -e "WARNING: Storm version $DIB_STORM_VERSION not supported."
+            echo -e "WARNING: make sure STORM_DOWNLOAD_URL points to a compatible Storm version."
+            exit 1
+        ;;
+    esac
+fi
+
+storm_file=$(basename "$STORM_DOWNLOAD_URL")
+cached_tar="$DIB_IMAGE_CACHE/$storm_file"
+$TMP_HOOKS_PATH/bin/cache-url $STORM_DOWNLOAD_URL $cached_tar
+sudo install -D -g root -o root -m 0755 $cached_tar $tmp_dir

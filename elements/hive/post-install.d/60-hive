@@ -4,21 +4,16 @@ if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
     set -x
 fi
 
-install-packages wget tar
+install-packages tar
 
 tmp_dir=/tmp/hive
-mkdir -p $tmp_dir
 cd $tmp_dir
 
 if [ -z "${HIVE_DOWNLOAD_URL:-}" ]; then
-    HIVE_DOWNLOAD_URL=http://archive.apache.org/dist/hive/hive-$HIVE_VERSION/hive-$HIVE_VERSION-bin.tar.gz
+    HIVE_FILE=hive-$HIVE_VERSION-bin.tar.gz
+else
+    HIVE_FILE=$(basename $HIVE_DOWNLOAD_URL)
 fi
-wget $HIVE_DOWNLOAD_URL
-if [ $? -ne 0 ]; then
-    echo -e "Could not download hive.\nAborting"
-    exit 1
-fi
-HIVE_FILE=$(basename $HIVE_DOWNLOAD_URL)
 tar xzf $HIVE_FILE
 HIVE_DIR="${HIVE_FILE%.*}"
 HIVE_DIR="${HIVE_DIR%.*}"
