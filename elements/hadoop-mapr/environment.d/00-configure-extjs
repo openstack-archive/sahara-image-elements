@@ -1,0 +1,2 @@
+export EXTJS_DESTINATION_DIR="/opt/mapr-repository/"
+export EXTJS_NO_UNPACK=1
