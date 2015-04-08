@@ -13,6 +13,8 @@ fi
 set -eu
 set -o pipefail
 
+install-packages wget tar
+
 function install_hadoop_v1 {
     case "$DISTRO_NAME" in
         ubuntu )
