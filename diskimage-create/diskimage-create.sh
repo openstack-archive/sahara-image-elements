@@ -685,4 +685,4 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
 fi
 
 popd # out of $TEMP
-sudo rm -rf $TEMP
+rm -rf $TEMP
