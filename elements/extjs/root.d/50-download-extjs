@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://extjs.com/deploy/ext-2.2.zip"}
+
+filename=$(basename $EXTJS_DOWNLOAD_URL)
+cached_package="$DIB_IMAGE_CACHE/$filename"
+$TMP_HOOKS_PATH/bin/cache-url "$EXTJS_DOWNLOAD_URL" $cached_package
+sudo install -D -g root -o root -m 0644 $cached_package $TARGET_ROOT/tmp/
