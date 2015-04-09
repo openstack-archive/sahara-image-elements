@@ -6,8 +6,6 @@ fi
 set -eu
 set -o pipefail
 
-install-packages which
-
 if which systemctl; then
     systemctl disable firewalld
 fi

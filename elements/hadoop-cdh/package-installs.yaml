@@ -1,0 +1,4 @@
+curl:
+  phase: post-install.d
+wget:
+  phase: post-install.d

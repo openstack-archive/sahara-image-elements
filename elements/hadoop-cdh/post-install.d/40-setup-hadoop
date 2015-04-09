@@ -29,7 +29,6 @@ esac
 
 echo "CDH 4 will be injected into image. Starting the download"
 
-install-packages wget
 # Here more versions of CDH could be supported by downloading the right repository package.
 wget -P $tmp_dir "http://archive.cloudera.com/cdh4/one-click-install/precise/amd64/cdh4-repository_1.0_all.deb"
 if [ $? -ne 0 ]; then

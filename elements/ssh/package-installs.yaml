@@ -1,0 +1,5 @@
+augeas-tools:
+# /etc/ssh/sshd_config is provided by openssh-server
+openssh-server:
+# /etc/ssh/ssh_config is provided by openssh-client
+openssh-client:

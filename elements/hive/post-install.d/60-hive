@@ -6,8 +6,6 @@ fi
 set -eu
 set -o pipefail
 
-install-packages tar
-
 tmp_dir=/tmp/hive
 cd $tmp_dir
 

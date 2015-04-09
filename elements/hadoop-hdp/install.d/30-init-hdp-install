@@ -26,14 +26,6 @@ fi
 set -eu
 set -o pipefail
 
-install-packages wget
-install-packages ntp
-
-install-packages bind-utils
-
-#install cloud-inint which is necessary for all images
-install-packages cloud-init
-
 # change the cloud-init user to root
 sed "s/ec2-user/root/" -i /etc/cloud/cloud.cfg
 sed "s/disable_root: 1/disable_root: 0/" -i /etc/cloud/cloud.cfg

@@ -8,8 +8,6 @@ fi
 set -u
 set -o pipefail
 
-install-packages wget unzip build-essential uuid-dev git libtool autoconf pkg-config tar
-
 tmp_dir=/tmp/storm
 
 echo "Creating Storm User"

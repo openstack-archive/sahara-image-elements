@@ -1,0 +1,6 @@
+augeas-tools:
+  phase: post-install.d
+openssh-server:
+  phase: post-install.d
+openssh-client:
+  phase: post-install.d

@@ -1,0 +1,2 @@
+redhat-lsb:
+  phase: pre-install.d
