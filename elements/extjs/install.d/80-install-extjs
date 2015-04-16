@@ -6,7 +6,7 @@ fi
 set -eu
 set -o pipefail
 
-EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://extjs.com/deploy/ext-2.2.zip"}
+EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://dev.sencha.com/deploy/ext-2.2.zip"}
 
 extjs_archive=/tmp/$(basename $EXTJS_DOWNLOAD_URL)
 
