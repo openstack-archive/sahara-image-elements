@@ -195,7 +195,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
   export OOZIE_HADOOP_V2_4_DOWNLOAD_URL=${OOZIE_HADOOP_V2_4_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/oozie-juno-4.0.1-hadoop-2.4.1.tar.gz"}
   export HADOOP_V2_3_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_3_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-2.3.0-native-libs.tar.gz"}
   export HADOOP_V2_4_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_4_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-native-libs-juno-2.4.1.tar.gz"}
-  export EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://extjs.com/deploy/ext-2.2.zip"}
+  export EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://dev.sencha.com/deploy/ext-2.2.zip"}
   export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
 
   ubuntu_elements_sequence="base vm ubuntu hadoop oozie mysql"
