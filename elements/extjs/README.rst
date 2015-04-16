@@ -20,7 +20,7 @@ The element can be configured by exporting variables using a
 * EXTJS\_DOWNLOAD\_URL
 
   The URL from where to download extjs.  Defaults to
-  ``http://extjs.com/deploy/ext-2.2.zip``.
+  ``http://dev.sencha.com/deploy/ext-2.2.zip``.
 
 * EXTJS\_NO\_UNPACK
 

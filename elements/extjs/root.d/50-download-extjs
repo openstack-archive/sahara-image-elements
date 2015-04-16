@@ -6,7 +6,7 @@ fi
 set -eu
 set -o pipefail
 
-EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://extjs.com/deploy/ext-2.2.zip"}
+EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://dev.sencha.com/deploy/ext-2.2.zip"}
 
 filename=$(basename $EXTJS_DOWNLOAD_URL)
 cached_package="$DIB_IMAGE_CACHE/$filename"
