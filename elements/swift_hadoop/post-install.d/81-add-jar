@@ -6,8 +6,6 @@ fi
 set -eu
 set -o pipefail
 
-install-packages wget
-
 HDFS_LIB_DIR=${DIB_HDFS_LIB_DIR:-"/usr/share/hadoop/lib"}
 SWIFT_LIB_URI="http://sahara-files.mirantis.com/hadoop-swift/hadoop-swift-latest.jar"
 

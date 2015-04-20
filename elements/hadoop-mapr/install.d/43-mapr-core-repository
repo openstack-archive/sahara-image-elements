@@ -8,8 +8,6 @@ set -o pipefail
 
 echo "START: installing MapR core repository"
 
-install-packages curl
-
 MAPR_REPO_DIR=/opt/mapr-repository/core
 
 if [ "$DISTRO_NAME" = "ubuntu" ]; then

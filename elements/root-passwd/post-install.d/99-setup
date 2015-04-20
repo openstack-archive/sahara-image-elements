@@ -11,7 +11,6 @@ if [ -z "$DIB_PASSWORD" ]; then
     exit 1
 fi
 sed -i "s/disable_root: true/disable_root: false/" /etc/cloud/cloud.cfg
-install-packages augeas-tools openssh-server openssh-client
 augtool -s set /files/etc/ssh/sshd_config/PasswordAuthentication yes
 augtool -s set /files/etc/ssh/sshd_config/PermitRootLogin yes
 augtool -s set /files/etc/ssh/ssh_config/PasswordAuthentication yes

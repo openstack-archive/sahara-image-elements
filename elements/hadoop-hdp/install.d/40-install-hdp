@@ -150,9 +150,6 @@ function installHDP_2_0 {
 
 # Start of Main HDP Install Element
 
-# Make sure wget is installed
-install-packages wget
-
 # Call version-specific script to install the desired version of HDP
 if [[ $DIB_HDP_VERSION == "1.3"  ]]; then
     echo "Installing HDP Version $DIB_HDP_VERSION..."

@@ -7,12 +7,6 @@ set -u
 set -o pipefail
 echo "Begin: install and configure SSH"
 
-# /etc/ssh/sshd_config is provided by openssh-server
-# /etc/ssh/ssh_config is provided by openssh-client
-# Note: You need diskimage-builder w/ SHA 82eacdec (11 July 2013) for
-#       this install to work on Fedora - https://review.openstack.org/#/c/36739/
-install-packages augeas-tools openssh-server openssh-client
-
 augtool -s set /files/etc/ssh/sshd_config/GSSAPIAuthentication no
 augtool -s set /files/etc/ssh/sshd_config/UseDNS no
 augtool -s set /files/etc/ssh/sshd_config/PermitTunnel yes

@@ -1,0 +1,5 @@
+wget:
+ntp:
+bind-utils:
+# install cloud-init which is necessary for all images
+cloud-init:

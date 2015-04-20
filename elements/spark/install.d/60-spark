@@ -8,8 +8,6 @@ fi
 set -eu
 set -o pipefail
 
-install-packages tar
-
 tmp_dir=/tmp/spark
 pushd $tmp_dir
 

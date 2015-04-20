@@ -8,8 +8,6 @@ set -o pipefail
 
 echo "Oozie setup"
 
-install-packages zip unzip tar
-
 tmp_dir=/tmp/oozie
 
 if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]]; then

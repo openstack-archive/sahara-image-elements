@@ -1,0 +1,5 @@
+zip:
+unzip:
+tar:
+wget:
+  phase: post-install.d

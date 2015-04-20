@@ -1,0 +1,4 @@
+wget:
+  phase: post-install.d
+tar:
+  phase: post-install.d

@@ -6,8 +6,6 @@ fi
 set -eu
 set -o pipefail
 
-install-packages wget
-
 ln -s /usr/share/java/mysql-connector-java.jar /opt/oozie/libtools/mysql.jar
 ln -s /usr/share/java/mysql-connector-java.jar /opt/oozie/oozie-server/lib/mysql.jar
 
