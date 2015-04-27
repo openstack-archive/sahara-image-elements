@@ -543,6 +543,9 @@ fi
 #########################
 
 if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
+    # Cloudera installation requires additional space
+    export DIB_MIN_TMPFS=5
+
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.0" ]; then
             cloudera_5_0_ubuntu_image_name=${cloudera_5_0_ubuntu_image_name:-ubuntu_sahara_cloudera_5_0_0}
@@ -623,6 +626,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
         fi
         unset REG_METHOD REG_HALT_UNREGISTER
     fi
+    unset DIB_MIN_TMPFS
 fi
 
 ##########################
