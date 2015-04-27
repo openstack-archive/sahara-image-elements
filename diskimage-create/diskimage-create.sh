@@ -21,6 +21,9 @@ DIB_DEFAULT_MAPR_VERSION="4.0.2"
 # Default list of datasource modules for ubuntu. Workaround for bug #1375645
 export CLOUD_INIT_DATASOURCES=${DIB_CLOUD_INIT_DATASOURCES:-"NoCloud, ConfigDrive, OVF, MAAS, Ec2"}
 
+# Tracing control
+TRACING=
+
 usage() {
     echo
     echo "Usage: $(basename $0)"
@@ -32,6 +35,7 @@ usage() {
     echo "         [-m]"
     echo "         [-u]"
     echo "         [-j openjdk|oracle-java]"
+    echo "         [-x]"
     echo "   '-p' is plugin version (default: all plugins)"
     echo "   '-i' is operating system of the base image (default: all supported by plugin)"
     echo "   '-v' is hadoop version (default: all supported by plugin)"
@@ -40,6 +44,7 @@ usage() {
     echo "   '-m' set the dib-utils and diskimage-builder repos to their master branches (default: dib-utils=$DEFAULT_DIB_UTILS_REPO_BRANCH, dib=$DEFAULT_DIB_REPO_BRANCH)"
     echo "   '-u' install missing packages necessary for building"
     echo "   '-j' is java distribution (default: openjdk)"
+    echo "   '-x' turns on tracing"
     echo
     echo "You shouldn't specify hadoop version and image type for spark plugin"
     echo "You shouldn't specify image type for hdp plugin"
@@ -50,7 +55,7 @@ usage() {
     exit 1
 }
 
-while getopts "p:i:v:dmur:j:" opt; do
+while getopts "p:i:v:dmur:j:x" opt; do
     case $opt in
         p)
             PLUGIN=$OPTARG
@@ -86,6 +91,10 @@ while getopts "p:i:v:dmur:j:" opt; do
         ;;
         j)
             JAVA_ELEMENT=$OPTARG
+        ;;
+        x)
+            TRACING="$TRACING -x"
+            set -x
         ;;
         *)
             usage
@@ -347,13 +356,13 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
             export ubuntu_image_name=${ubuntu_vanilla_hadoop_1_image_name:-"ubuntu_sahara_vanilla_hadoop_1_latest"}
             elements_sequence="$ubuntu_elements_sequence swift_hadoop"
-            disk-image-create $elements_sequence -o $ubuntu_image_name
+            disk-image-create $TRACING $elements_sequence -o $ubuntu_image_name
             mv $ubuntu_image_name.qcow2 ../
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export ubuntu_image_name=${ubuntu_vanilla_hadoop_2_6_image_name:-"ubuntu_sahara_vanilla_hadoop_2_6_latest"}
-            disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
+            disk-image-create $TRACING $ubuntu_elements_sequence -o $ubuntu_image_name
             mv $ubuntu_image_name.qcow2 ../
         fi
         unset DIB_CLOUD_INIT_DATASOURCES
@@ -365,13 +374,13 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
             export fedora_image_name=${fedora_vanilla_hadoop_1_image_name:-"fedora_sahara_vanilla_hadoop_1_latest$suffix"}
             elements_sequence="$fedora_elements_sequence swift_hadoop"
-            disk-image-create $elements_sequence -o $fedora_image_name
+            disk-image-create $TRACING $elements_sequence -o $fedora_image_name
             mv $fedora_image_name.qcow2 ../
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export fedora_image_name=${fedora_vanilla_hadoop_2_6_image_name:-"fedora_sahara_vanilla_hadoop_2_6_latest$suffix"}
-            disk-image-create $fedora_elements_sequence -o $fedora_image_name
+            disk-image-create $TRACING $fedora_elements_sequence -o $fedora_image_name
             mv $fedora_image_name.qcow2 ../
         fi
     fi
@@ -391,13 +400,13 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
             export centos_image_name=${centos_vanilla_hadoop_1_image_name:-"centos_sahara_vanilla_hadoop_1_latest$suffix"}
             elements_sequence="$centos_elements_sequence swift_hadoop"
-            disk-image-create $elements_sequence -n -o $centos_image_name
+            disk-image-create $TRACING $elements_sequence -n -o $centos_image_name
             mv $centos_image_name.qcow2 ../
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export centos_image_name=${centos_vanilla_hadoop_2_6_image_name:-"centos_sahara_vanilla_hadoop_2_6_latest$suffix"}
-            disk-image-create $centos_elements_sequence -n -o $centos_image_name
+            disk-image-create $TRACING $centos_elements_sequence -n -o $centos_image_name
             mv $centos_image_name.qcow2 ../
         fi
         unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES REG_METHOD REG_HALT_UNREGISTER
@@ -425,7 +434,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
     fi
 
     # Creating Ubuntu cloud image
-    disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
+    disk-image-create $TRACING $ubuntu_elements_sequence -o $ubuntu_image_name
     mv $ubuntu_image_name.qcow2 ../
     unset DIB_CLOUD_INIT_DATASOURCES
     unset DIB_HDFS_LIB_DIR
@@ -452,7 +461,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "storm" ]; then
     fi
 
     # Creating Ubuntu cloud image
-    disk-image-create $ubuntu_elements_sequence -o $ubuntu_image_name
+    disk-image-create $TRACING $ubuntu_elements_sequence -o $ubuntu_image_name
     mv $ubuntu_image_name.qcow2 ../
     unset DIB_CLOUD_INIT_DATASOURCES
 fi
@@ -495,7 +504,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
 
         # generate image with HDP 1.3
         export DIB_HDP_VERSION="1.3"
-        disk-image-create $centos_elements_sequence -n -o $centos_image_name_hdp_1_3
+        disk-image-create $TRACING $centos_elements_sequence -n -o $centos_image_name_hdp_1_3
         mv $centos_image_name_hdp_1_3.qcow2 ../
     fi
 
@@ -514,7 +523,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
 
         # generate image with HDP 2.0
         export DIB_HDP_VERSION="2.0"
-        disk-image-create $centos_elements_sequence -n -o $centos_image_name_hdp_2_0
+        disk-image-create $TRACING $centos_elements_sequence -n -o $centos_image_name_hdp_2_0
         mv $centos_image_name_hdp_2_0.qcow2 ../
     fi
 
@@ -532,7 +541,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
         fi
 
         # generate plain (no Hadoop components) image for testing
-        disk-image-create $centos_plain_elements_sequence -n -o $centos_image_name_plain
+        disk-image-create $TRACING $centos_plain_elements_sequence -n -o $centos_image_name_plain
         mv $centos_image_name_plain.qcow2 ../
     fi
     unset BASE_IMAGE_FILE DIB_IMAGE_SIZE DIB_CLOUD_IMAGES REG_METHOD REG_HALT_UNREGISTER
@@ -558,7 +567,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             # Cloudera supports only 12.04 Ubuntu
             export DIB_CDH_VERSION="5.0"
             export DIB_RELEASE="precise"
-            disk-image-create $cloudera_elements_sequence -o $cloudera_5_0_ubuntu_image_name
+            disk-image-create $TRACING $cloudera_elements_sequence -o $cloudera_5_0_ubuntu_image_name
             mv $cloudera_5_0_ubuntu_image_name.qcow2 ../
             unset DIB_CDH_VERSION DIB_RELEASE
         fi
@@ -573,7 +582,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             # Cloudera supports only 12.04 Ubuntu
             export DIB_CDH_VERSION="5.3"
             export DIB_RELEASE="precise"
-            disk-image-create $cloudera_elements_sequence -o $cloudera_5_3_ubuntu_image_name
+            disk-image-create $TRACING $cloudera_elements_sequence -o $cloudera_5_3_ubuntu_image_name
             mv $cloudera_5_3_ubuntu_image_name.qcow2 ../
             unset DIB_CDH_VERSION DIB_RELEASE
         fi
@@ -599,7 +608,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
                 [ -n "$CENTOS_MIRROR" ] && cloudera_elements_sequence="$cloudera_elements_sequence centos-mirror"
             fi
 
-            disk-image-create $cloudera_elements_sequence -n -o $cloudera_5_0_centos_image_name
+            disk-image-create $TRACING $cloudera_elements_sequence -n -o $cloudera_5_0_centos_image_name
             mv $cloudera_5_0_centos_image_name.qcow2 ../
 
             unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES DIB_CDH_VERSION
@@ -619,7 +628,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
                 [ -n "$CENTOS_MIRROR" ] && cloudera_elements_sequence="$cloudera_elements_sequence centos-mirror"
             fi
 
-            disk-image-create $cloudera_elements_sequence -n -o $cloudera_5_3_centos_image_name
+            disk-image-create $TRACING $cloudera_elements_sequence -n -o $cloudera_5_3_centos_image_name
             mv $cloudera_5_3_centos_image_name.qcow2 ../
 
             unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES DIB_CDH_VERSION
@@ -660,7 +669,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
 
         mapr_ubuntu_image_name=${mapr_ubuntu_image_name:-ubuntu_${DIB_RELEASE}_mapr_${DIB_MAPR_VERSION}_latest}
 
-        disk-image-create $mapr_ubuntu_elements_sequence -n -o $mapr_ubuntu_image_name
+        disk-image-create $TRACING $mapr_ubuntu_elements_sequence -n -o $mapr_ubuntu_image_name
         mv $mapr_ubuntu_image_name.qcow2 ../
 
         unset DIB_RELEASE
@@ -676,7 +685,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
 
         mapr_centos_image_name=${mapr_centos_image_name:-centos_6.5_mapr_${DIB_MAPR_VERSION}_latest}
 
-        disk-image-create $mapr_centos_elements_sequence -n -o $mapr_centos_image_name
+        disk-image-create $TRACING $mapr_centos_elements_sequence -n -o $mapr_centos_image_name
         mv $mapr_centos_image_name.qcow2 ../
 
         unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
