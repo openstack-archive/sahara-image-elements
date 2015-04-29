@@ -5,24 +5,26 @@ extjs
 This element downloads extjs from its website, caching it so it is
 not downloaded every time, and optionally unpacking it.
 
-Configuration
--------------
+Environment Variables
+---------------------
 
 The element can be configured by exporting variables using a
-`environment.d` script; variables with ``*`` are mandatory:
+`environment.d` script.
 
-* EXTJS\_DESTINATION\_DIR ``*``
+EXTJS_DESTINATION_DIR
+  :Required: Yes
+  :Description: The directory where to extract (or copy) extjs; must be
+    an absolute directory within the image. The directory is created if not
+    existing already.
+  :Example: ``EXTJS_DESTINATION_DIR=/usr/share/someapp``
 
-  The directory where to extract (or copy) extjs.  Mandatory, must be
-  an absolute directory within the image, e.g. ``/usr/share/someapp``.
-  The directory is created if not existing already.
+EXTJS_DOWNLOAD_URL
+  :Required: No
+  :Default: ``http://dev.sencha.com/deploy/ext-2.2.zip``
+  :Description: The URL from where to download extjs.
 
-* EXTJS\_DOWNLOAD\_URL
-
-  The URL from where to download extjs.  Defaults to
-  ``http://dev.sencha.com/deploy/ext-2.2.zip``.
-
-* EXTJS\_NO\_UNPACK
-
-  If set to 1, then the extjs tarball is simply copied to the location
-  specified by EXTJS\_DESTINATION\_DIR.
+EXTJS_NO_UNPACK
+  :Required: No
+  :Default: *unset*
+  :Description: If set to 1, then the extjs tarball is simply copied to the
+    location specified by ``EXTJS_DESTINATION_DIR``.
