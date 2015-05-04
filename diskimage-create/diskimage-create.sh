@@ -27,9 +27,9 @@ TRACING=
 usage() {
     echo
     echo "Usage: $(basename $0)"
-    echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr]"
+    echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr|plain]"
     echo "         [-i ubuntu|fedora|centos]"
-    echo "         [-v 1|2|2.6|5.0|5.3|plain]"
+    echo "         [-v 1|2|2.6|5.0|5.3]"
     echo "         [-r 3.1.1|4.0.1|4.0.2]"
     echo "         [-d]"
     echo "         [-m]"
@@ -48,7 +48,7 @@ usage() {
     echo
     echo "You shouldn't specify hadoop version and image type for spark plugin"
     echo "You shouldn't specify image type for hdp plugin"
-    echo "Version 'plain' could be specified for hdp plugin only"
+    echo "You shouldn't specify hadoop version for plain images"
     echo "Debug mode should only be enabled for local debugging purposes, not for production systems"
     echo "By default all images for all plugins will be created"
     echo
@@ -135,7 +135,7 @@ if [ "$DEBUG_MODE" = "true" -a "$platform" != 'NAME="Ubuntu"' ]; then
     fi
 fi
 
-if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" -a "$PLUGIN" != "cloudera" -a "$PLUGIN" != "storm" -a "$PLUGIN" != "mapr" ]; then
+if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" -a "$PLUGIN" != "cloudera" -a "$PLUGIN" != "storm" -a "$PLUGIN" != "mapr" -a "$PLUGIN" != "plain" ]; then
     echo -e "Unknown plugin selected.\nAborting"
     exit 1
 fi
@@ -145,18 +145,13 @@ if [ -n "$BASE_IMAGE_OS" -a "$BASE_IMAGE_OS" != "ubuntu" -a "$BASE_IMAGE_OS" != 
     exit 1
 fi
 
-if [ -n "$HADOOP_VERSION" -a "$HADOOP_VERSION" != "1" -a "$HADOOP_VERSION" != "2" -a "$HADOOP_VERSION" != "plain" ]; then
-    if [ "$PLUGIN" = "vanilla" -a "$HADOOP_VERSION" != "1" -a "$HADOOP_VERSION" != "2.6" -a "$HADOOP_VERSION" != "plain" ]; then
+if [ -n "$HADOOP_VERSION" -a "$HADOOP_VERSION" != "1" -a "$HADOOP_VERSION" != "2" ]; then
+    if [ "$PLUGIN" = "vanilla" -a "$HADOOP_VERSION" != "1" -a "$HADOOP_VERSION" != "2.6" ]; then
         if [ "$PLUGIN" = "cloudera" -a "$HADOOP_VERSION" != "5.0" -a "$HADOOP_VERSION" != "5.3" ]; then
             echo -e "Unknown hadoop version selected.\nAborting"
             exit 1
         fi
     fi
-fi
-
-if [ "$PLUGIN" = "vanilla" -a "$HADOOP_VERSION" = "plain" ]; then
-    echo -e "Impossible combination.\nAborting"
-    exit 1
 fi
 
 if [ "$PLUGIN" = "cloudera" -a "$BASE_IMAGE_OS" = "fedora" ]; then
@@ -526,24 +521,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
         disk-image-create $TRACING $centos_elements_sequence -n -o $centos_image_name_hdp_2_0
         mv $centos_image_name_hdp_2_0.qcow2 ../
     fi
-
-    if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "plain" ]; then
-        export centos_image_name_plain=${centos_hdp_plain_image_name:-"centos-6_6-64-plain"}
-        # Elements for a plain CentOS image that does not contain HDP or Apache Hadoop
-        centos_plain_elements_sequence="vm rhel redhat-lsb disable-firewall disable-selinux ssh sahara-version yum $JAVA_ELEMENT epel"
-        if [ "$DEBUG_MODE" = "true" ]; then
-            # enable the root-pwd element, for simpler local debugging of images
-            centos_plain_elements_sequence=$centos_plain_elements_sequence" root-passwd"
-        fi
-
-        if [ -n "$USE_MIRRORS"]; then
-            [ -n "$CENTOS_MIRROR" ] && centos_plain_elements_sequence="$centos_plain_elements_sequence centos-mirror"
-        fi
-
-        # generate plain (no Hadoop components) image for testing
-        disk-image-create $TRACING $centos_plain_elements_sequence -n -o $centos_image_name_plain
-        mv $centos_image_name_plain.qcow2 ../
-    fi
     unset BASE_IMAGE_FILE DIB_IMAGE_SIZE DIB_CLOUD_IMAGES REG_METHOD REG_HALT_UNREGISTER
 fi
 
@@ -690,6 +667,60 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
 
         unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
         unset DIB_CLOUD_INIT_DATASOURCES
+        unset REG_METHOD
+        unset REG_HALT_UNREGISTER
+    fi
+fi
+
+################
+# Plain images #
+################
+if [ -z "$PLUGIN" -o "$PLUGIN" = "plain" ]; then
+    # generate plain (no Hadoop components) images for testing
+
+    common_elements="vm ssh sahara-version"
+    if [ "$DEBUG_MODE" = "true" ]; then
+        common_elements="$common_elements root-passwd"
+    fi
+
+    ubuntu_elements_sequence="$common_elements ubuntu"
+    fedora_elements_sequence="$common_elements fedora"
+    centos_elements_sequence="$common_elements rhel redhat-lsb disable-firewall disable-selinux epel"
+
+    if [ -n "$USE_MIRRORS" ]; then
+        [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
+        [ -n "$FEDORA_MIRROR" ] && fedora_elements_sequence="$fedora_elements_sequence fedora-mirror"
+        [ -n "$CENTOS_MIRROR" ] && centos_elements_sequence="$centos_elements_sequence centos-mirror"
+    fi
+
+    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
+        plain_image_name=${plain_ubuntu_image_name:-ubuntu_plain}
+
+        disk-image-create $TRACING $ubuntu_elements_sequence -o $plain_image_name
+        mv $plain_image_name.qcow2 ../
+    fi
+
+    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "fedora" ]; then
+        plain_image_name=${plain_fedora_image_name:-fedora_plain}
+
+        disk-image-create $TRACING $fedora_elements_sequence -o $plain_image_name
+        mv $plain_image_name.qcow2 ../
+    fi
+
+    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
+        export BASE_IMAGE_FILE=${BASE_IMAGE_FILE:-"CentOS-6.6-cloud-init-20141118.qcow2"}
+        export DIB_CLOUD_IMAGES=${DIB_CLOUD_IMAGES:-"http://sahara-files.mirantis.com"}
+        # No registration for RHEL-based distros
+        export REG_METHOD=disable
+        # Workaround for https://review.openstack.org/#/c/162239/
+        export REG_HALT_UNREGISTER=1
+
+        plain_image_name=${plain_centos_image_name:-centos_plain}
+
+        disk-image-create $TRACING $centos_elements_sequence -o $plain_image_name
+        mv $plain_image_name.qcow2 ../
+
+        unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
         unset REG_METHOD
         unset REG_HALT_UNREGISTER
     fi
