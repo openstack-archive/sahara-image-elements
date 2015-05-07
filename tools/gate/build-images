@@ -2,4 +2,4 @@
 
 PLUGIN=$1
 
-tox -e venv -- sahara-image-create -u -p $PLUGIN
+tox -e venv -- sahara-image-create -x -u -p $PLUGIN
