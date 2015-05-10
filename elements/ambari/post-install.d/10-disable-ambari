@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ ${DIB_DEBUG_TRACE:-0} -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+case "${DISTRO_NAME}" in
+    rhel | centos | centos7 )
+        chkconfig ambari-server off
+        chkconfig ambari-agent off
+    ;;
+esac

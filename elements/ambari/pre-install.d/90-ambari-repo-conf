@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+DIB_AMBARI_VERSION="${DIB_AMBARI_VERSION:-2.1.0}"
+
+case "${DISTRO_NAME}" in
+    rhel | centos )
+        wget http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/$DIB_AMBARI_VERSION/ambari.repo -O /etc/yum.repos.d/ambari.repo
+    ;;
+    centos7 )
+        wget http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/$DIB_AMBARI_VERSION/ambari.repo -O /etc/yum.repos.d/ambari.repo
+    ;;
+    ubuntu )
+        wget http://public-repo-1.hortonworks.com/ambari/ubuntu12/2.x/updates/$DIB_AMBARI_VERSION/ambari.list -O /etc/apt/sources.list.d/ambari.list
+        apt-key adv --recv-keys --keyserver keyserver.ubuntu.com B9733A7A07513CAD
+    ;;
+esac
