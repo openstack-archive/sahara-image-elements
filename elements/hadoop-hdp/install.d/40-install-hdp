@@ -32,7 +32,8 @@ set -o pipefail
 
 function install_ganglia {
     # Install ganglia
-    install-packages libganglia ganglia-gmond ganglia-gmond-modules-python ganglia-devel ganglia-gmetad ganglia-web
+    local gv="3.5.0-99"
+    install-packages libganglia-$gv ganglia-gmond-$gv ganglia-gmond-modules-python-$gv ganglia-devel-$gv ganglia-gmetad-$gv ganglia-web-3.5.7-99
 }
 
 function install_mysql {
