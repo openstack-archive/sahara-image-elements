@@ -3,37 +3,46 @@
 if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
     set -x
 fi
-set -u
+set -ue
 set -o pipefail
 echo "Begin: install and configure SSH"
 
-augtool -s set /files/etc/ssh/sshd_config/GSSAPIAuthentication no
-augtool -s set /files/etc/ssh/sshd_config/UseDNS no
-augtool -s set /files/etc/ssh/sshd_config/PermitTunnel yes
-
-# ssh-client configuration
-# Common
-augtool -s set /files/etc/ssh/ssh_config/Host/StrictHostKeyChecking no
-augtool -s set /files/etc/ssh/ssh_config/Host/GSSAPIAuthentication no
+augtool <<EOF
+set /files/etc/ssh/sshd_config/GSSAPIAuthentication no
+set /files/etc/ssh/sshd_config/UseDNS no
+set /files/etc/ssh/sshd_config/PermitTunnel yes
+set /files/etc/ssh/ssh_config/Host/StrictHostKeyChecking no
+set /files/etc/ssh/ssh_config/Host/GSSAPIAuthentication no
+save
+EOF
 
 case "$DISTRO_NAME" in
     ubuntu )
-        augtool -s set /files/etc/ssh/sshd_config/GSSAPICleanupCredentials yes
-        augtool -s set /files/etc/ssh/sshd_config/AuthorizedKeysFile %h/.ssh/authorized_keys
+        augtool <<EOF
+set /files/etc/ssh/sshd_config/GSSAPICleanupCredentials yes
+set /files/etc/ssh/sshd_config/AuthorizedKeysFile %h/.ssh/authorized_keys
+save
+EOF
     ;;
     fedora )
         sed -i 's/ssh_pwauth:    0/ssh_pwauth:    1/' /etc/cloud/cloud.cfg
-        augtool -s clear /files/etc/sudoers/Defaults[type=':nrpe']/requiretty/negate
-        augtool -s set /files/etc/ssh/sshd_config/SyslogFacility AUTH
-        augtool -s set /files/etc/ssh/sshd_config/StrictModes yes
-        augtool -s set /files/etc/ssh/sshd_config/RSAAuthentication yes
-        augtool -s set /files/etc/ssh/sshd_config/PubkeyAuthentication yes
+        augtool <<EOF
+clear /files/etc/sudoers/Defaults[type=':nrpe']/requiretty/negate
+set /files/etc/ssh/sshd_config/SyslogFacility AUTH
+set /files/etc/ssh/sshd_config/StrictModes yes
+set /files/etc/ssh/sshd_config/RSAAuthentication yes
+set /files/etc/ssh/sshd_config/PubkeyAuthentication yes
+save
+EOF
     ;;
     rhel | centos )
         sed -i 's/ssh_pwauth:    0/ssh_pwauth:    1/' /etc/cloud/cloud.cfg
-        augtool -s clear /files/etc/sudoers/Defaults[type=':nrpe']/requiretty/negate
-        augtool -s set /files/etc/ssh/sshd_config/SyslogFacility AUTH
-        augtool -s set /files/etc/ssh/sshd_config/PubkeyAuthentication yes
+        augtool <<EOF
+clear /files/etc/sudoers/Defaults[type=':nrpe']/requiretty/negate
+set /files/etc/ssh/sshd_config/SyslogFacility AUTH
+set /files/etc/ssh/sshd_config/PubkeyAuthentication yes
+save
+EOF
     ;;
     * )
         echo "Unknown distro: $DISTRO_NAME, exiting"
