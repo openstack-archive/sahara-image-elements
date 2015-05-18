@@ -6,3 +6,4 @@ libtool:
 autoconf:
 pkg-config:
 tar:
+supervisor:
