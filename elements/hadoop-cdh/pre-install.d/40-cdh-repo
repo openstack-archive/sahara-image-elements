@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+case "$DISTRO_NAME" in
+    ubuntu )
+        # Here more versions of CDH could be supported by downloading the right repository package.
+        wget -P /tmp "http://archive.cloudera.com/cdh4/one-click-install/precise/amd64/cdh4-repository_1.0_all.deb"
+
+        # Pin packages from cloudera repository
+        cat >> /etc/apt/preferences.d/cloudera << EOF
+Package: *
+Pin: origin "archive.cloudera.com"
+Pin-Priority: 800
+EOF
+
+        dpkg -i /tmp/cdh4-repository_1.0_all.deb
+        rm /tmp/cdh4-repository_1.0_all.deb
+        wget -O - http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh/archive.key | sudo apt-key add -
+    ;;
+    *)
+        echo "Distro $DISTRO_NAME not supported by CDH. Exiting."
+        exit 1
+    ;;
+esac

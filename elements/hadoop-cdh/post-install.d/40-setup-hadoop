@@ -10,49 +10,18 @@ fi
 set -eu
 set -o pipefail
 
-if [ "$DISTRO_NAME" != "ubuntu" ]; then
-    echo "Distro $DISTRO_NAME not supported by CDH. Exiting."
-    exit 1
-fi
-
-echo "Hadoop CDH setup begins for $DISTRO_NAME"
-tmp_dir=/tmp/hadoop
-
 echo "Creating hadoop user & group"
 case "$DISTRO_NAME" in
     ubuntu )
-        addgroup hadoop
-        adduser --ingroup hadoop --disabled-password --gecos GECOS hadoop
+        if ! getent group hadoop > /dev/null; then
+            addgroup hadoop
+        fi
+        if ! getent passwd hadoop > /dev/null; then
+            adduser --ingroup hadoop --disabled-password --gecos GECOS hadoop
+        fi
         adduser hadoop sudo
     ;;
 esac
-
-echo "CDH 4 will be injected into image. Starting the download"
-
-# Here more versions of CDH could be supported by downloading the right repository package.
-wget -P $tmp_dir "http://archive.cloudera.com/cdh4/one-click-install/precise/amd64/cdh4-repository_1.0_all.deb"
-if [ $? -ne 0 ]; then
-    echo -e "Could not find CDH 4.\nAborting"
-    exit 1
-fi
-
-# Pin packages from cloudera repository
-cat >> /etc/apt/preferences.d/cloudera << EOF
-Package: *
-Pin: origin "archive.cloudera.com"
-Pin-Priority: 800
-EOF
-
-case "$DISTRO_NAME" in
-    ubuntu )
-        dpkg -i $tmp_dir/cdh4-repository_1.0_all.deb
-        curl -s http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh/archive.key | sudo apt-key add -
-        sudo apt-get update
-        # Here the script could be expanded to install all CDH packages and not only HDFS.
-        install-packages hadoop-hdfs-namenode hadoop-hdfs-datanode
-    ;;
-esac
-rm -r $tmp_dir
 
 echo "Pre-configuring Hadoop"
 
