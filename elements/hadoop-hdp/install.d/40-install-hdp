@@ -27,7 +27,7 @@
 if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
     set -x
 fi
-set -u
+set -ue
 set -o pipefail
 
 function install_ganglia {
@@ -130,9 +130,6 @@ function installHDP_2_0 {
 
     # Install sqoop
     install-packages sqoop
-
-    # Install tez
-    install-packages tez
 
     # Install openssl
     install-packages openssl
