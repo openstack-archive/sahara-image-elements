@@ -19,7 +19,7 @@ fi
 JRE_HOME=$1
 JDK_HOME=$2
 
-echo "JAVA_HOME=$JRE_HOME" >> $JAVA_RC
+echo "export JAVA_HOME=$JRE_HOME" >> $JAVA_RC
 chmod +x $JAVA_RC
 
 echo "Setting up alternatives for Java"
