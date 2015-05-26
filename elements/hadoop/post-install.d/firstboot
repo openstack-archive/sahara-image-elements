@@ -23,7 +23,7 @@ function firstboot_common {
             else
                 user=ec2-user
             fi
-            until [[ -n $(grep "$user:" /etc/passwd) && -n $(cat /etc/group | grep "$user:") ]]; do
+            until [[ -n $(grep "$user:" /etc/passwd) && -n $(grep "$user:" /etc/group) ]]; do
                 sleep 1
             done
             chown -R $user:$user /home/$user
