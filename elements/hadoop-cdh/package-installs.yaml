@@ -1,4 +1,4 @@
-curl:
-  phase: post-install.d
 wget:
-  phase: post-install.d
+  phase: pre-install.d
+hadoop-hdfs-namenode:
+hadoop-hdfs-datanode:
