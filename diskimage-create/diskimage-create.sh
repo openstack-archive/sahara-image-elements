@@ -23,7 +23,7 @@ usage() {
     echo "Usage: $(basename $0)"
     echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr|plain]"
     echo "         [-i ubuntu|fedora|centos]"
-    echo "         [-v 1|2|2.6|5.0|5.3]"
+    echo "         [-v 1|2|2.6|5.0|5.3|5.4]"
     echo "         [-r 3.1.1|4.0.1|4.0.2]"
     echo "         [-d]"
     echo "         [-u]"
@@ -533,6 +533,20 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             disk-image-create $TRACING $cloudera_elements_sequence -o $cloudera_5_3_ubuntu_image_name
             unset DIB_CDH_VERSION DIB_RELEASE
         fi
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.4" ]; then
+            cloudera_5_4_ubuntu_image_name=${cloudera_5_4_ubuntu_image_name:-ubuntu_sahara_cloudera_5_4_0}
+            cloudera_elements_sequence="base vm ubuntu hadoop-cloudera"
+
+            if [ -n "$USE_MIRRORS" ]; then
+                [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
+            fi
+
+            # Cloudera supports only 12.04 Ubuntu
+            export DIB_CDH_VERSION="5.4"
+            export DIB_RELEASE="precise"
+            disk-image-create $TRACING $cloudera_elements_sequence -o $cloudera_5_4_ubuntu_image_name
+            unset DIB_CDH_VERSION DIB_RELEASE
+        fi
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
@@ -575,6 +589,25 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             fi
 
             disk-image-create $TRACING $cloudera_elements_sequence -o $cloudera_5_3_centos_image_name
+
+            unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES DIB_CDH_VERSION
+        fi
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.4" ]; then
+            # CentOS cloud image:
+            # - Disable including 'base' element for CentOS
+            # - Export link and filename for CentOS cloud image to download
+            export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20141118.qcow2"
+            export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
+            export DIB_CDH_VERSION="5.4"
+
+            cloudera_5_4_centos_image_name=${cloudera_5_4_centos_image_name:-centos_sahara_cloudera_5_4_0}
+            cloudera_elements_sequence="base vm rhel hadoop-cloudera redhat-lsb selinux-permissive disable-firewall"
+
+            if [ -n "$USE_MIRRORS"]; then
+                [ -n "$CENTOS_MIRROR" ] && cloudera_elements_sequence="$cloudera_elements_sequence centos-mirror"
+            fi
+
+            disk-image-create $TRACING $cloudera_elements_sequence -n -o $cloudera_5_4_centos_image_name
 
             unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES DIB_CDH_VERSION
         fi
