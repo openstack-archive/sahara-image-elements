@@ -105,52 +105,123 @@ if [ "$DEBUG_MODE" = "true" -a "$platform" != 'NAME="Ubuntu"' ]; then
     fi
 fi
 
-if [ -n "$PLUGIN" -a "$PLUGIN" != "vanilla" -a "$PLUGIN" != "spark" -a "$PLUGIN" != "hdp" -a "$PLUGIN" != "cloudera" -a "$PLUGIN" != "storm" -a "$PLUGIN" != "mapr" -a "$PLUGIN" != "plain" ]; then
-    echo -e "Unknown plugin selected.\nAborting"
-    exit 1
-fi
+case "$PLUGIN" in
+    "");;
+    "vanilla")
+        case "$HADOOP_VERSION" in
+            "" | "1" | "2.6");;
+            *)
+                echo -e "Unknown hadoop version selected.\nAborting"
+                exit 1
+            ;;
+        esac
+        case "$BASE_IMAGE_OS" in
+            "" | "ubuntu" | "fedora" | "centos");;
+            *)
+                echo -e "'$BASE_IMAGE_OS' image type is not supported by '$PLUGIN'.\nAborting"
+                exit 1
+            ;;
+        esac
+        ;;
+    "cloudera")
+        case "$BASE_IMAGE_OS" in
+            "" | "ubuntu" | "centos");;
+            *)
+                echo -e "'$BASE_IMAGE_OS' image type is not supported by '$PLUGIN'.\nAborting"
+                exit 1
+            ;;
+        esac
 
-if [ -n "$BASE_IMAGE_OS" -a "$BASE_IMAGE_OS" != "ubuntu" -a "$BASE_IMAGE_OS" != "fedora" -a "$BASE_IMAGE_OS" != "centos" ]; then
-    echo -e "Unknown image type selected.\nAborting"
-    exit 1
-fi
+        case "$HADOOP_VERSION" in
+            "" | "5.0" | "5.3");;
+            *)
+                echo -e "Unknown hadoop version selected.\nAborting"
+                exit 1
+            ;;
+        esac
+        ;;
+    "spark" | "storm")
+        case "$BASE_IMAGE_OS" in
+            "" | "ubuntu");;
+            *)
+                echo -e "'$BASE_IMAGE_OS' image type is not supported by '$PLUGIN'.\nAborting"
+                exit 1
+            ;;
+        esac
 
-if [ -n "$HADOOP_VERSION" -a "$HADOOP_VERSION" != "1" -a "$HADOOP_VERSION" != "2" ]; then
-    if [ "$PLUGIN" = "vanilla" -a "$HADOOP_VERSION" != "1" -a "$HADOOP_VERSION" != "2.6" ]; then
-        if [ "$PLUGIN" = "cloudera" -a "$HADOOP_VERSION" != "5.0" -a "$HADOOP_VERSION" != "5.3" ]; then
-            echo -e "Unknown hadoop version selected.\nAborting"
+        if [ -n "$HADOOP_VERSION" ]; then
+            echo -e "You shouldn't specify hadoop version for '$PLUGIN'.\nAborting"
             exit 1
         fi
-    fi
-fi
+        ;;
+    "hdp")
+        case "$BASE_IMAGE_OS" in
+            "" | "centos");;
+            *)
+                echo -e "'$BASE_IMAGE_OS' image type is not supported by 'hdp'.\nAborting"
+                exit 1
+            ;;
+        esac
 
-if [ "$PLUGIN" = "cloudera" -a "$BASE_IMAGE_OS" = "fedora" ]; then
-    echo -e "Impossible combination.\nAborting"
-    exit 1
-fi
+        case "$HADOOP_VERSION" in
+            "" | "1" | "2");;
+            *)
+                echo -e "Unknown hadoop version selected.\nAborting"
+                exit 1
+            ;;
+        esac
+        ;;
+    "mapr")
+        case "$BASE_IMAGE_OS" in
+            "" | "ubuntu" | "centos");;
+            *)
+                echo -e "'$BASE_IMAGE_OS' image type is not supported by '$PLUGIN'.\nAborting"
+                exit 1
+            ;;
+        esac
 
-if [ "$PLUGIN" = "mapr" -a "$BASE_IMAGE_OS" = "fedora" ]; then
-    echo -e "'fedora' image type is not supported by 'mapr' plugin.\nAborting"
-    exit 1
-fi
+        if [ -n "$HADOOP_VERSION" ]; then
+            echo -e "You shouldn't specify hadoop version for 'mapr'.\nAborting"
+            exit 1
+        fi
+
+        case "$DIB_MAPR_VERSION" in
+            "")
+                echo "MapR version is not specified"
+                echo "${DIB_DEFAULT_MAPR_VERSION} version would be used"
+                DIB_MAPR_VERSION=${DIB_DEFAULT_MAPR_VERSION}
+            ;;
+            "3.1.1" | "4.0.1" | "4.0.2");;
+            *)
+                echo -e "Unknown MapR version.\nExit"
+                exit 1
+            ;;
+        esac
+        ;;
+    "plain")
+        case "$BASE_IMAGE_OS" in
+            "" | "ubuntu" | "fedora" | "centos");;
+            *)
+                echo -e "'$BASE_IMAGE_OS' image type is not supported by '$PLUGIN'.\nAborting"
+                exit 1
+            ;;
+        esac
+
+        if [ -n "$HADOOP_VERSION" ]; then
+            echo -e "You shouldn't specify hadoop version for '$PLUGIN'.\nAborting"
+            exit 1
+        fi
+        ;;
+    *)
+        echo -e "Unknown plugin selected.\nAborting"
+        exit 1
+esac
 
 if [ "$PLUGIN" != "mapr" -a -n "$DIB_MAPR_VERSION" ]; then
     echo -e "'-r' parameter should be used only with 'mapr' plugin.\nAborting"
     exit 1
 fi
 
-if [ "$PLUGIN" = "mapr" -a -z "$DIB_MAPR_VERSION" ]; then
-    echo "MapR version is not specified"
-    echo "${DIB_DEFAULT_MAPR_VERSION} version would be used"
-    DIB_MAPR_VERSION=${DIB_DEFAULT_MAPR_VERSION}
-fi
-
-if [ "$PLUGIN" = "mapr" ];  then
-    case "$DIB_MAPR_VERSION" in
-        "3.1.1" | "4.0.1" | "4.0.2") ;;
-        *) echo -e "Unknown MapR version.\nExit"; exit 1 ;;
-    esac
-fi
 
 if [ "$JAVA_ELEMENT" != "openjdk" -a "$JAVA_ELEMENT" != "oracle-java" ]; then
     echo "Unknown java distro"
@@ -327,9 +398,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
     export DIB_HDFS_LIB_DIR="/usr/lib/hadoop"
     export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
 
-    # Ignoring image type and hadoop version options
-    echo "For spark plugin options -i and -v are ignored"
-
     export DIB_HADOOP_VERSION="CDH4"
     export ubuntu_image_name=${ubuntu_spark_image_name:-"ubuntu_sahara_spark_latest"}
 
@@ -352,9 +420,6 @@ fi
 
 if [ -z "$PLUGIN" -o "$PLUGIN" = "storm" ]; then
     export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
-
-    # Ignoring image type and hadoop version options
-    echo "For storm plugin options -i and -v are ignored"
 
     export DIB_STORM_VERSION=${DIB_STORM_VERSION:-0.9.2}
     export ubuntu_image_name=${ubuntu_storm_image_name:-"ubuntu_sahara_storm_latest_$DIB_STORM_VERSION"}
@@ -522,7 +587,6 @@ fi
 # Images for MapR plugin #
 ##########################
 if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
-    echo "For mapr plugin option -v is ignored"
     export DIB_MAPR_VERSION=${DIB_MAPR_VERSION:-${DIB_DEFAULT_MAPR_VERSION}}
 
     export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
