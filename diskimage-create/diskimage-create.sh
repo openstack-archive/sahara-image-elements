@@ -133,7 +133,7 @@ case "$PLUGIN" in
         esac
 
         case "$HADOOP_VERSION" in
-            "" | "5.0" | "5.3");;
+            "" | "5.0" | "5.3" | "5.4");;
             *)
                 echo -e "Unknown hadoop version selected.\nAborting"
                 exit 1
