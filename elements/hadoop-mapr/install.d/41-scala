@@ -20,7 +20,7 @@ fi
 
 VERSION="$(curl -s --fail http://www.scala-lang.org|grep 'scala-version'|grep -Eo '([0-9]\.?)+')"
 
-if [ $? != 0 -o -z ${VERSION} ]; then
+if [ $? != 0 -o -z "${VERSION}" ]; then
     echo "Installing default version $DEF_VERSION"
     VERSION=${DEF_VERSION}
 fi

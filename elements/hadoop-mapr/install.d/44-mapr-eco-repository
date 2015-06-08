@@ -37,9 +37,9 @@ else
 fi
 
 echo "Downloading MapR repository archive"
-if [ -z ${DEB_REPO} -o -z ${RPM_REPO} ]; then
+if [ -z "${DEB_REPO}" -o -z "${RPM_REPO}" ]; then
     LATEST_ARCHIVE=$(curl -s ${MAPR_REPO_URL} | grep -Po '(?<=<a href=")(mapr-ecosystem.*?\.tgz)(?<!">)' | uniq | sort | tail -n 1)
-    if [ -z ${LATEST_ARCHIVE} ]; then
+    if [ -z "${LATEST_ARCHIVE}" ]; then
         echo "No repository archive found"
         exit 1
     fi
