@@ -535,7 +535,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.4" ]; then
             cloudera_5_4_ubuntu_image_name=${cloudera_5_4_ubuntu_image_name:-ubuntu_sahara_cloudera_5_4_0}
-            cloudera_elements_sequence="base vm ubuntu hadoop-cloudera"
+            cloudera_elements_sequence="vm ubuntu hadoop-cloudera"
 
             if [ -n "$USE_MIRRORS" ]; then
                 [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
@@ -601,13 +601,13 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             export DIB_CDH_VERSION="5.4"
 
             cloudera_5_4_centos_image_name=${cloudera_5_4_centos_image_name:-centos_sahara_cloudera_5_4_0}
-            cloudera_elements_sequence="base vm rhel hadoop-cloudera selinux-permissive disable-firewall"
+            cloudera_elements_sequence="vm centos hadoop-cloudera selinux-permissive disable-firewall"
 
             if [ -n "$USE_MIRRORS"]; then
                 [ -n "$CENTOS_MIRROR" ] && cloudera_elements_sequence="$cloudera_elements_sequence centos-mirror"
             fi
 
-            disk-image-create $TRACING $cloudera_elements_sequence -n -o $cloudera_5_4_centos_image_name
+            disk-image-create $TRACING $cloudera_elements_sequence -o $cloudera_5_4_centos_image_name
 
             unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES DIB_CDH_VERSION
         fi
