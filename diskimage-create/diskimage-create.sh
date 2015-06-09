@@ -303,8 +303,8 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
 
     ubuntu_elements_sequence="vm ubuntu hadoop oozie mysql hive $JAVA_ELEMENT"
-    fedora_elements_sequence="vm fedora redhat-lsb hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT"
-    centos_elements_sequence="vm centos hadoop oozie mysql redhat-lsb disable-firewall hive $JAVA_ELEMENT"
+    fedora_elements_sequence="vm fedora hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT"
+    centos_elements_sequence="vm centos hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT"
 
     if [ "$DEBUG_MODE" = "true" ]; then
         ubuntu_elements_sequence="$ubuntu_elements_sequence root-passwd"
@@ -461,7 +461,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
         export centos_image_name_hdp_1_3=${centos_hdp_hadoop_1_image_name:-"centos-6_6-64-hdp-1-3"}
         # Elements to include in an HDP-based image
-        centos_elements_sequence="vm centos hadoop-hdp redhat-lsb yum $JAVA_ELEMENT"
+        centos_elements_sequence="vm centos hadoop-hdp yum $JAVA_ELEMENT"
         if [ "$DEBUG_MODE" = "true" ]; then
             # enable the root-pwd element, for simpler local debugging of images
             centos_elements_sequence=$centos_elements_sequence" root-passwd"
@@ -479,7 +479,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
         export centos_image_name_hdp_2_0=${centos_hdp_hadoop_2_image_name:-"centos-6_6-64-hdp-2-0"}
         # Elements to include in an HDP-based image
-        centos_elements_sequence="vm centos hadoop-hdp redhat-lsb yum $JAVA_ELEMENT"
+        centos_elements_sequence="vm centos hadoop-hdp yum $JAVA_ELEMENT"
         if    [ "$DEBUG_MODE" = "true" ]; then
             # enable the root-pwd element, for simpler local debugging of images
             centos_elements_sequence=$centos_elements_sequence" root-passwd"
@@ -563,7 +563,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             export DIB_CDH_VERSION="5.0"
 
             cloudera_5_0_centos_image_name=${cloudera_5_0_centos_image_name:-centos_sahara_cloudera_5_0_0}
-            cloudera_elements_sequence="vm centos hadoop-cloudera redhat-lsb selinux-permissive disable-firewall"
+            cloudera_elements_sequence="vm centos hadoop-cloudera selinux-permissive disable-firewall"
 
             if [ -n "$USE_MIRRORS"]; then
                 [ -n "$CENTOS_MIRROR" ] && cloudera_elements_sequence="$cloudera_elements_sequence centos-mirror"
@@ -582,7 +582,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             export DIB_CDH_VERSION="5.3"
 
             cloudera_5_3_centos_image_name=${cloudera_5_3_centos_image_name:-centos_sahara_cloudera_5_3_0}
-            cloudera_elements_sequence="vm centos hadoop-cloudera redhat-lsb selinux-permissive disable-firewall"
+            cloudera_elements_sequence="vm centos hadoop-cloudera selinux-permissive disable-firewall"
 
             if [ -n "$USE_MIRRORS"]; then
                 [ -n "$CENTOS_MIRROR" ] && cloudera_elements_sequence="$cloudera_elements_sequence centos-mirror"
@@ -601,7 +601,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             export DIB_CDH_VERSION="5.4"
 
             cloudera_5_4_centos_image_name=${cloudera_5_4_centos_image_name:-centos_sahara_cloudera_5_4_0}
-            cloudera_elements_sequence="base vm rhel hadoop-cloudera redhat-lsb selinux-permissive disable-firewall"
+            cloudera_elements_sequence="base vm rhel hadoop-cloudera selinux-permissive disable-firewall"
 
             if [ -n "$USE_MIRRORS"]; then
                 [ -n "$CENTOS_MIRROR" ] && cloudera_elements_sequence="$cloudera_elements_sequence centos-mirror"
@@ -629,7 +629,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
     export DIB_MIN_TMPFS=10
 
     mapr_ubuntu_elements_sequence="vm ssh ubuntu hadoop-mapr $JAVA_ELEMENT"
-    mapr_centos_elements_sequence="vm centos ssh hadoop-mapr redhat-lsb selinux-permissive $JAVA_ELEMENT disable-firewall"
+    mapr_centos_elements_sequence="vm centos ssh hadoop-mapr selinux-permissive $JAVA_ELEMENT disable-firewall"
 
     if [ "$DEBUG_MODE" = "true" ]; then
         mapr_ubuntu_elements_sequence="$mapr_ubuntu_elements_sequence root-passwd"
@@ -683,7 +683,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "plain" ]; then
 
     ubuntu_elements_sequence="$common_elements ubuntu"
     fedora_elements_sequence="$common_elements fedora"
-    centos_elements_sequence="$common_elements centos redhat-lsb disable-firewall disable-selinux"
+    centos_elements_sequence="$common_elements centos disable-firewall disable-selinux"
 
     if [ -n "$USE_MIRRORS" ]; then
         [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
