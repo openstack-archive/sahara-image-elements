@@ -118,10 +118,14 @@ EOF
     ln -s ${HADOOP_HOME}/share/hadoop/tools/lib/hadoop-openstack-${DIB_HADOOP_VERSION}.jar ${HADOOP_HOME}/share/hadoop/common/lib/
 }
 
-if [ ! "$DISTRO_NAME" == "fedora" -a ! "$DISTRO_NAME" == "ubuntu" -a ! "$DISTRO_NAME" == "rhel" -a ! "$DISTRO_NAME" == "centos" ]; then
-    echo "Unknown distro: $DISTRO_NAME. Exiting."
-    exit 1
-fi
+case "$DISTRO_NAME" in
+    fedora | ubuntu | rhel | centos )
+    ;;
+    *)
+        echo "Unknown distro: $DISTRO_NAME. Exiting."
+        exit 1
+    ;;
+esac
 
 echo "Hadoop setup begins for $DISTRO_NAME"
 tmp_dir=/tmp/hadoop
