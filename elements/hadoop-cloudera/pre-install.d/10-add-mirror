@@ -61,6 +61,9 @@ function add_repo_5_3_0 {
 
             wget -qO - http://archive-primary.cloudera.com/cm5/ubuntu/precise/amd64/cm/archive.key | apt-key add -
 
+            wget -O /etc/apt/sources.list.d/kms.list http://archive.cloudera.com/navigator-keytrustee5/ubuntu/precise/amd64/navigator-keytrustee/cloudera.list
+            wget -qO - http://archive.cloudera.com/navigator-keytrustee5/ubuntu/precise/amd64/navigator-keytrustee/archive.key | apt-key add -
+
             apt-get update
         ;;
         centos | rhel )
@@ -75,6 +78,9 @@ function add_repo_5_3_0 {
             echo 'baseurl=http://archive.cloudera.com/cm5/redhat/6/x86_64/cm/5.3.0/' >> /etc/yum.repos.d/cloudera-manager.repo
             echo 'gpgkey = http://archive.cloudera.com/cm5/redhat/6/x86_64/cm/RPM-GPG-KEY-cloudera' >> /etc/yum.repos.d/cloudera-manager.repo
             echo 'gpgcheck = 1' >> /etc/yum.repos.d/cloudera-manager.repo
+
+            wget -O /etc/yum.repos.d/kms.repo http://archive.cloudera.com/navigator-keytrustee5/redhat/6/x86_64/navigator-keytrustee/navigator-keytrustee5.repo
+
             yum clean all
         ;;
     esac
@@ -98,6 +104,9 @@ function add_repo_5_4_0 {
 
             wget -qO - http://archive-primary.cloudera.com/cm5/ubuntu/precise/amd64/cm/archive.key | apt-key add -
 
+            wget -O /etc/apt/sources.list.d/kms.list http://archive.cloudera.com/navigator-keytrustee5/ubuntu/precise/amd64/navigator-keytrustee/cloudera.list
+            wget -qO - http://archive.cloudera.com/navigator-keytrustee5/ubuntu/precise/amd64/navigator-keytrustee/archive.key | apt-key add -
+
             apt-get update
         ;;
         centos | rhel )
@@ -112,6 +121,9 @@ function add_repo_5_4_0 {
             echo 'baseurl=http://archive.cloudera.com/cm5/redhat/6/x86_64/cm/5.4.0/' >> /etc/yum.repos.d/cloudera-manager.repo
             echo 'gpgkey = http://archive.cloudera.com/cm5/redhat/6/x86_64/cm/RPM-GPG-KEY-cloudera' >> /etc/yum.repos.d/cloudera-manager.repo
             echo 'gpgcheck = 1' >> /etc/yum.repos.d/cloudera-manager.repo
+
+            wget -O /etc/yum.repos.d/kms.repo http://archive.cloudera.com/navigator-keytrustee5/redhat/6/x86_64/navigator-keytrustee/navigator-keytrustee5.repo
+
             yum clean all
         ;;
     esac
