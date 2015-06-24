@@ -13,18 +13,25 @@ mkdir -p $tmp_dir
 if [ -z "${SPARK_DOWNLOAD_URL:-}" ]; then
     # Check hadoop version
     # INFO on hadoop versions: http://spark.apache.org/docs/latest/hadoop-third-party-distributions.html
-    if [ -z "${DIB_SPARK_VERSION:-}" ]; then
-        case "$DIB_HADOOP_VERSION" in
-            CDH4)
-                DIB_SPARK_VERSION=1.0.0
-                SPARK_HADOOP_DL=cdh4
-                ;;
-            *)
-                echo -e "WARNING: Hadoop version $DIB_HADOOP_VERSION not supported."
-                echo -e "WARNING: make sure SPARK_DOWNLOAD_URL points to a compatible Spark version."
-                ;;
-        esac
-    fi
+    case "$DIB_CDH_VERSION" in
+        5.0)
+            SPARK_HADOOP_DL=hadoop2.3
+        ;;
+        5.3)
+            SPARK_HADOOP_DL=hadoop2.4
+        ;;
+        5.4)
+            SPARK_HADOOP_DL=hadoop2.6
+        ;;
+        CDH4)
+            SPARK_HADOOP_DL=cdh4
+        ;;
+        *)
+            echo "WARNING: Cloudera CDH version $DIB_CDH_VERSION not supported."
+            echo "WARNING: use the SPARK_DOWNLOAD_URL variable to install a custom Spark version."
+            exit 1
+        ;;
+    esac
 
     SPARK_DOWNLOAD_URL="http://archive.apache.org/dist/spark/spark-$DIB_SPARK_VERSION/spark-$DIB_SPARK_VERSION-bin-$SPARK_HADOOP_DL.tgz"
 fi
@@ -34,3 +41,4 @@ spark_file=$(basename "$SPARK_DOWNLOAD_URL")
 cached_tar="$DIB_IMAGE_CACHE/$spark_file"
 $TMP_HOOKS_PATH/bin/cache-url $SPARK_DOWNLOAD_URL $cached_tar
 sudo install -D -g root -o root -m 0755 $cached_tar $tmp_dir
+echo "$SPARK_DOWNLOAD_URL" > $tmp_dir/spark_url.txt

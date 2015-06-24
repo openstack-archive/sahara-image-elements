@@ -11,48 +11,48 @@ if [ "$DISTRO_NAME" = "ubuntu" ]; then
     export RUNLEVEL=1
 fi
 
-install-packages \
-    cloudera-manager-agent \
-    cloudera-manager-daemons \
-    cloudera-manager-server \
-    cloudera-manager-server-db-2 \
-    hadoop-hdfs-datanode \
-    hadoop-hdfs-namenode \
-    hadoop-hdfs-secondarynamenode \
-    hadoop-mapreduce \
-    hadoop-mapreduce-historyserver \
-    hadoop-yarn-nodemanager \
-    hadoop-yarn-resourcemanager \
-    hbase \
-    hive-hcatalog \
-    hive-metastore \
-    hive-server2 \
-    hive-webhcat-server \
-    hue \
-    ntp \
-    oozie \
-    oracle-j2sdk1.7 \
-    spark-core \
-    zookeeper
-
-if [ $DIB_CDH_VERSION \> "5.0" ]; then
-    # CDH5.0 does not have below packages.
+# Install the rest of CDH unless a limited HDFS install was requested
+if [ -z "${CDH_HDFS_ONLY:-}" ]; then
     install-packages \
-        flume-ng \
-        hadoop-kms \
-        hbase-solr \
-        impala \
-        impala-server \
-        impala-state-store \
-        impala-catalog \
-        impala-shell \
-        keytrustee-keyprovider \
-        sentry \
-        solr-server \
-        solr-doc \
-        search \
-        spark-history-server \
-        sqoop2
+        cloudera-manager-agent \
+        cloudera-manager-daemons \
+        cloudera-manager-server \
+        cloudera-manager-server-db-2 \
+        hadoop-hdfs-secondarynamenode \
+        hadoop-mapreduce \
+        hadoop-mapreduce-historyserver \
+        hadoop-yarn-nodemanager \
+        hadoop-yarn-resourcemanager \
+        hbase \
+        hive-hcatalog \
+        hive-metastore \
+        hive-server2 \
+        hive-webhcat-server \
+        hue \
+        oozie \
+        oracle-j2sdk1.7 \
+        spark-core \
+        zookeeper
+
+    if [ $DIB_CDH_VERSION \> "5.0" ]; then
+        # CDH5.0 does not have below packages.
+        install-packages \
+            flume-ng \
+            hadoop-kms \
+            hbase-solr \
+            impala \
+            impala-server \
+            impala-state-store \
+            impala-catalog \
+            impala-shell \
+            keytrustee-keyprovider \
+            sentry \
+            solr-server \
+            solr-doc \
+            search \
+            spark-history-server \
+            sqoop2
+    fi
 fi
 
 HADOOP_OPENSTACK_5_4_0_URL="https://repository.cloudera.com/artifactory/repo/org/apache/hadoop/hadoop-openstack/2.6.0-cdh5.4.0/hadoop-openstack-2.6.0-cdh5.4.0.jar"

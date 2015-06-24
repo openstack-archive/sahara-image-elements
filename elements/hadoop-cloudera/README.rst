@@ -16,3 +16,15 @@ following syntax to select the ``cloudera`` plugin:
 .. sourcecode:: bash
 
   diskimage-create.sh -p cloudera
+
+Environment Variables
+---------------------
+
+The element can be configured by exporting variables using a
+`environment.d` script.
+
+CDH_HDFS_ONLY
+  :Required: No
+  :Description: If set will install only the namenode and datanode
+    packages with their dependencies.
+

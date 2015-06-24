@@ -11,11 +11,11 @@ if [ -z "${JAVA_DOWNLOAD_URL:-}" ]; then
         echo "JAVA_FILE and JAVA_DOWNLOAD_URL are not set. Proceeding with distro native Java."
     fi
 fi
-if [ -z "$DIB_HADOOP_VERSION" ]; then
-    echo "DIB_HADOOP_VERSION is not set. Impossible to install hadoop. Exit"
+if [ -z "$DIB_CDH_VERSION" ]; then
+    echo "DIB_CDH_VERSION is not set. Impossible to install hadoop. Exit"
     exit 1
 fi
-if [ $DIB_HADOOP_VERSION != "CDH4" ]; then
-    echo "CDH version $DIB_HADOOP_VERSION not supported. Exiting."
+if [ $DIB_CDH_VERSION != "CDH4" ]; then
+    echo "CDH version $DIB_CDH_VERSION not supported. Exiting."
     exit 1
 fi

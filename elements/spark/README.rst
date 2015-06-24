@@ -2,27 +2,45 @@
 spark
 =====
 
-Installs Spark on Ubuntu. Requires Hadoop CDH 4 (``hadoop-cdh`` element).
+Installs Spark on Ubuntu. Requires Hadoop (currently from CDH distribution).
 
-It will install a version of Spark known to be compatible with CDH 4;
-this behaviour can be controlled also by using ``DIB_SPARK_VERSION`` or
-directly with ``SPARK_DOWNLOAD_URL``.
+This element will install Spark into an Ubuntu image. It tries to guess the
+correct file to download based on the ``DIB_SPARK_VERSION`` and ``DIB_CDH_VERSION``
+variables, but this behaviour can be overridden by using ``SPARK_DOWNLOAD_URL``
+to specify a download URL for a pre-built Spark tar.gz file. See
+http://spark.apache.org/downloads.html for more download options.
+
+Versions
+--------
+
+This element is able to generate images containing any valid Spark version,
+compiled against one version of Hadoop HDFS libraries.
+
+Only some combinations of Spark and Hadoop versions are possible, depending on
+the availability of a pre-compiled binary and only few of them are tested with
+the Sahara Spark plugin.
+
+The ``diskimage-create.sh`` script will use tested defaults. Those defaults
+generate an image supported by the Sahara Spark plugin. Other combinations
+should be used only for evaluation or testing purposes. Refer to the Sahara
+Spark plugin wiki page (https://wiki.openstack.org/wiki/Sahara/SparkPlugin)
+for more information about tested and supported versions.
 
 Environment Variables
 ---------------------
 
-DIB_HADOOP_VERSION
-  :Required: Yes, if ``SPARK_DOWNLOAD_URL`` is not set.
-  :Description: Version of the Hadoop platform. See also
-    http://spark.apache.org/docs/latest/hadoop-third-party-distributions.html.
-  :Example: ``DIB_HADOOP_VERSION=CDH4``
-
 DIB_SPARK_VERSION
-  :Required: No
-  :Default: Depends on ``DIB_HADOOP_VERSION``.
-  :Description: Version of Spark to download from apache.org.
+  :Required: Yes, if ``SPARK_DOWNLOAD_URL`` is not set.
+  :Description: Version of the Spark package to download.
+  :Exmaple: ``DIB_SPARK_VERSION=1.3.1``
+
+DIB_CDH_VERSION
+  :Required: Yes, if ``SPARK_DOWNLOAD_URL`` is not set.
+  :Description: Version of the CDH platform to use for Hadoop compatibility.
+    CDH version 5.3 is known to work well.
+  :Example: ``DIB_CDH_VERSION=5.3``
 
 SPARK_DOWNLOAD_URL
-  :Required: Yes, if ``DIB_HADOOP_VERSION`` is not set.
-  :Default: ``http://archive.apache.org/dist/spark/spark-$DIB_SPARK_VERSION/spark-$DIB_SPARK_VERSION-bin-$SPARK_HADOOP_DL.tgz``
-  :Description: Download URL of the Spark package.
+  :Required: No, if set overrides ``DIB_CDH_VERSION`` and ``DIB_SPARK_VERSION``
+  :Description: Download URL of a tgz Spark package to override the automatic
+    selection from the Apache repositories.
