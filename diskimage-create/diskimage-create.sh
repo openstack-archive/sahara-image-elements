@@ -396,10 +396,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
         # Read Create_CentOS_cloud_image.rst to know how to create CentOS image in qcow2 format
         export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20141118.qcow2"
         export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
-        # No registration for RHEL-based distros
-        export REG_METHOD=disable
-        # Workaround for https://review.openstack.org/#/c/162239/
-        export REG_HALT_UNREGISTER=1
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
             export centos_image_name=${centos_vanilla_hadoop_1_image_name:-"centos_sahara_vanilla_hadoop_1_latest$suffix"}
@@ -411,7 +407,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             export centos_image_name=${centos_vanilla_hadoop_2_6_image_name:-"centos_sahara_vanilla_hadoop_2_6_latest$suffix"}
             disk-image-create $TRACING $centos_elements_sequence -o $centos_image_name
         fi
-        unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES REG_METHOD REG_HALT_UNREGISTER
+        unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
     fi
 fi
 
@@ -477,11 +473,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20141118.qcow2"
     export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
 
-    # No registration for RHEL-based distros
-    export REG_METHOD=disable
-    # Workaround for https://review.openstack.org/#/c/162239/
-    export REG_HALT_UNREGISTER=1
-
     # Ignoring image type option
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
         export centos_image_name_hdp_1_3=${centos_hdp_hadoop_1_image_name:-"centos-6_6-64-hdp-1-3"}
@@ -518,7 +509,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
         export DIB_HDP_VERSION="2.0"
         disk-image-create $TRACING $centos_elements_sequence -o $centos_image_name_hdp_2_0
     fi
-    unset BASE_IMAGE_FILE DIB_IMAGE_SIZE DIB_CLOUD_IMAGES REG_METHOD REG_HALT_UNREGISTER
+    unset BASE_IMAGE_FILE DIB_IMAGE_SIZE DIB_CLOUD_IMAGES
 fi
 
 #########################
@@ -575,10 +566,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
-        # No registration for RHEL-based distros
-        export REG_METHOD=disable
-        # Workaround for https://review.openstack.org/#/c/162239/
-        export REG_HALT_UNREGISTER=1
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.0" ]; then
             # CentOS cloud image:
             # - Disable including 'base' element for CentOS
@@ -636,7 +623,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
 
             unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES DIB_CDH_VERSION
         fi
-        unset REG_METHOD REG_HALT_UNREGISTER
     fi
     unset DIB_MIN_TMPFS
 fi
@@ -679,10 +665,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
         export BASE_IMAGE_FILE=${BASE_IMAGE_FILE:-"CentOS-6.6-cloud-init-20141118.qcow2"}
         export DIB_CLOUD_IMAGES=${DIB_CLOUD_IMAGES:-"http://sahara-files.mirantis.com"}
-        # No registration for RHEL-based distros
-        export REG_METHOD=disable
-        # Workaround for https://review.openstack.org/#/c/162239/
-        export REG_HALT_UNREGISTER=1
 
         mapr_centos_image_name=${mapr_centos_image_name:-centos_6.5_mapr_${DIB_MAPR_VERSION}_latest}
 
@@ -690,8 +672,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
 
         unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
         unset DIB_CLOUD_INIT_DATASOURCES
-        unset REG_METHOD
-        unset REG_HALT_UNREGISTER
     fi
 fi
 
@@ -731,17 +711,11 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "plain" ]; then
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
         export BASE_IMAGE_FILE=${BASE_IMAGE_FILE:-"CentOS-6.6-cloud-init-20141118.qcow2"}
         export DIB_CLOUD_IMAGES=${DIB_CLOUD_IMAGES:-"http://sahara-files.mirantis.com"}
-        # No registration for RHEL-based distros
-        export REG_METHOD=disable
-        # Workaround for https://review.openstack.org/#/c/162239/
-        export REG_HALT_UNREGISTER=1
 
         plain_image_name=${plain_centos_image_name:-centos_plain}
 
         disk-image-create $TRACING $centos_elements_sequence -o $plain_image_name
 
         unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
-        unset REG_METHOD
-        unset REG_HALT_UNREGISTER
     fi
 fi
