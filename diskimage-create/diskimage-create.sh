@@ -88,17 +88,27 @@ fi
 JAVA_ELEMENT=${JAVA_ELEMENT:-"openjdk"}
 
 if [ -e /etc/os-release ]; then
-    platform=$(head -1 /etc/os-release)
+    platform=$(cat /etc/os-release | awk -F= '/^ID=/ {print tolower($2);}')
+elif [ -e /etc/system-release ]; then
+    case "$(head -1 /etc/system-release)" in
+        "Red Hat Enterprise Linux Server"*)
+            platform=rhel
+            ;;
+        "CentOS"*)
+            platform=centos
+            ;;
+        *)
+            echo -e "Unknown value in /etc/system-release. Impossible to build images.\nAborting"
+            exit 2
+            ;;
+    esac
 else
-    platform=$(head -1 /etc/system-release | grep -e CentOS -e 'Red Hat Enterprise Linux' || :)
-    if [ -z "$platform" ]; then
-        echo -e "Unknown Host OS. Impossible to build images.\nAborting"
-        exit 2
-    fi
+    echo -e "Unknown host OS. Impossible to build images.\nAborting"
+    exit 2
 fi
 
 # Checks of input
-if [ "$DEBUG_MODE" = "true" -a "$platform" != 'NAME="Ubuntu"' ]; then
+if [ "$DEBUG_MODE" = "true" -a "$platform" != 'ubuntu' ]; then
     if [ "$(getenforce)" != "Disabled" ]; then
         echo "Debug mode cannot be used from this platform while SELinux is enabled, see https://bugs.launchpad.net/sahara/+bug/1292614"
         exit 1
@@ -231,7 +241,7 @@ fi
 #################
 
 is_installed() {
-    if [ "$platform" = 'NAME="Ubuntu"' ]; then
+    if [ "$platform" = 'ubuntu' ]; then
         dpkg -s "$1" &> /dev/null
     else
         # centos, fedora, opensuse, or rhel
@@ -240,20 +250,28 @@ is_installed() {
 }
 
 need_required_packages() {
-    if [[ "$platform" == 'NAME="Ubuntu"' ]]; then
-        package_list="qemu kpartx git"
-    elif [ "$platform" = 'NAME=Fedora' ]; then
-        package_list="qemu-img kpartx git"
-    elif [ "$platform" = 'NAME=openSUSE' ]; then
-        package_list="qemu kpartx git-core"
-    else
-        # centos or rhel
-        package_list="qemu-kvm qemu-img kpartx git"
-        if [ ${platform:0:6} = "CentOS" ]; then
-            # CentOS requires the python-argparse package be installed separately
-            package_list="$package_list python-argparse"
-        fi
-    fi
+    case "$platform" in
+        "ubuntu")
+            package_list="qemu kpartx git"
+            ;;
+        "fedora")
+            package_list="qemu-img kpartx git"
+            ;;
+        "opensuse")
+            package_list="qemu kpartx git-core"
+            ;;
+        "rhel" | "centos")
+            package_list="qemu-kvm qemu-img kpartx git"
+            if [ ${platform} = "centos" ]; then
+                # CentOS requires the python-argparse package be installed separately
+                package_list="$package_list python-argparse"
+            fi
+            ;;
+        *)
+            echo -e "Unknown platform '$platform' for the package list.\nAborting"
+            exit 2
+            ;;
+    esac
 
     for p in `echo $package_list`; do
         if ! is_installed $p; then
@@ -266,18 +284,25 @@ need_required_packages() {
 if need_required_packages; then
     # install required packages if requested
     if [ -n "$DIB_UPDATE_REQUESTED" ]; then
-        if [ "$platform" = 'NAME="Ubuntu"' ]; then
-            sudo apt-get install $package_list -y
-        elif [ "$platform" = 'NAME=openSUSE' ]; then
-            sudo zypper --non-interactive --gpg-auto-import-keys in $package_list
-        else
-            # fedora, centos,  and rhel share an install command
-            if [ ${platform:0:6} = "CentOS" ]; then
-                # install EPEL repo, in order to install argparse
-                sudo rpm -Uvh --force http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-            fi
-            sudo yum install $package_list -y
-        fi
+        case "$platform" in
+            "ubuntu")
+                sudo apt-get install $package_list -y
+                ;;
+            "opensuse")
+                sudo zypper --non-interactive --gpg-auto-import-keys in $package_list
+                ;;
+            "fedora" | "rhel" | "centos")
+                if [ ${platform} = "centos" ]; then
+                    # install EPEL repo, in order to install argparse
+                    sudo rpm -Uvh --force http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+                fi
+                sudo yum install $package_list -y
+                ;;
+            *)
+                echo -e "Unknown platform '$platform' for installing packages.\nAborting"
+                exit 2
+                ;;
+        esac
     else
         echo "Missing one of the following packages: $package_list"
         echo "Please install manually or rerun with the update option (-u)."
@@ -314,7 +339,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
 
     # Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
     # https://bugs.launchpad.net/sahara/+bug/1252684
-    if [ "$platform" = 'NAME="Ubuntu"' ]; then
+    if [ "$platform" = 'ubuntu' ]; then
         echo "**************************************************************"
         echo "WARNING: As a workaround for DIB bug 1204824, you are about to"
         echo "         create a Fedora and CentOS images that has SELinux    "
