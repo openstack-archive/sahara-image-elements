@@ -1,10 +1,12 @@
 {
     "family": {
         "debian": {
-            "openjdk-7": "openjdk-7-jdk"
+            "openjdk-7": "openjdk-7-jdk",
+            "openjdk-8": "openjdk-8-jdk"
         },
         "redhat": {
-            "openjdk-7": "java-1.7.0-openjdk-devel"
+            "openjdk-7": "java-1.7.0-openjdk-devel",
+            "openjdk-8": "java-1.8.0-openjdk-devel"
         }
     }
 }
