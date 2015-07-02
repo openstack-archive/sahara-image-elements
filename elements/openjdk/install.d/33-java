@@ -10,8 +10,15 @@ echo "Installing OpenJDK"
 
 default_jdk_version_for_distro () {
     case "$DISTRO_NAME" in
-        centos | fedora | rhel | ubuntu )
+        centos | rhel | ubuntu )
             echo "7"
+        ;;
+        fedora )
+            if [ $(lsb_release -rs) -ge '21' ]; then
+                echo "8"
+            else
+                echo "7"
+            fi
         ;;
         *)
             echo "Unknown OpenJDK distro: $DISTRO_NAME" >&2
