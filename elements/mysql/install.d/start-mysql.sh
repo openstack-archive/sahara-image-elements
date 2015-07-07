@@ -6,8 +6,13 @@ fi
 set -eu
 set -o pipefail
 
-if [ $(lsb_release -is) = 'Ubuntu' ]; then
-    sudo service mysql start
-elif [ $(lsb_release -is) = 'Fedora' -o $(lsb_release -is) = 'CentOS' -o $(lsb_release -is) = 'RedHatEnterpriseServer' ]; then
-    sudo service mysqld start
-fi
+DISTRO="$(lsb_release -is)"
+
+case "$DISTRO" in
+    Ubuntu )
+        sudo service mysql start
+        ;;
+    Fedora | CentOS | RedHatEnterpriseServer )
+        sudo service mysqld start
+        ;;
+esac
