@@ -8,6 +8,10 @@ set -o pipefail
 
 function firstboot_common {
     distro=$(lsb_release -is || :)
+    RUNDIR=/run
+    if [ ! -d $RUNDIR ]; then
+        RUNDIR=/var/run
+    fi
     case "$distro" in
         Ubuntu )
             mkdir -p /home/ubuntu/.ssh
@@ -39,14 +43,15 @@ function firstboot_common {
 
     mkdir -p /mnt/log/hadoop
     chown hadoop:hadoop /mnt/log/hadoop
+
+    mkdir -p $RUNDIR/hadoop
+    chown hadoop:hadoop $RUNDIR/hadoop
 }
 
 function firstboot_hadoop_v1 {
     distro=$(lsb_release -is || :)
     case "$distro" in
         Ubuntu )
-            mkdir /run/hadoop
-            chown hadoop:hadoop /run/hadoop/
             chown -R ubuntu:ubuntu /etc/hadoop
         ;;
         Fedora )
@@ -65,9 +70,6 @@ function firstboot_hadoop_v1 {
             exit 1
         ;;
     esac
-
-    mkdir -p /var/run/hadoop
-    chown hadoop:hadoop /var/run/hadoop
 }
 
 DIB_HADOOP_VERSION=$(su - hadoop hadoop version | head -1 | awk '{print $2}')
