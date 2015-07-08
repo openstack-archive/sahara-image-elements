@@ -35,7 +35,7 @@ set /files/etc/ssh/sshd_config/PubkeyAuthentication yes
 save
 EOF
     ;;
-    rhel | centos )
+    rhel | centos | centos7 )
         sed -i 's/ssh_pwauth:    0/ssh_pwauth:    1/' /etc/cloud/cloud.cfg
         augtool <<EOF
 clear /files/etc/sudoers/Defaults[type=':nrpe']/requiretty/negate

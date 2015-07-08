@@ -22,7 +22,7 @@ usage() {
     echo
     echo "Usage: $(basename $0)"
     echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr|plain]"
-    echo "         [-i ubuntu|fedora|centos]"
+    echo "         [-i ubuntu|fedora|centos|centos7]"
     echo "         [-v 1|2|2.6|5.0|5.3|5.4]"
     echo "         [-r 3.1.1|4.0.1|4.0.2]"
     echo "         [-d]"
@@ -210,7 +210,7 @@ case "$PLUGIN" in
         ;;
     "plain")
         case "$BASE_IMAGE_OS" in
-            "" | "ubuntu" | "fedora" | "centos");;
+            "" | "ubuntu" | "fedora" | "centos" | "centos7");;
             *)
                 echo -e "'$BASE_IMAGE_OS' image type is not supported by '$PLUGIN'.\nAborting"
                 exit 1
@@ -689,11 +689,13 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "plain" ]; then
     ubuntu_elements_sequence="$common_elements ubuntu"
     fedora_elements_sequence="$common_elements fedora"
     centos_elements_sequence="$common_elements centos disable-firewall disable-selinux"
+    centos7_elements_sequence="$common_elements centos7 disable-firewall disable-selinux"
 
     if [ -n "$USE_MIRRORS" ]; then
         [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
         [ -n "$FEDORA_MIRROR" ] && fedora_elements_sequence="$fedora_elements_sequence fedora-mirror"
         [ -n "$CENTOS_MIRROR" ] && centos_elements_sequence="$centos_elements_sequence centos-mirror"
+        [ -n "$CENTOS_MIRROR" ] && centos7_elements_sequence="$centos7_elements_sequence centos-mirror"
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
@@ -717,5 +719,11 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "plain" ]; then
         disk-image-create $TRACING $centos_elements_sequence -o $plain_image_name
 
         unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
+    fi
+
+    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
+        plain_image_name=${plain_centos7_image_name:-centos7_plain}
+
+        disk-image-create $TRACING $centos7_elements_sequence -o $plain_image_name
     fi
 fi
