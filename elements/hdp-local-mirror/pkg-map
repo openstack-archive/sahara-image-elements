@@ -1,0 +1,10 @@
+{
+    "family": {
+        "redhat": {
+            "apache-server": "httpd"
+        },
+        "debian": {
+            "apache-server": "apache2"
+        }
+    }
+}
