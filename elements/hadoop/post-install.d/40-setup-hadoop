@@ -91,8 +91,6 @@ function install_hadoop_v2 {
     echo "Pre-configuring Hadoop"
 
     HADOOP_PID_DIR="/var/run/hadoop"
-    mkdir $HADOOP_PID_DIR
-    chown hadoop:hadoop $HADOOP_PID_DIR
 
     cat >> /etc/profile.d/hadoop.sh <<EOF
 export HADOOP_COMMON_HOME=$HADOOP_HOME
