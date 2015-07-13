@@ -8,6 +8,22 @@ set -o pipefail
 
 echo "Installing OpenJDK"
 
+default_jdk_version_for_distro () {
+    case "$DISTRO_NAME" in
+        centos | fedora | rhel | ubuntu )
+            echo "7"
+        ;;
+        *)
+            echo "Unknown OpenJDK distro: $DISTRO_NAME" >&2
+            exit 1
+        ;;
+    esac
+}
+
+pkg=openjdk-$(default_jdk_version_for_distro)
+pkg=$(pkg-map --element openjdk $pkg)
+install-packages $pkg
+
 case "$DISTRO_NAME" in
     ubuntu )
         JRE_PATH=$(update-alternatives --list java)
