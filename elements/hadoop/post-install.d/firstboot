@@ -33,7 +33,11 @@ function firstboot_common {
             chown -R $user:$user /home/$user
         ;;
         CentOS )
-            chown -R cloud-user:cloud-user /home/cloud-user
+            case "$(lsb_release -rs)" in
+                6.*)
+                    chown -R cloud-user:cloud-user /home/cloud-user
+                    ;;
+            esac
         ;;
         * )
             echo "Unknown distro: $distro. Exiting."
