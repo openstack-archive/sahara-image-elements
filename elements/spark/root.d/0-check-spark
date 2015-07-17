@@ -6,7 +6,7 @@ fi
 set -eu
 set -o pipefail
 
-if [ -z "${SPARK_DOWNLOAD_URL:-}" -a -z "${DIB_HADOOP_VERSION:-}" ]; then
-    echo -e "Neither DIB_HADOOP_VERSION nor SPARK_DOWNLOAD_URL are set. Impossible to install Spark.\nAborting"
+if [ -z "${SPARK_DOWNLOAD_URL:-}" -a -z "${DIB_CDH_VERSION:-}" ]; then
+    echo -e "Neither DIB_CDH_VERSION nor SPARK_DOWNLOAD_URL are set. Impossible to install Spark.\nAborting"
     exit 1
 fi

@@ -12,6 +12,9 @@ DEBUG_MODE="false"
 # The default version for a MapR plugin
 DIB_DEFAULT_MAPR_VERSION="4.0.2"
 
+# The default version for Spark plugin
+DIB_DEFAULT_SPARK_VERSION="1.3.1"
+
 # Default list of datasource modules for ubuntu. Workaround for bug #1375645
 export CLOUD_INIT_DATASOURCES=${DIB_CLOUD_INIT_DATASOURCES:-"NoCloud, ConfigDrive, OVF, MAAS, Ec2"}
 
@@ -23,8 +26,9 @@ usage() {
     echo "Usage: $(basename $0)"
     echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr|plain]"
     echo "         [-i ubuntu|fedora|centos|centos7]"
-    echo "         [-v 1|2|2.6|5.0|5.3|5.4]"
+    echo "         [-v 1|2|2.6|4|5.0|5.3|5.4]"
     echo "         [-r 3.1.1|4.0.1|4.0.2]"
+    echo "         [-s <Spark version>]"
     echo "         [-d]"
     echo "         [-u]"
     echo "         [-j openjdk|oracle-java]"
@@ -33,12 +37,13 @@ usage() {
     echo "   '-i' is operating system of the base image (default: all supported by plugin)"
     echo "   '-v' is hadoop version (default: all supported by plugin)"
     echo "   '-r' is MapR Version (default: ${DIB_DEFAULT_MAPR_VERSION})"
+    echo "   '-s' is Spark version (default: ${DIB_DEFAULT_SPARK_VERSION})"
     echo "   '-d' enable debug mode, root account will have password 'hadoop'"
     echo "   '-u' install missing packages necessary for building"
     echo "   '-j' is java distribution (default: openjdk)"
     echo "   '-x' turns on tracing"
     echo
-    echo "You shouldn't specify hadoop version and image type for spark plugin"
+    echo "You shouldn't specify image type for spark plugin"
     echo "You shouldn't specify image type for hdp plugin"
     echo "You shouldn't specify hadoop version for plain images"
     echo "Debug mode should only be enabled for local debugging purposes, not for production systems"
@@ -47,7 +52,7 @@ usage() {
     exit 1
 }
 
-while getopts "p:i:v:dur:j:x" opt; do
+while getopts "p:i:v:dur:s:j:x" opt; do
     case $opt in
         p)
             PLUGIN=$OPTARG
@@ -63,6 +68,9 @@ while getopts "p:i:v:dur:j:x" opt; do
         ;;
         r)
             DIB_MAPR_VERSION=$OPTARG
+        ;;
+        s)
+            DIB_SPARK_VERSION=$OPTARG
         ;;
         u)
             DIB_UPDATE_REQUESTED=true
@@ -150,7 +158,41 @@ case "$PLUGIN" in
             ;;
         esac
         ;;
-    "spark" | "storm")
+    "spark")
+        case "$BASE_IMAGE_OS" in
+            "" | "ubuntu");;
+            *)
+                echo -e "'$BASE_IMAGE_OS' image type is not supported by '$PLUGIN'.\nAborting"
+                exit 1
+            ;;
+        esac
+
+        case "$HADOOP_VERSION" in
+            "")
+                echo "CDH version not specified"
+                echo "CDH version 5.3 will be used"
+                HADOOP_VERSION="5.3"
+            ;;
+            "4")
+                HADOOP_VERSION="CDH4"
+            ;;
+            "5.0" | "5.3" | "5.4");;
+            *)
+                echo -e "Unknown hadoop version selected.\nAborting"
+                exit 1
+            ;;
+        esac
+
+        case "$DIB_SPARK_VERSION" in
+            "")
+                echo "Spark version not specified"
+                echo "Spark ${DIB_DEFAULT_SPARK_VERSION} will be used"
+                DIB_SPARK_VERSION=${DIB_DEFAULT_SPARK_VERSION}
+            ;;
+        esac
+
+        ;;
+    "storm")
         case "$BASE_IMAGE_OS" in
             "" | "ubuntu");;
             *)
@@ -418,11 +460,22 @@ fi
 if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
     export DIB_HDFS_LIB_DIR="/usr/lib/hadoop"
     export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
+    export DIB_SPARK_VERSION
 
-    export DIB_HADOOP_VERSION="CDH4"
+    COMMON_ELEMENTS="vm ubuntu $JAVA_ELEMENT swift_hadoop spark"
+    if [ "$DIB_SPARK_VERSION" == "1.0.2" ]; then
+        echo "Overriding CDH version, CDH 4 is required for this Spark version"
+        export DIB_CDH_VERSION="CDH4"
+        ubuntu_elements_sequence="$COMMON_ELEMENTS hadoop-cdh"
+    else
+        export DIB_CDH_VERSION=$HADOOP_VERSION
+        ubuntu_elements_sequence="$COMMON_ELEMENTS hadoop-cloudera"
+    fi
+
+    # Tell the cloudera element to install only hdfs
+    export CDH_HDFS_ONLY=1
+
     export ubuntu_image_name=${ubuntu_spark_image_name:-"ubuntu_sahara_spark_latest"}
-
-    ubuntu_elements_sequence="vm ubuntu $JAVA_ELEMENT hadoop-cdh swift_hadoop spark"
 
     if [ -n "$USE_MIRRORS" ]; then
         [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
@@ -432,6 +485,10 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
     disk-image-create $TRACING $ubuntu_elements_sequence -o $ubuntu_image_name
     unset DIB_CLOUD_INIT_DATASOURCES
     unset DIB_HDFS_LIB_DIR
+    unset CDH_HDFS_ONLY
+    unset DIB_CDH_VERSION
+    unset DIB_SPARK_VERSION
+    unset DIB_HADOOP_VERSION
 fi
 
 

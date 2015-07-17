@@ -46,7 +46,7 @@ NOTE: Do not create all images for all plugins with the same mirrors. Different 
 NOTE for 4, 5, 6:
 
 For Vanilla you can create ubuntu, fedora and centos cloud image with hadoop 1.x.x and 2.x.x versions. Use environment variables 'DIB_HADOOP_VERSION_1' and 'DIB_HADOOP_VERSION_2' to change defaults.
-For Spark you can create only ubuntu image with one hadoop version. You shouldn't specify image type and hadoop version.
+For Spark you can create only ubuntu images, so you shouldn't specify an image type. The default Spark and HDFS versions included in the build are tested and known working together with the Sahara Spark plugin, other combinations should be used only for evaluation or testing purposes. You can select a different Spark version with commandline option '-s' and Hadoop HDFS version with '-v', but only Cludera CDH versions are available for now.
 For HDP you can create only centos image with hadoop 1.3.0 or 2.0 and without hadoop ('plain' image). You shouldn't specify image type.
 For Cloudera you can create ubuntu and centos images with preinstalled cloudera hadoop. You shouldn't specify hadoop version.
 

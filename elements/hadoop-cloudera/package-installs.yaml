@@ -1,2 +1,6 @@
 wget:
   phase: pre-install.d
+ntp:
+hadoop-hdfs-datanode:
+hadoop-hdfs-namenode:
+# other packages are installed conditionally in install.d/50-install-cloudera
