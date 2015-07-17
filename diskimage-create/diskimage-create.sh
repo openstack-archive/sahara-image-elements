@@ -473,7 +473,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
     fi
 
     # Tell the cloudera element to install only hdfs
-    export CDH_HDFS_ONLY=1
+    export DIB_CDH_HDFS_ONLY=1
 
     export ubuntu_image_name=${ubuntu_spark_image_name:-"ubuntu_sahara_spark_latest"}
 
@@ -485,7 +485,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
     disk-image-create $TRACING $ubuntu_elements_sequence -o $ubuntu_image_name
     unset DIB_CLOUD_INIT_DATASOURCES
     unset DIB_HDFS_LIB_DIR
-    unset CDH_HDFS_ONLY
+    unset DIB_CDH_HDFS_ONLY
     unset DIB_CDH_VERSION
     unset DIB_SPARK_VERSION
     unset DIB_HADOOP_VERSION
