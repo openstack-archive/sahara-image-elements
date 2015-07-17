@@ -6,6 +6,28 @@ fi
 set -eu
 set -o pipefail
 
+print_deprecation_warning() {
+    echo "##############################################################"
+    echo "##                                                          ##"
+    echo "## WARNING: the version of Spark being included in this     ##"
+    echo "##          image has been deprecated in the Sahara Spark   ##"
+    echo "##          plugin. Please consider upgrading to a          ##"
+    echo "##          supported version.                              ##"
+    echo "##                                                          ##"
+    echo "##  See: https://wiki.openstack.org/wiki/Sahara/SparkPlugin ##"
+    echo "##                                                          ##"
+    echo "##############################################################"
+}
+
+# Check for deprecated versions in the Spark plugin
+major_v=$(echo $DIB_SPARK_VERSION | cut -f1 -d.)
+minor_v=$(echo $DIB_SPARK_VERSION | cut -f2 -d.)
+if [ "${major_v}" == "0" ]; then
+    print_deprecation_warning
+elif [ "${major_v}" == "1" -a "${minor_v}" == "0" ]; then
+    print_deprecation_warning
+fi
+
 if [ -z "${SPARK_DOWNLOAD_URL:-}" -a -z "${DIB_CDH_VERSION:-}" ]; then
     echo -e "Neither DIB_CDH_VERSION nor SPARK_DOWNLOAD_URL are set. Impossible to install Spark.\nAborting"
     exit 1
