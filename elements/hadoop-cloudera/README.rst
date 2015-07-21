@@ -23,7 +23,7 @@ Environment Variables
 The element can be configured by exporting variables using a
 `environment.d` script.
 
-CDH_HDFS_ONLY
+DIB_CDH_HDFS_ONLY
   :Required: No
   :Description: If set will install only the namenode and datanode
     packages with their dependencies.

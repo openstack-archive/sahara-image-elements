@@ -12,7 +12,7 @@ if [ "$DISTRO_NAME" = "ubuntu" ]; then
 fi
 
 # Install the rest of CDH unless a limited HDFS install was requested
-if [ -z "${CDH_HDFS_ONLY:-}" ]; then
+if [ -z "${DIB_CDH_HDFS_ONLY:-}" ]; then
     install-packages \
         cloudera-manager-agent \
         cloudera-manager-daemons \
