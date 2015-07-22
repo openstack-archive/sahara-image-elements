@@ -12,7 +12,17 @@ case "$DISTRO" in
     Ubuntu )
         sudo service mysql start
         ;;
-    Fedora | CentOS | RedHatEnterpriseServer )
+    Fedora | RedHatEnterpriseServer )
         sudo service mysqld start
+        ;;
+    CentOS )
+        case "$(lsb_release -rs)" in
+            7.*)
+                sudo service mariadb start
+                ;;
+            6.*)
+                sudo service mysqld start
+                ;;
+        esac
         ;;
 esac

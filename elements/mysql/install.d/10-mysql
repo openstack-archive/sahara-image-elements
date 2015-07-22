@@ -7,7 +7,7 @@ set -eu
 set -o pipefail
 
 case "$DISTRO_NAME" in
-    fedora | rhel | centos )
+    fedora | rhel | centos | centos7 )
         mkdir -p /etc/mysql/conf.d
     ;;
 esac
