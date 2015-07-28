@@ -1,0 +1,10 @@
+{
+    "family": {
+        "debian": {
+            "nfs-utilities": "nfs-common"
+        },
+        "redhat": {
+            "nfs-utilities": "nfs-utils"
+        }
+    }
+}
