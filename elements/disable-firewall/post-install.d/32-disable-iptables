@@ -10,7 +10,14 @@ if [ "$DISTRO_NAME" = "fedora" ]; then
     install-packages iptables-services
 fi
 
-if which service; then
-    service iptables save
-    chkconfig iptables off
-fi
+case "${DISTRO_NAME}" in
+    fedora | centos | rhel )
+        if which service; then
+            service iptables save
+            chkconfig iptables off
+        fi
+    ;;
+    * )
+        echo "Unknown distro: $DISTRO_NAME. Skipping."
+    ;;
+esac
