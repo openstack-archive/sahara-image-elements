@@ -723,7 +723,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
         export BASE_IMAGE_FILE=${BASE_IMAGE_FILE:-"CentOS-6.6-cloud-init-20141118.qcow2"}
         export DIB_CLOUD_IMAGES=${DIB_CLOUD_IMAGES:-"http://sahara-files.mirantis.com"}
 
-        mapr_centos_image_name=${mapr_centos_image_name:-centos_6.5_mapr_${DIB_MAPR_VERSION}_latest}
+        mapr_centos_image_name=${mapr_centos_image_name:-centos_6.6_mapr_${DIB_MAPR_VERSION}_latest}
 
         disk-image-create $TRACING $mapr_centos_elements_sequence -o $mapr_centos_image_name
 
