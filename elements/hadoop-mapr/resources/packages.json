@@ -20,15 +20,32 @@
       "mapr-hbase-internal",
       "mapr-hbase-master",
       "mapr-hbase-regionserver",
-      "mapr-hbasethrift",
-      "mapr-libhbase"
+      "mapr-hbasethrift"
     ],
-    "0.94": [
+    "0.98.7": [
       "mapr-hbase",
       "mapr-hbase-internal",
       "mapr-hbase-master",
       "mapr-hbase-regionserver",
-      "mapr-hbasethrift"
+      "mapr-hbasethrift",
+      "mapr-libhbase"
+    ],
+    "0.98.9": [
+      "mapr-hbase",
+      "mapr-hbase-internal",
+      "mapr-hbase-master",
+      "mapr-hbase-regionserver",
+      "mapr-hbasethrift",
+      "mapr-hbase-rest"
+    ],
+    "0.98.12": [
+      "mapr-hbase",
+      "mapr-hbase-internal",
+      "mapr-hbase-master",
+      "mapr-hbase-regionserver",
+      "mapr-hbasethrift",
+      "mapr-libhbase",
+      "mapr-hbase-rest"
     ]
   },
   "hive": {

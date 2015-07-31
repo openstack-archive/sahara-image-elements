@@ -17,6 +17,9 @@ import argparse
 import json
 import sys
 
+_GROUP_VERSION_SEPARATOR = ","
+_ALL_GROUP_VERSION = "all"
+
 
 def _build_parser():
     parser = argparse.ArgumentParser()
@@ -35,12 +38,23 @@ def _load_json(path):
         return json.load(json_file)
 
 
+def _version_matches(version, group_version):
+    if group_version == _ALL_GROUP_VERSION:
+        return True
+
+    for gv in group_version.split(_GROUP_VERSION_SEPARATOR):
+        if version.startswith(gv):
+            return True
+
+    return False
+
+
 def _get_packages(version, group_spec):
     for group_version in group_spec:
-        if group_version != "all" and version.startswith(group_version):
+        if _version_matches(version, group_version):
             return group_spec[group_version]
 
-    return group_spec["all"]
+    return group_spec[_ALL_GROUP_VERSION]
 
 
 def _get_package_versions(spec, package_groups):
