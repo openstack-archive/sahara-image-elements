@@ -127,7 +127,7 @@ case "$PLUGIN" in
     "");;
     "vanilla")
         case "$HADOOP_VERSION" in
-            "" | "1" | "2.6");;
+            "" | "1" | "2.6" | "2.7.1");;
             *)
                 echo -e "Unknown hadoop version selected.\nAborting"
                 exit 1
@@ -372,6 +372,8 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     export HADOOP_V2_6_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_6_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-native-libs-2.6.0.tar.gz"}
     export EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://dev.sencha.com/deploy/ext-2.2.zip"}
     export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
+    export HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-native-libs-2.7.1.tar.gz"}
+    export OOZIE_HADOOP_V2_7_1_DOWNLOAD_URL=${OOZIE_HADOOP_V2_7_1_FILE:-"http://sahara-files.mirantis.com/oozie-4.2.0-hadoop-2.7.1.tar.gz"}
 
     ubuntu_elements_sequence="vm ntp ubuntu hadoop oozie mysql hive $JAVA_ELEMENT"
     fedora_elements_sequence="vm ntp fedora hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT"
@@ -421,6 +423,11 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             export ubuntu_image_name=${ubuntu_vanilla_hadoop_2_6_image_name:-"ubuntu_sahara_vanilla_hadoop_2_6_latest"}
             disk-image-create $TRACING $ubuntu_elements_sequence -o $ubuntu_image_name
         fi
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.7.1" ]; then
+            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_7_1:-"2.7.1"}
+            export ubuntu_image_name=${ubuntu_vanilla_hadoop_2_7_1_image_name:-"ubuntu_sahara_vanilla_hadoop_2_7_1_latest"}
+            disk-image-create $TRACING $ubuntu_elements_sequence -o $ubuntu_image_name
+        fi
         unset DIB_CLOUD_INIT_DATASOURCES
     fi
 
@@ -435,6 +442,11 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export fedora_image_name=${fedora_vanilla_hadoop_2_6_image_name:-"fedora_sahara_vanilla_hadoop_2_6_latest$suffix"}
+            disk-image-create $TRACING $fedora_elements_sequence -o $fedora_image_name
+        fi
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.7.1" ]; then
+            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_7_1:-"2.7.1"}
+            export fedora_image_name=${fedora_vanilla_hadoop_2_7_1_image_name:-"fedora_sahara_vanilla_hadoop_2_7_1_latest$suffix"}
             disk-image-create $TRACING $fedora_elements_sequence -o $fedora_image_name
         fi
     fi
@@ -457,6 +469,11 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             export centos_image_name=${centos_vanilla_hadoop_2_6_image_name:-"centos_sahara_vanilla_hadoop_2_6_latest$suffix"}
             disk-image-create $TRACING $centos_elements_sequence -o $centos_image_name
         fi
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.7.1" ]; then
+            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_7_1:-"2.7.1"}
+            export centos_image_name=${centos_vanilla_hadoop_2_7_1_image_name:-"centos_sahara_vanilla_hadoop_2_7_1_latest$suffix"}
+            disk-image-create $TRACING $centos_elements_sequence -o $centos_image_name
+        fi
         unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
     fi
 
@@ -465,6 +482,11 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export centos7_image_name=${centos7_vanilla_hadoop_2_6_image_name:-"centos7_sahara_vanilla_hadoop_2_6_latest$suffix"}
+            disk-image-create $TRACING $centos7_elements_sequence -o $centos7_image_name
+        fi
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.7.1" ]; then
+            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_7_1:-"2.7.1"}
+            export centos7_image_name=${centos7_vanilla_hadoop_2_7_1_image_name:-"centos7_sahara_vanilla_hadoop_2_7_1_latest$suffix"}
             disk-image-create $TRACING $centos7_elements_sequence -o $centos7_image_name
         fi
     fi
