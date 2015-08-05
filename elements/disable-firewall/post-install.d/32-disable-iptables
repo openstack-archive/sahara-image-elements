@@ -6,9 +6,11 @@ fi
 set -eu
 set -o pipefail
 
-if [ "$DISTRO_NAME" = "fedora" ]; then
-    install-packages iptables-services
-fi
+case "$DISTRO_NAME" in
+    fedora | centos7 )
+        install-packages iptables-services
+        ;;
+esac
 
 case "${DISTRO_NAME}" in
     fedora | centos | rhel )

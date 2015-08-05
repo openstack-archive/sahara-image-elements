@@ -134,12 +134,16 @@ case "$PLUGIN" in
             ;;
         esac
         case "$BASE_IMAGE_OS" in
-            "" | "ubuntu" | "fedora" | "centos");;
+            "" | "ubuntu" | "fedora" | "centos" | "centos7");;
             *)
                 echo -e "'$BASE_IMAGE_OS' image type is not supported by '$PLUGIN'.\nAborting"
                 exit 1
             ;;
         esac
+        if [ "$HADOOP_VERSION" = "1" -a "$BASE_IMAGE_OS" = "centos7" ]; then
+            echo -e "'$BASE_IMAGE_OS' image type is not supported for hadoop version '$HADOOP_VERSION'.\nAborting"
+            exit 1
+        fi
         ;;
     "cloudera")
         case "$BASE_IMAGE_OS" in
@@ -372,11 +376,13 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     ubuntu_elements_sequence="vm ntp ubuntu hadoop oozie mysql hive $JAVA_ELEMENT"
     fedora_elements_sequence="vm ntp fedora hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT"
     centos_elements_sequence="vm ntp centos hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT"
+    centos7_elements_sequence="vm ntp centos7 hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT"
 
     if [ "$DEBUG_MODE" = "true" ]; then
         ubuntu_elements_sequence="$ubuntu_elements_sequence root-passwd"
         fedora_elements_sequence="$fedora_elements_sequence root-passwd"
         centos_elements_sequence="$centos_elements_sequence root-passwd"
+        centos7_elements_sequence="$centos7_elements_sequence root-passwd"
     fi
 
     # Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
@@ -389,6 +395,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
         echo "**************************************************************"
         fedora_elements_sequence="$fedora_elements_sequence selinux-permissive"
         centos_elements_sequence="$centos_elements_sequence selinux-permissive"
+        centos7_elements_sequence="$centos7_elements_sequence selinux-permissive"
         suffix=".selinux-permissive"
     fi
 
@@ -396,6 +403,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
         [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
         [ -n "$FEDORA_MIRROR" ] && fedora_elements_sequence="$fedora_elements_sequence fedora-mirror"
         [ -n "$CENTOS_MIRROR" ] && centos_elements_sequence="$centos_elements_sequence centos-mirror"
+        [ -n "$CENTOS_MIRROR" ] && centos7_elements_sequence="$centos7_elements_sequence centos-mirror"
     fi
 
     # Ubuntu cloud image
@@ -450,6 +458,15 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             disk-image-create $TRACING $centos_elements_sequence -o $centos_image_name
         fi
         unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
+    fi
+
+    # CentOS 7 cloud image
+    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
+            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
+            export centos7_image_name=${centos7_vanilla_hadoop_2_6_image_name:-"centos7_sahara_vanilla_hadoop_2_6_latest$suffix"}
+            disk-image-create $TRACING $centos7_elements_sequence -o $centos7_image_name
+        fi
     fi
 fi
 

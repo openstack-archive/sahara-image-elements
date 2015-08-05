@@ -5,6 +5,12 @@
       "mysql_libs_package": "community-mysql-libs",
       "mysql_server_package": "community-mysql-server",
       "mysql_java_package": "mysql-connector-java"
+    },
+    "centos7": {
+      "mysql_package": "mariadb",
+      "mysql_libs_package": "mariadb-libs",
+      "mysql_server_package": "mariadb-server",
+      "mysql_java_package": "mysql-connector-java"
     }
   },
   "family": {
