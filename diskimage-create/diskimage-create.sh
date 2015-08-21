@@ -456,7 +456,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     # - Export link and filename for CentOS cloud image to download
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
         # Read Create_CentOS_cloud_image.rst to know how to create CentOS image in qcow2 format
-        export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20141118.qcow2"
+        export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20150821.qcow2"
         export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
@@ -566,7 +566,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     # CentOS cloud image:
     # - Disable including 'base' element for CentOS
     # - Export link and filename for CentOS cloud image to download
-    export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20141118.qcow2"
+    export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20150821.qcow2"
     export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
 
     # Ignoring image type option
@@ -666,7 +666,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             # CentOS cloud image:
             # - Disable including 'base' element for CentOS
             # - Export link and filename for CentOS cloud image to download
-            export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20141118.qcow2"
+            export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20150821.qcow2"
             export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
             export DIB_CDH_VERSION="5.0"
 
@@ -685,7 +685,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             # CentOS cloud image:
             # - Disable including 'base' element for CentOS
             # - Export link and filename for CentOS cloud image to download
-            export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20141118.qcow2"
+            export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20150821.qcow2"
             export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
             export DIB_CDH_VERSION="5.3"
 
@@ -704,7 +704,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             # CentOS cloud image:
             # - Disable including 'base' element for CentOS
             # - Export link and filename for CentOS cloud image to download
-            export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20141118.qcow2"
+            export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20150821.qcow2"
             export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
             export DIB_CDH_VERSION="5.4"
 
@@ -759,7 +759,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
-        export BASE_IMAGE_FILE=${BASE_IMAGE_FILE:-"CentOS-6.6-cloud-init-20141118.qcow2"}
+        export BASE_IMAGE_FILE=${BASE_IMAGE_FILE:-"CentOS-6.6-cloud-init-20150821.qcow2"}
         export DIB_CLOUD_IMAGES=${DIB_CLOUD_IMAGES:-"http://sahara-files.mirantis.com"}
 
         mapr_centos_image_name=${mapr_centos_image_name:-centos_6.6_mapr_${DIB_MAPR_VERSION}_latest}
@@ -807,7 +807,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "plain" ]; then
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
-        export BASE_IMAGE_FILE=${BASE_IMAGE_FILE:-"CentOS-6.6-cloud-init-20141118.qcow2"}
+        export BASE_IMAGE_FILE=${BASE_IMAGE_FILE:-"CentOS-6.6-cloud-init-20150821.qcow2"}
         export DIB_CLOUD_IMAGES=${DIB_CLOUD_IMAGES:-"http://sahara-files.mirantis.com"}
 
         plain_image_name=${plain_centos_image_name:-centos_plain}
