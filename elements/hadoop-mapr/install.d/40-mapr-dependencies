@@ -33,8 +33,6 @@ EOF
     libc6 \
     libc6-dev \
     libcrypt-passwdmd5-perl \
-    libevent-1.4-2 \
-    libevent-2.0-5 \
     libgcc-4.8-dev \
     libgomp1 \
     libgssglue1 \
@@ -152,8 +150,6 @@ elif [ "$DISTRO_NAME" = "centos" -o "$DISTRO_NAME" = "rhel" ]; then
     yum-utils \
     xml-common \
     zip
-
-    rpm -Uvh ftp://rpmfind.net/linux/centos/6.6/os/x86_64/Packages/libevent-1.4.13-4.el6.x86_64.rpm
 fi
 
 echo "END: installing MapR core dependencies"
