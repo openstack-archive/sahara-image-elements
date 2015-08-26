@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+if [ -z "${DIB_CDH_HDFS_ONLY:-}" ]; then
+    echo "Installing Oracle JDK for Cloudera"
+
+    pkg="oracle-j2sdk1.7"
+    install-packages $pkg
+
+    JDK_HOME=""
+    case $DISTRO_NAME in
+        centos | centos7 | rhel )
+            JDK_HOME=$(find /usr/java -name 'jdk*cloudera' -print)
+        ;;
+        ubuntu )
+            JDK_HOME="/usr/lib/jvm/java-7-oracle-cloudera"
+        ;;
+    esac
+
+    JRE_HOME=$JDK_HOME/jre
+
+    setup-java-home $JRE_HOME $JDK_HOME
+else
+    echo "Skip this step. JDK has already been installed for Spark."
+fi

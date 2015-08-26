@@ -30,7 +30,6 @@ if [ -z "${DIB_CDH_HDFS_ONLY:-}" ]; then
         hive-webhcat-server \
         hue \
         oozie \
-        oracle-j2sdk1.7 \
         spark-core \
         zookeeper
 
