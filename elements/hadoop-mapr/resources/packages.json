@@ -63,6 +63,11 @@
   "hue": {
     "all": [
       "mapr-hue"
+    ],
+    "3.8.1": [
+      "mapr-hue",
+      "mapr-hue-base",
+      "mapr-hue-livy"
     ]
   },
   "impala": {
