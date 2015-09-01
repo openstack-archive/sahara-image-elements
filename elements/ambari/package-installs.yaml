@@ -1,0 +1,7 @@
+wget:
+  phase: pre-install.d
+ambari-agent:
+ambari-log4j:
+ambari-metrics-hadoop-sink:
+ambari-metrics-monitor:
+ambari-server:

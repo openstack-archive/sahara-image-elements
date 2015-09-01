@@ -27,7 +27,7 @@ NOTE: Do not create all images for all plugins with the same mirrors. Different 
 
 .. sourcecode:: bash
 
-  tox -e venv -- sahara-image-create -p [vanilla|spark|hdp|cloudera|storm|mapr]
+  tox -e venv -- sahara-image-create -p [vanilla|spark|hdp|cloudera|storm|mapr|ambari]
 
 5. To select which hadoop version to target use the '-v' commandline option like this:
 
@@ -39,7 +39,7 @@ NOTE: Do not create all images for all plugins with the same mirrors. Different 
 
 .. sourcecode:: bash
 
-  tox -e venv -- sahara-image-create -i [ubuntu|fedora|centos]
+  tox -e venv -- sahara-image-create -i [ubuntu|fedora|centos|centos7]
 
 7. If the host system is missing packages required for diskimage-create.sh, the '-u' commandline option will instruct the script to install them without prompt.
 

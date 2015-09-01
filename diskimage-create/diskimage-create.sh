@@ -227,6 +227,16 @@ case "$PLUGIN" in
             ;;
         esac
         ;;
+    "ambari")
+        case "$BASE_IMAGE_OS" in
+            "" | "centos" | "centos7" | "ubuntu" )
+            ;;
+            * )
+                echo "\"$BASE_IMAGE_OS\" image type is not supported by \"$PLUGIN\".\nAborting"
+                exit 1
+            ;;
+        esac
+    ;;
     "mapr")
         case "$BASE_IMAGE_OS" in
             "" | "ubuntu" | "centos");;
@@ -608,6 +618,44 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
         disk-image-create $TRACING $centos_elements_sequence -o $centos_image_name_hdp_2_0
     fi
     unset BASE_IMAGE_FILE DIB_IMAGE_SIZE DIB_CLOUD_IMAGES
+fi
+
+############################
+# Images for Ambari plugin #
+############################
+
+if [ -z "$PLUGIN" -o "$PLUGIN" = "ambari" ]; then
+    export DIB_AMBARI_VERSION="$HADOOP_VERSION"
+    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
+        ambari_ubuntu_image_name=${ambari_ubuntu_image_name:-ubuntu_sahara_ambari}
+        ambari_element_sequence="vm ntp ubuntu ambari $JAVA_ELEMENT"
+        if [ -n "$USE_MIRRORS" -a "$UBUNTU_MIRROR" ]; then
+            ambari_element_sequence="$ambari_element_sequence apt-mirror"
+        fi
+        export DIB_RELEASE="precise"
+        disk-image-create $TRACING $ambari_element_sequence -o $ambari_ubuntu_image_name
+        unset DIB_RELEASE
+    fi
+    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
+        export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20150821.qcow2"
+        export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
+        ambari_centos_image_name=${ambari_centos_image_name:-centos_sahara_ambari}
+        ambari_element_sequence="vm ntp centos ambari $JAVA_ELEMENT"
+        if [ -n "$USE_MIRRORS" -a "$CENTOS_MIRROR" ]; then
+            ambari_element_sequence="$ambari_element_sequence centos-mirror"
+        fi
+        if [ "$DEBUG_MODE" = "true" ]; then
+            ambari_element_sequence="$ambari_element_sequence root-passwd"
+        fi
+        disk-image-create $ambari_element_sequence -o $ambari_centos_image_name
+        unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
+    fi
+    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
+        ambari_centos7_image_name=${ambari_centos7_image_name:-"centos7-sahara-ambari"}
+        ambari_element_sequence="vm ntp centos7 disable-selinux ambari $JAVA_ELEMENT"
+        disk-image-create $ambari_element_sequence -o $ambari_centos7_image_name
+    fi
+    unset DIB_AMBARI_VERSION
 fi
 
 #########################
