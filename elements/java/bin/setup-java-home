@@ -20,8 +20,11 @@ JRE_HOME=$1
 JDK_HOME=$2
 
 echo "export JAVA_HOME=$JRE_HOME" >> $JAVA_RC
-echo "export PATH=$JRE_HOME/bin:\$PATH" >> $JAVA_RC
 chmod +x $JAVA_RC
+
+echo "export PATH=$JRE_HOME/bin:\$PATH" >> $JAVA_BIN_RC
+echo "export PATH=$JDK_HOME/bin:\$PATH" >> $JAVA_BIN_RC
+chmod +x $JAVA_BIN_RC
 
 echo "Setting up alternatives for Java"
 
