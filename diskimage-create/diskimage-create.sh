@@ -26,7 +26,7 @@ usage() {
     echo "Usage: $(basename $0)"
     echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr|plain]"
     echo "         [-i ubuntu|fedora|centos|centos7]"
-    echo "         [-v 1|2|2.6|4|5.0|5.3|5.4]"
+    echo "         [-v 1|2|2.6|2.7.1|4|5.0|5.3|5.4]"
     echo "         [-r 3.1.1|4.0.1|4.0.2|5.0.0]"
     echo "         [-s <Spark version>]"
     echo "         [-d]"
