@@ -97,6 +97,8 @@ JAVA_ELEMENT=${JAVA_ELEMENT:-"openjdk"}
 
 if [ -e /etc/os-release ]; then
     platform=$(cat /etc/os-release | awk -F= '/^ID=/ {print tolower($2);}')
+    # remove eventual quotes around ID=...
+    platform=$(echo $platform | sed -e 's,^",,;s,"$,,')
 elif [ -e /etc/system-release ]; then
     case "$(head -1 /etc/system-release)" in
         "Red Hat Enterprise Linux Server"*)
