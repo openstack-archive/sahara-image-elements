@@ -301,7 +301,9 @@ is_installed() {
         dpkg -s "$1" &> /dev/null
     else
         # centos, fedora, opensuse, or rhel
-        rpm -q "$1" &> /dev/null
+        if ! rpm -q "$1" &> /dev/null; then
+            rpm -q "$(rpm -q --whatprovides "$1")"
+        fi
     fi
 }
 
