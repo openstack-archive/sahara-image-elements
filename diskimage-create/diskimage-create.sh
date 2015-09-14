@@ -26,7 +26,7 @@ usage() {
     echo "Usage: $(basename $0)"
     echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr|plain]"
     echo "         [-i ubuntu|fedora|centos|centos7]"
-    echo "         [-v 1|2|2.6|2.7.1|4|5.0|5.3|5.4]"
+    echo "         [-v 2|2.6|2.7.1|4|5.0|5.3|5.4]"
     echo "         [-r 3.1.1|4.0.1|4.0.2|5.0.0]"
     echo "         [-s <Spark version>]"
     echo "         [-d]"
@@ -127,7 +127,7 @@ case "$PLUGIN" in
     "");;
     "vanilla")
         case "$HADOOP_VERSION" in
-            "" | "1" | "2.6" | "2.7.1");;
+            "" | "2.6" | "2.7.1");;
             *)
                 echo -e "Unknown hadoop version selected.\nAborting"
                 exit 1
@@ -377,7 +377,6 @@ fi
 #############################
 
 if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
-    export OOZIE_HADOOP_V1_DOWNLOAD_URL=${OOZIE_HADOOP_V1_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/oozie-4.0.0.tar.gz"}
     export OOZIE_HADOOP_V2_6_DOWNLOAD_URL=${OOZIE_HADOOP_V2_6_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/oozie-4.0.1-hadoop-2.6.0.tar.gz"}
     export HADOOP_V2_6_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_6_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-native-libs-2.6.0.tar.gz"}
     export EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://dev.sencha.com/deploy/ext-2.2.zip"}
@@ -422,12 +421,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
 
-        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
-            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
-            export ubuntu_image_name=${ubuntu_vanilla_hadoop_1_image_name:-"ubuntu_sahara_vanilla_hadoop_1_latest"}
-            elements_sequence="$ubuntu_elements_sequence swift_hadoop"
-            disk-image-create $TRACING $elements_sequence -o $ubuntu_image_name
-        fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export ubuntu_image_name=${ubuntu_vanilla_hadoop_2_6_image_name:-"ubuntu_sahara_vanilla_hadoop_2_6_latest"}
@@ -443,12 +436,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
 
     # Fedora cloud image
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "fedora" ]; then
-        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
-            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
-            export fedora_image_name=${fedora_vanilla_hadoop_1_image_name:-"fedora_sahara_vanilla_hadoop_1_latest$suffix"}
-            elements_sequence="$fedora_elements_sequence swift_hadoop"
-            disk-image-create $TRACING $elements_sequence -o $fedora_image_name
-        fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export fedora_image_name=${fedora_vanilla_hadoop_2_6_image_name:-"fedora_sahara_vanilla_hadoop_2_6_latest$suffix"}
@@ -468,12 +455,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
         # Read Create_CentOS_cloud_image.rst to know how to create CentOS image in qcow2 format
         export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20150821.qcow2"
         export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
-        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
-            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_1:-"1.2.1"}
-            export centos_image_name=${centos_vanilla_hadoop_1_image_name:-"centos_sahara_vanilla_hadoop_1_latest$suffix"}
-            elements_sequence="$centos_elements_sequence swift_hadoop"
-            disk-image-create $TRACING $elements_sequence -o $centos_image_name
-        fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export centos_image_name=${centos_vanilla_hadoop_2_6_image_name:-"centos_sahara_vanilla_hadoop_2_6_latest$suffix"}

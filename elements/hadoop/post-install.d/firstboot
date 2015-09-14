@@ -53,37 +53,9 @@ function firstboot_common {
     chown hadoop:hadoop $RUNDIR/hadoop
 }
 
-function firstboot_hadoop_v1 {
-    distro=$(lsb_release -is || :)
-    case "$distro" in
-        Ubuntu )
-            chown -R ubuntu:ubuntu /etc/hadoop
-        ;;
-        Fedora )
-            if [ $(lsb_release -rs) -ge '19' ]; then
-                user=fedora
-            else
-                user=ec2-user
-            fi
-            chown -R $user:$user /etc/hadoop
-        ;;
-        CentOS )
-            chown -R cloud-user:cloud-user /etc/hadoop
-        ;;
-        * )
-            echo "Unknown distro: $distro. Exiting."
-            exit 1
-        ;;
-    esac
-}
-
 DIB_HADOOP_VERSION=$(su - hadoop hadoop version | head -1 | awk '{print $2}')
 
 firstboot_common
-
-if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]]; then
-    firstboot_hadoop_v1
-fi
 
 # Clean
 if [ "$distro" == "Ubuntu" ]; then

@@ -14,19 +14,6 @@ function download_hadoop_package {
     sudo install -D -g root -o root -m 0644 $cached_package $tmp_dir
 }
 
-function download_hadoop_v1 {
-    case "$DISTRO_NAME" in
-        ubuntu )
-            package="hadoop_$DIB_HADOOP_VERSION-1_x86_64.deb"
-        ;;
-        fedora | rhel | centos )
-            package="hadoop-$DIB_HADOOP_VERSION-1.x86_64.rpm"
-        ;;
-    esac
-
-    download_hadoop_package $package
-}
-
 function download_hadoop_v2 {
     download_hadoop_package "hadoop-$DIB_HADOOP_VERSION.tar.gz"
 }
@@ -43,8 +30,4 @@ esac
 tmp_dir=$TARGET_ROOT/tmp/hadoop
 mkdir -p $tmp_dir
 
-if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]]; then
-    download_hadoop_v1
-else
-    download_hadoop_v2
-fi
+download_hadoop_v2

@@ -10,13 +10,7 @@ echo "Oozie setup"
 
 tmp_dir=/tmp/oozie
 
-if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]]; then
-    if [ -z "${OOZIE_HADOOP_V1_DOWNLOAD_URL:-}" ]; then
-        OOZIE_FILE=$(basename $OOZIE_HADOOP_V1_FILE)
-    else
-        OOZIE_FILE=$(basename $OOZIE_HADOOP_V1_DOWNLOAD_URL)
-    fi
-elif [[ "$DIB_HADOOP_VERSION" == "2.6.0" ]]; then
+if [[ "$DIB_HADOOP_VERSION" == "2.6.0" ]]; then
     if [ -z "${OOZIE_HADOOP_V2_6_DOWNLOAD_URL:-}" ]; then
         OOZIE_FILE=$(basename $OOZIE_HADOOP_V2_6_FILE)
     else

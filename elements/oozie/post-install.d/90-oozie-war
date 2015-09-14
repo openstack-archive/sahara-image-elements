@@ -9,12 +9,7 @@ set -o pipefail
 ln -s /usr/share/java/mysql-connector-java.jar /opt/oozie/libtools/mysql.jar
 ln -s /usr/share/java/mysql-connector-java.jar /opt/oozie/oozie-server/lib/mysql.jar
 
-if [[ "$DIB_HADOOP_VERSION" < "2.0.0" ]]; then
-    cp -r /usr/share/hadoop/*.jar /opt/oozie/libext
-    cp -r /usr/share/hadoop/lib/*.jar /opt/oozie/libext
-else
-    wget -P /opt/oozie/libtools/ "$EXTJS_DOWNLOAD_URL"
-    /opt/oozie/bin/oozie-setup.sh prepare-war -d /opt/oozie/libtools
-fi
+wget -P /opt/oozie/libtools/ "$EXTJS_DOWNLOAD_URL"
+/opt/oozie/bin/oozie-setup.sh prepare-war -d /opt/oozie/libtools
 
 chown -R hadoop:hadoop /opt/oozie
