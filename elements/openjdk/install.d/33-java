@@ -44,8 +44,8 @@ case "$DISTRO_NAME" in
     fedora | rhel | centos | centos7 )
         # NOTE: rpm -E "%{java_home}" command returns wrong java home
         # on CentOS, Fedora and RHEL
-        JRE_HOME="/usr/lib/jvm/java-openjdk"
-        JDK_HOME="$JRE_HOME"
+        JRE_HOME="/usr/lib/jvm/java-openjdk/jre"
+        JDK_HOME="/usr/lib/jvm/java-openjdk"
     ;;
 esac
 
