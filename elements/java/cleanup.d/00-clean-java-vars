@@ -7,4 +7,5 @@ set -eu
 set -o pipefail
 
 unset DIB_JAVA_DISTRO
+unset JAVA_BIN_RC
 unset JAVA_RC
