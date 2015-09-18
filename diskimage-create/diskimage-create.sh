@@ -379,7 +379,6 @@ fi
 if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     export OOZIE_HADOOP_V2_6_DOWNLOAD_URL=${OOZIE_HADOOP_V2_6_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/oozie-4.0.1-hadoop-2.6.0.tar.gz"}
     export HADOOP_V2_6_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_6_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-native-libs-2.6.0.tar.gz"}
-    export EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://dev.sencha.com/deploy/ext-2.2.zip"}
     export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
     export HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-native-libs-2.7.1.tar.gz"}
     export OOZIE_HADOOP_V2_7_1_DOWNLOAD_URL=${OOZIE_HADOOP_V2_7_1_FILE:-"http://sahara-files.mirantis.com/oozie-4.2.0-hadoop-2.7.1.tar.gz"}
