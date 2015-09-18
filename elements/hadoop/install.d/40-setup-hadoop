@@ -1,12 +1,5 @@
 #!/bin/bash
 
-# XXX: This is in post-install.d, instead of install.d, because the
-# hadoop RPM claims ownership of files owned by the filesystem RPM,
-# such as /usr and /bin, and installing hadoop then updating
-# filesystem results in a failure. This can be moved to install.d when
-# HADOOP-9777 is resolved.
-#   https://issues.apache.org/jira/browse/HADOOP-9777
-
 if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
     set -x
 fi
