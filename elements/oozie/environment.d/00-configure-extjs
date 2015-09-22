@@ -1,0 +1,2 @@
+export EXTJS_DESTINATION_DIR="/opt/oozie/libtools/"
+export EXTJS_NO_UNPACK=1
