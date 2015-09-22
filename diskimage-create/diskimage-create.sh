@@ -376,6 +376,56 @@ if [ "$DEBUG_MODE" = "true" ]; then
     export DIB_PASSWORD="hadoop"
 fi
 
+#################
+
+# Common helper for invoking disk-image-create, adding all the common
+# elements and arguments, and setting common environment variables.
+#
+# Usage:
+#   image_create DISTRO OUTPUT [args...]
+# - DISTRO is the main element of the distribution
+# - OUTPUT is the output name for the image
+# - any other argument is passed directly to disk-image-create
+image_create() {
+    local distro=$1
+    shift
+    local output=$1
+    shift
+
+    # the base elements and args, used in *all* the images
+    local elements="vm sahara-version ntp xfs-tools"
+    local args=""
+
+    # debug mode handling
+    if [ "$DEBUG_MODE" = "true" ]; then
+        elements="$elements root-passwd"
+    fi
+    # mirror handling
+    if [ -n "$USE_MIRRORS" ]; then
+        case "$distro" in
+            ubuntu) elements="$elements apt-mirror" ;;
+            fedora) elements="$elements fedora-mirror" ;;
+            centos | centos7) elements="$elements centos-mirror" ;;
+        esac
+    fi
+    # use a custom cloud image for CentOS 6
+    case "$distro" in
+        centos)
+            export BASE_IMAGE_FILE=${BASE_IMAGE_FILE:-"CentOS-6.6-cloud-init-20150821.qcow2"}
+            export DIB_CLOUD_IMAGES=${DIB_CLOUD_IMAGES:-"http://sahara-files.mirantis.com"}
+        ;;
+    esac
+
+    disk-image-create $TRACING -o "$output" $args "$distro" $elements "$@"
+
+    # cleanup
+    case "$distro" in
+        centos)
+            unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
+        ;;
+    esac
+}
+
 #############################
 # Images for Vanilla plugin #
 #############################
@@ -388,17 +438,10 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     export HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-native-libs-2.7.1.tar.gz"}
     export OOZIE_HADOOP_V2_7_1_DOWNLOAD_URL=${OOZIE_HADOOP_V2_7_1_FILE:-"http://sahara-files.mirantis.com/oozie-4.2.0-hadoop-2.7.1.tar.gz"}
 
-    ubuntu_elements_sequence="vm ntp ubuntu hadoop oozie mysql hive xfs-tools $JAVA_ELEMENT"
-    fedora_elements_sequence="vm ntp fedora hadoop oozie mysql disable-firewall hive xfs-tools $JAVA_ELEMENT"
-    centos_elements_sequence="vm ntp centos hadoop oozie mysql disable-firewall hive xfs-tools $JAVA_ELEMENT"
-    centos7_elements_sequence="vm ntp centos7 hadoop oozie mysql disable-firewall hive xfs-tools $JAVA_ELEMENT"
-
-    if [ "$DEBUG_MODE" = "true" ]; then
-        ubuntu_elements_sequence="$ubuntu_elements_sequence root-passwd"
-        fedora_elements_sequence="$fedora_elements_sequence root-passwd"
-        centos_elements_sequence="$centos_elements_sequence root-passwd"
-        centos7_elements_sequence="$centos7_elements_sequence root-passwd"
-    fi
+    ubuntu_elements_sequence="hadoop oozie mysql hive $JAVA_ELEMENT"
+    fedora_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT"
+    centos_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT"
+    centos7_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT"
 
     # Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
     # https://bugs.launchpad.net/sahara/+bug/1252684
@@ -414,13 +457,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
         suffix=".selinux-permissive"
     fi
 
-    if [ -n "$USE_MIRRORS" ]; then
-        [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
-        [ -n "$FEDORA_MIRROR" ] && fedora_elements_sequence="$fedora_elements_sequence fedora-mirror"
-        [ -n "$CENTOS_MIRROR" ] && centos_elements_sequence="$centos_elements_sequence centos-mirror"
-        [ -n "$CENTOS_MIRROR" ] && centos7_elements_sequence="$centos7_elements_sequence centos-mirror"
-    fi
-
     # Ubuntu cloud image
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
@@ -428,12 +464,12 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export ubuntu_image_name=${ubuntu_vanilla_hadoop_2_6_image_name:-"ubuntu_sahara_vanilla_hadoop_2_6_latest"}
-            disk-image-create $TRACING $ubuntu_elements_sequence -o $ubuntu_image_name
+            image_create ubuntu $ubuntu_image_name $ubuntu_elements_sequence
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.7.1" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_7_1:-"2.7.1"}
             export ubuntu_image_name=${ubuntu_vanilla_hadoop_2_7_1_image_name:-"ubuntu_sahara_vanilla_hadoop_2_7_1_latest"}
-            disk-image-create $TRACING $ubuntu_elements_sequence -o $ubuntu_image_name
+            image_create ubuntu $ubuntu_image_name $ubuntu_elements_sequence
         fi
         unset DIB_CLOUD_INIT_DATASOURCES
     fi
@@ -443,33 +479,27 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export fedora_image_name=${fedora_vanilla_hadoop_2_6_image_name:-"fedora_sahara_vanilla_hadoop_2_6_latest$suffix"}
-            disk-image-create $TRACING $fedora_elements_sequence -o $fedora_image_name
+            image_create fedora $fedora_image_name $fedora_elements_sequence
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.7.1" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_7_1:-"2.7.1"}
             export fedora_image_name=${fedora_vanilla_hadoop_2_7_1_image_name:-"fedora_sahara_vanilla_hadoop_2_7_1_latest$suffix"}
-            disk-image-create $TRACING $fedora_elements_sequence -o $fedora_image_name
+            image_create fedora $fedora_image_name $fedora_elements_sequence
         fi
     fi
 
-    # CentOS cloud image:
-    # - Disable including 'base' element for CentOS
-    # - Export link and filename for CentOS cloud image to download
+    # CentOS 6 cloud image
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
-        # Read Create_CentOS_cloud_image.rst to know how to create CentOS image in qcow2 format
-        export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20150821.qcow2"
-        export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export centos_image_name=${centos_vanilla_hadoop_2_6_image_name:-"centos_sahara_vanilla_hadoop_2_6_latest$suffix"}
-            disk-image-create $TRACING $centos_elements_sequence -o $centos_image_name
+            image_create centos $centos_image_name $centos_elements_sequence
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.7.1" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_7_1:-"2.7.1"}
             export centos_image_name=${centos_vanilla_hadoop_2_7_1_image_name:-"centos_sahara_vanilla_hadoop_2_7_1_latest$suffix"}
-            disk-image-create $TRACING $centos_elements_sequence -o $centos_image_name
+            image_create centos $centos_image_name $centos_elements_sequence
         fi
-        unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
     fi
 
     # CentOS 7 cloud image
@@ -478,12 +508,12 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export centos7_image_name=${centos7_vanilla_hadoop_2_6_image_name:-"centos7_sahara_vanilla_hadoop_2_6_latest$suffix"}
-            disk-image-create $TRACING $centos7_elements_sequence -o $centos7_image_name
+            image_create centos7 $centos7_image_name $centos7_elements_sequence
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.7.1" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_7_1:-"2.7.1"}
             export centos7_image_name=${centos7_vanilla_hadoop_2_7_1_image_name:-"centos7_sahara_vanilla_hadoop_2_7_1_latest$suffix"}
-            disk-image-create $TRACING $centos7_elements_sequence -o $centos7_image_name
+            image_create centos7 $centos7_image_name $centos7_elements_sequence
         fi
         unset DIB_EXTLINUX
     fi
@@ -498,7 +528,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
     export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
     export DIB_SPARK_VERSION
 
-    COMMON_ELEMENTS="vm ntp ubuntu xfs-tools $JAVA_ELEMENT swift_hadoop spark"
+    COMMON_ELEMENTS="$JAVA_ELEMENT swift_hadoop spark"
     if [ "$DIB_SPARK_VERSION" == "1.0.2" ]; then
         echo "Overriding CDH version, CDH 4 is required for this Spark version"
         export DIB_CDH_VERSION="CDH4"
@@ -513,12 +543,8 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
 
     export ubuntu_image_name=${ubuntu_spark_image_name:-"ubuntu_sahara_spark_latest"}
 
-    if [ -n "$USE_MIRRORS" ]; then
-        [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
-    fi
-
     # Creating Ubuntu cloud image
-    disk-image-create $TRACING $ubuntu_elements_sequence -o $ubuntu_image_name
+    image_create ubuntu $ubuntu_image_name $ubuntu_elements_sequence
     unset DIB_CLOUD_INIT_DATASOURCES
     unset DIB_HDFS_LIB_DIR
     unset DIB_CDH_HDFS_ONLY
@@ -538,14 +564,10 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "storm" ]; then
     export DIB_STORM_VERSION=${DIB_STORM_VERSION:-0.9.2}
     export ubuntu_image_name=${ubuntu_storm_image_name:-"ubuntu_sahara_storm_latest_$DIB_STORM_VERSION"}
 
-    ubuntu_elements_sequence="vm ntp ubuntu xfs-tools $JAVA_ELEMENT zookeeper storm"
-
-    if [ -n "$USE_MIRRORS" ]; then
-        [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
-    fi
+    ubuntu_elements_sequence="$JAVA_ELEMENT zookeeper storm"
 
     # Creating Ubuntu cloud image
-    disk-image-create $TRACING $ubuntu_elements_sequence -o $ubuntu_image_name
+    image_create ubuntu $ubuntu_image_name $ubuntu_elements_sequence
     unset DIB_CLOUD_INIT_DATASOURCES
 fi
 #########################
@@ -560,49 +582,27 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
     # Parameter 'DIB_IMAGE_SIZE' should be specified for CentOS only
     export DIB_IMAGE_SIZE=${IMAGE_SIZE:-"10"}
 
-    # CentOS cloud image:
-    # - Disable including 'base' element for CentOS
-    # - Export link and filename for CentOS cloud image to download
-    export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20150821.qcow2"
-    export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
-
     # Ignoring image type option
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
         export centos_image_name_hdp_1_3=${centos_hdp_hadoop_1_image_name:-"centos-6_6-64-hdp-1-3"}
         # Elements to include in an HDP-based image
-        centos_elements_sequence="vm ntp centos hadoop-hdp yum xfs-tools $JAVA_ELEMENT"
-        if [ "$DEBUG_MODE" = "true" ]; then
-            # enable the root-pwd element, for simpler local debugging of images
-            centos_elements_sequence=$centos_elements_sequence" root-passwd"
-        fi
-
-        if [ -n "$USE_MIRRORS"]; then
-            [ -n "$CENTOS_MIRROR" ] && centos_elements_sequence="$centos_elements_sequence centos-mirror"
-        fi
+        centos_elements_sequence="hadoop-hdp yum $JAVA_ELEMENT"
 
         # generate image with HDP 1.3
         export DIB_HDP_VERSION="1.3"
-        disk-image-create $TRACING $centos_elements_sequence -o $centos_image_name_hdp_1_3
+        image_create centos $centos_image_name_hdp_1_3 $centos_elements_sequence
     fi
 
     if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
         export centos_image_name_hdp_2_0=${centos_hdp_hadoop_2_image_name:-"centos-6_6-64-hdp-2-0"}
         # Elements to include in an HDP-based image
-        centos_elements_sequence="vm ntp centos hadoop-hdp yum xfs-tools $JAVA_ELEMENT"
-        if    [ "$DEBUG_MODE" = "true" ]; then
-            # enable the root-pwd element, for simpler local debugging of images
-            centos_elements_sequence=$centos_elements_sequence" root-passwd"
-        fi
-
-        if [ -n "$USE_MIRRORS"]; then
-            [ -n "$CENTOS_MIRROR" ] && centos_elements_sequence="$centos_elements_sequence centos-mirror"
-        fi
+        centos_elements_sequence="hadoop-hdp yum $JAVA_ELEMENT"
 
         # generate image with HDP 2.0
         export DIB_HDP_VERSION="2.0"
-        disk-image-create $TRACING $centos_elements_sequence -o $centos_image_name_hdp_2_0
+        image_create centos $centos_image_name_hdp_2_0 $centos_elements_sequence
     fi
-    unset BASE_IMAGE_FILE DIB_IMAGE_SIZE DIB_CLOUD_IMAGES
+    unset DIB_IMAGE_SIZE
 fi
 
 ############################
@@ -613,32 +613,20 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "ambari" ]; then
     export DIB_AMBARI_VERSION="$HADOOP_VERSION"
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         ambari_ubuntu_image_name=${ambari_ubuntu_image_name:-ubuntu_sahara_ambari}
-        ambari_element_sequence="vm ntp ubuntu ambari $JAVA_ELEMENT"
-        if [ -n "$USE_MIRRORS" -a "$UBUNTU_MIRROR" ]; then
-            ambari_element_sequence="$ambari_element_sequence apt-mirror"
-        fi
+        ambari_element_sequence="ambari $JAVA_ELEMENT"
         export DIB_RELEASE="precise"
-        disk-image-create $TRACING $ambari_element_sequence -o $ambari_ubuntu_image_name
+        image_create ubuntu $ambari_ubuntu_image_name $ambari_element_sequence
         unset DIB_RELEASE
     fi
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
-        export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20150821.qcow2"
-        export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
         ambari_centos_image_name=${ambari_centos_image_name:-centos_sahara_ambari}
-        ambari_element_sequence="vm ntp centos ambari $JAVA_ELEMENT"
-        if [ -n "$USE_MIRRORS" -a "$CENTOS_MIRROR" ]; then
-            ambari_element_sequence="$ambari_element_sequence centos-mirror"
-        fi
-        if [ "$DEBUG_MODE" = "true" ]; then
-            ambari_element_sequence="$ambari_element_sequence root-passwd"
-        fi
-        disk-image-create $ambari_element_sequence -o $ambari_centos_image_name
-        unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
+        ambari_element_sequence="ambari $JAVA_ELEMENT"
+        image_create centos $ambari_centos_image_name $ambari_element_sequence
     fi
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
         ambari_centos7_image_name=${ambari_centos7_image_name:-"centos7-sahara-ambari"}
-        ambari_element_sequence="vm ntp centos7 disable-selinux ambari $JAVA_ELEMENT"
-        disk-image-create $ambari_element_sequence -o $ambari_centos7_image_name
+        ambari_element_sequence="disable-selinux ambari $JAVA_ELEMENT"
+        image_create centos7 $ambari_centos7_image_name $ambari_element_sequence
     fi
     unset DIB_AMBARI_VERSION
 fi
@@ -654,105 +642,66 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.0" ]; then
             cloudera_5_0_ubuntu_image_name=${cloudera_5_0_ubuntu_image_name:-ubuntu_sahara_cloudera_5_0_0}
-            cloudera_elements_sequence="vm ntp ubuntu hadoop-cloudera xfs-tools"
-
-            if [ -n "$USE_MIRRORS" ]; then
-                [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
-            fi
+            cloudera_elements_sequence="hadoop-cloudera"
 
             # Cloudera supports only 12.04 Ubuntu
             export DIB_CDH_VERSION="5.0"
             export DIB_RELEASE="precise"
-            disk-image-create $TRACING $cloudera_elements_sequence -o $cloudera_5_0_ubuntu_image_name
+            image_create ubuntu $cloudera_5_0_ubuntu_image_name $cloudera_elements_sequence
             unset DIB_CDH_VERSION DIB_RELEASE
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.3" ]; then
             cloudera_5_3_ubuntu_image_name=${cloudera_5_3_ubuntu_image_name:-ubuntu_sahara_cloudera_5_3_0}
-            cloudera_elements_sequence="vm ntp ubuntu hadoop-cloudera xfs-tools"
-
-            if [ -n "$USE_MIRRORS" ]; then
-                [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
-            fi
+            cloudera_elements_sequence="hadoop-cloudera"
 
             # Cloudera supports only 12.04 Ubuntu
             export DIB_CDH_VERSION="5.3"
             export DIB_RELEASE="precise"
-            disk-image-create $TRACING $cloudera_elements_sequence -o $cloudera_5_3_ubuntu_image_name
+            image_create ubuntu $cloudera_5_3_ubuntu_image_name $cloudera_elements_sequence
             unset DIB_CDH_VERSION DIB_RELEASE
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.4" ]; then
             cloudera_5_4_ubuntu_image_name=${cloudera_5_4_ubuntu_image_name:-ubuntu_sahara_cloudera_5_4_0}
-            cloudera_elements_sequence="vm ntp ubuntu hadoop-cloudera xfs-tools"
-
-            if [ -n "$USE_MIRRORS" ]; then
-                [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
-            fi
+            cloudera_elements_sequence="hadoop-cloudera"
 
             # Cloudera supports only 12.04 Ubuntu
             export DIB_CDH_VERSION="5.4"
             export DIB_RELEASE="precise"
-            disk-image-create $TRACING $cloudera_elements_sequence -o $cloudera_5_4_ubuntu_image_name
+            image_create ubuntu $cloudera_5_4_ubuntu_image_name $cloudera_elements_sequence
             unset DIB_CDH_VERSION DIB_RELEASE
         fi
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.0" ]; then
-            # CentOS cloud image:
-            # - Disable including 'base' element for CentOS
-            # - Export link and filename for CentOS cloud image to download
-            export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20150821.qcow2"
-            export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
             export DIB_CDH_VERSION="5.0"
 
             cloudera_5_0_centos_image_name=${cloudera_5_0_centos_image_name:-centos_sahara_cloudera_5_0_0}
-            cloudera_elements_sequence="vm ntp centos hadoop-cloudera selinux-permissive disable-firewall xfs-tools"
+            cloudera_elements_sequence="hadoop-cloudera selinux-permissive disable-firewall"
 
-            if [ -n "$USE_MIRRORS"]; then
-                [ -n "$CENTOS_MIRROR" ] && cloudera_elements_sequence="$cloudera_elements_sequence centos-mirror"
-            fi
+            image_create centos $cloudera_5_0_centos_image_name $cloudera_elements_sequence
 
-            disk-image-create $TRACING $cloudera_elements_sequence -o $cloudera_5_0_centos_image_name
-
-            unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES DIB_CDH_VERSION
+            unset DIB_CDH_VERSION
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.3" ]; then
-            # CentOS cloud image:
-            # - Disable including 'base' element for CentOS
-            # - Export link and filename for CentOS cloud image to download
-            export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20150821.qcow2"
-            export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
             export DIB_CDH_VERSION="5.3"
 
             cloudera_5_3_centos_image_name=${cloudera_5_3_centos_image_name:-centos_sahara_cloudera_5_3_0}
-            cloudera_elements_sequence="vm ntp centos hadoop-cloudera selinux-permissive disable-firewall xfs-tools"
+            cloudera_elements_sequence="hadoop-cloudera selinux-permissive disable-firewall"
 
-            if [ -n "$USE_MIRRORS"]; then
-                [ -n "$CENTOS_MIRROR" ] && cloudera_elements_sequence="$cloudera_elements_sequence centos-mirror"
-            fi
+            image_create centos $cloudera_5_3_centos_image_name $cloudera_elements_sequence
 
-            disk-image-create $TRACING $cloudera_elements_sequence -o $cloudera_5_3_centos_image_name
-
-            unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES DIB_CDH_VERSION
+            unset DIB_CDH_VERSION
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.4" ]; then
-            # CentOS cloud image:
-            # - Disable including 'base' element for CentOS
-            # - Export link and filename for CentOS cloud image to download
-            export BASE_IMAGE_FILE="CentOS-6.6-cloud-init-20150821.qcow2"
-            export DIB_CLOUD_IMAGES="http://sahara-files.mirantis.com"
             export DIB_CDH_VERSION="5.4"
 
             cloudera_5_4_centos_image_name=${cloudera_5_4_centos_image_name:-centos_sahara_cloudera_5_4_0}
-            cloudera_elements_sequence="vm ntp centos hadoop-cloudera selinux-permissive disable-firewall xfs-tools"
+            cloudera_elements_sequence="hadoop-cloudera selinux-permissive disable-firewall"
 
-            if [ -n "$USE_MIRRORS"]; then
-                [ -n "$CENTOS_MIRROR" ] && cloudera_elements_sequence="$cloudera_elements_sequence centos-mirror"
-            fi
+            image_create centos $cloudera_5_4_centos_image_name $cloudera_elements_sequence
 
-            disk-image-create $TRACING $cloudera_elements_sequence -o $cloudera_5_4_centos_image_name
-
-            unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES DIB_CDH_VERSION
+            unset DIB_CDH_VERSION
         fi
     fi
     unset DIB_MIN_TMPFS
@@ -770,38 +719,24 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
     #MapR repository requires additional space
     export DIB_MIN_TMPFS=10
 
-    mapr_ubuntu_elements_sequence="vm ntp ssh ubuntu hadoop-mapr xfs-tools $JAVA_ELEMENT"
-    mapr_centos_elements_sequence="vm ntp centos ssh hadoop-mapr selinux-permissive xfs-tools $JAVA_ELEMENT disable-firewall"
-
-    if [ "$DEBUG_MODE" = "true" ]; then
-        mapr_ubuntu_elements_sequence="$mapr_ubuntu_elements_sequence root-passwd"
-        mapr_centos_elements_sequence="$mapr_centos_elements_sequence root-passwd"
-    fi
-
-    if [ -n "$USE_MIRRORS" ]; then
-        [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$mapr_ubuntu_elements_sequence apt-mirror"
-        [ -n "$CENTOS_MIRROR" ] && centos_elements_sequence="$mapr_centos_elements_sequence centos-mirror"
-    fi
+    mapr_ubuntu_elements_sequence="ssh hadoop-mapr $JAVA_ELEMENT"
+    mapr_centos_elements_sequence="ssh hadoop-mapr selinux-permissive $JAVA_ELEMENT disable-firewall"
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         export DIB_RELEASE=${DIB_RELEASE:-trusty}
 
         mapr_ubuntu_image_name=${mapr_ubuntu_image_name:-ubuntu_${DIB_RELEASE}_mapr_${DIB_MAPR_VERSION}_latest}
 
-        disk-image-create $TRACING $mapr_ubuntu_elements_sequence -o $mapr_ubuntu_image_name
+        image_create ubuntu $mapr_ubuntu_image_name $mapr_ubuntu_elements_sequence
 
         unset DIB_RELEASE
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
-        export BASE_IMAGE_FILE=${BASE_IMAGE_FILE:-"CentOS-6.6-cloud-init-20150821.qcow2"}
-        export DIB_CLOUD_IMAGES=${DIB_CLOUD_IMAGES:-"http://sahara-files.mirantis.com"}
-
         mapr_centos_image_name=${mapr_centos_image_name:-centos_6.6_mapr_${DIB_MAPR_VERSION}_latest}
 
-        disk-image-create $TRACING $mapr_centos_elements_sequence -o $mapr_centos_image_name
+        image_create centos $mapr_centos_image_name $mapr_centos_elements_sequence
 
-        unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
         unset DIB_CLOUD_INIT_DATASOURCES
     fi
 fi
@@ -812,49 +747,34 @@ fi
 if [ -z "$PLUGIN" -o "$PLUGIN" = "plain" ]; then
     # generate plain (no Hadoop components) images for testing
 
-    common_elements="vm ntp ssh sahara-version xfs-tools"
-    if [ "$DEBUG_MODE" = "true" ]; then
-        common_elements="$common_elements root-passwd"
-    fi
+    common_elements="ssh"
 
-    ubuntu_elements_sequence="$common_elements ubuntu"
-    fedora_elements_sequence="$common_elements fedora"
-    centos_elements_sequence="$common_elements centos disable-firewall disable-selinux"
-    centos7_elements_sequence="$common_elements centos7 disable-firewall disable-selinux"
-
-    if [ -n "$USE_MIRRORS" ]; then
-        [ -n "$UBUNTU_MIRROR" ] && ubuntu_elements_sequence="$ubuntu_elements_sequence apt-mirror"
-        [ -n "$FEDORA_MIRROR" ] && fedora_elements_sequence="$fedora_elements_sequence fedora-mirror"
-        [ -n "$CENTOS_MIRROR" ] && centos_elements_sequence="$centos_elements_sequence centos-mirror"
-        [ -n "$CENTOS_MIRROR" ] && centos7_elements_sequence="$centos7_elements_sequence centos-mirror"
-    fi
+    ubuntu_elements_sequence="$common_elements"
+    fedora_elements_sequence="$common_elements"
+    centos_elements_sequence="$common_elements disable-firewall disable-selinux"
+    centos7_elements_sequence="$common_elements disable-firewall disable-selinux"
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         plain_image_name=${plain_ubuntu_image_name:-ubuntu_plain}
 
-        disk-image-create $TRACING $ubuntu_elements_sequence -o $plain_image_name
+        image_create ubuntu $plain_image_name $ubuntu_elements_sequence
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "fedora" ]; then
         plain_image_name=${plain_fedora_image_name:-fedora_plain}
 
-        disk-image-create $TRACING $fedora_elements_sequence -o $plain_image_name
+        image_create fedora $plain_image_name $fedora_elements_sequence
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
-        export BASE_IMAGE_FILE=${BASE_IMAGE_FILE:-"CentOS-6.6-cloud-init-20150821.qcow2"}
-        export DIB_CLOUD_IMAGES=${DIB_CLOUD_IMAGES:-"http://sahara-files.mirantis.com"}
-
         plain_image_name=${plain_centos_image_name:-centos_plain}
 
-        disk-image-create $TRACING $centos_elements_sequence -o $plain_image_name
-
-        unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
+        image_create centos $plain_image_name $centos_elements_sequence
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
         plain_image_name=${plain_centos7_image_name:-centos7_plain}
 
-        disk-image-create $TRACING $centos7_elements_sequence -o $plain_image_name
+        image_create centos7 $plain_image_name $centos7_elements_sequence
     fi
 fi
