@@ -142,10 +142,6 @@ case "$PLUGIN" in
                 exit 1
             ;;
         esac
-        if [ "$HADOOP_VERSION" = "1" -a "$BASE_IMAGE_OS" = "centos7" ]; then
-            echo -e "'$BASE_IMAGE_OS' image type is not supported for hadoop version '$HADOOP_VERSION'.\nAborting"
-            exit 1
-        fi
         ;;
     "cloudera")
         case "$BASE_IMAGE_OS" in
