@@ -51,7 +51,7 @@ get_packages() {
     local spec_file="$2"
     local version_separator="${3:-:}"
 
-    echo "$(python "$VERSIONS_PY" --separator "$version_separator" "$package_groups_file" "$spec_file")"
+    python "$VERSIONS_PY" --separator "$version_separator" "$package_groups_file" "$spec_file"
 }
 
 # download_packages <package_groups_file> <spec_file> [directory] [distro]
