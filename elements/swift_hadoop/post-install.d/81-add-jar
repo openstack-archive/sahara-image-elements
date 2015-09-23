@@ -8,11 +8,12 @@ set -o pipefail
 
 HDFS_LIB_DIR=${DIB_HDFS_LIB_DIR:-"/usr/share/hadoop/lib"}
 SWIFT_LIB_URI="http://sahara-files.mirantis.com/hadoop-swift/hadoop-swift-latest.jar"
+HADOOP_SWIFT_JAR_NAME=${DIB_HADOOP_SWIFT_JAR_NAME:-"hadoop-swift.jar"}
 
 if [ -z "${swift_url:-}" ]; then
-    wget -O $HDFS_LIB_DIR/hadoop-swift.jar $SWIFT_LIB_URI
+    wget -O $HDFS_LIB_DIR/$HADOOP_SWIFT_JAR_NAME $SWIFT_LIB_URI
 else
-    wget -O $HDFS_LIB_DIR/hadoop-swift.jar $swift_url
+    wget -O $HDFS_LIB_DIR/$HADOOP_SWIFT_JAR_NAME $swift_url
 fi
 
 if [ $? -ne 0 ]; then
@@ -20,4 +21,4 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-chmod 0644 $HDFS_LIB_DIR/hadoop-swift.jar
+chmod 0644 $HDFS_LIB_DIR/$HADOOP_SWIFT_JAR_NAME
