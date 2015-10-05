@@ -499,7 +499,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
 
     # CentOS 7 cloud image
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
-        export DIB_EXTLINUX=1
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
             export centos7_image_name=${centos7_vanilla_hadoop_2_6_image_name:-"centos7_sahara_vanilla_hadoop_2_6_latest$suffix"}
@@ -510,7 +509,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             export centos7_image_name=${centos7_vanilla_hadoop_2_7_1_image_name:-"centos7_sahara_vanilla_hadoop_2_7_1_latest$suffix"}
             image_create centos7 $centos7_image_name $centos7_elements_sequence
         fi
-        unset DIB_EXTLINUX
     fi
 fi
 
