@@ -5,3 +5,4 @@ ambari-log4j:
 ambari-metrics-hadoop-sink:
 ambari-metrics-monitor:
 ambari-server:
+ambari-metrics-collector:
