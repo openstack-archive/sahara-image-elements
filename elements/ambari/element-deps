@@ -1,3 +1,4 @@
 disable-firewall
 java
+mysql
 package-installs
