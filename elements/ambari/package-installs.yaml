@@ -6,3 +6,12 @@ ambari-metrics-hadoop-sink:
 ambari-metrics-monitor:
 ambari-server:
 ambari-metrics-collector:
+redhat-lsb:
+nc:
+unzip:
+curl:
+tar:
+zip:
+rpcbind:
+fuse-libs:
+snappy-devel:

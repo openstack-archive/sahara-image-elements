@@ -1,0 +1,16 @@
+{
+  "family": {
+    "debian": {
+      "nc": "netcat",
+      "redhat-lsb": "",
+      "snappy-devel": "",
+      "fuse-libs": "fuse"
+    },
+    "redhat": {
+      "nc": "nc",
+      "redhat-lsb": "redhat-lsb",
+      "snappy-devel": "snappy-devel",
+      "fuse-libs": "fuse-libs"
+    }
+  }
+}
