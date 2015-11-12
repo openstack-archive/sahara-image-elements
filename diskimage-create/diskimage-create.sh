@@ -33,6 +33,7 @@ usage() {
     echo "         [-u]"
     echo "         [-j openjdk|oracle-java]"
     echo "         [-x]"
+    echo "         [-h]"
     echo "   '-p' is plugin version (default: all plugins)"
     echo "   '-i' is operating system of the base image (default: all supported by plugin)"
     echo "   '-v' is hadoop version (default: all supported by plugin)"
@@ -42,6 +43,7 @@ usage() {
     echo "   '-u' install missing packages necessary for building"
     echo "   '-j' is java distribution (default: openjdk)"
     echo "   '-x' turns on tracing"
+    echo "   '-h' display this message"
     echo
     echo "You shouldn't specify image type for spark plugin"
     echo "You shouldn't specify image type for hdp plugin"
@@ -49,10 +51,9 @@ usage() {
     echo "Debug mode should only be enabled for local debugging purposes, not for production systems"
     echo "By default all images for all plugins will be created"
     echo
-    exit 1
 }
 
-while getopts "p:i:v:dur:s:j:x" opt; do
+while getopts "p:i:v:dur:s:j:xh" opt; do
     case $opt in
         p)
             PLUGIN=$OPTARG
@@ -82,8 +83,13 @@ while getopts "p:i:v:dur:s:j:x" opt; do
             TRACING="$TRACING -x"
             set -x
         ;;
+        h)
+            usage
+            exit 0
+        ;;
         *)
             usage
+            exit 1
         ;;
     esac
 done
@@ -91,6 +97,7 @@ done
 shift $((OPTIND-1))
 if [ "$1" ]; then
     usage
+    exit 1
 fi
 
 JAVA_ELEMENT=${JAVA_ELEMENT:-"openjdk"}
