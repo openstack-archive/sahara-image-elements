@@ -1,13 +1,13 @@
 Diskimage-builder script for creation cloud images
 ==================================================
 
-This script builds Ubuntu, Fedora, CentOS cloud images for use in Sahara. By default the all plugin are targeted, all images will be built. The '-p' option can be used to select plugin (vanilla, spark, hdp or cloudera). The '-i' option can be used to select image type (ubuntu, fedora or centos). The '-v' option can be used to select hadoop version (1, 2 or plain).
+This script builds Ubuntu, Fedora, CentOS cloud images for use in Sahara. By default the all plugin are targeted, all images will be built. The '-p' option can be used to select plugin (vanilla, spark, hdp or cloudera, plain). The '-i' option can be used to select image type (ubuntu, fedora or centos). The '-v' option can be used to select hadoop version (1, 2 etc).
 
 NOTE: You should use Ubuntu or Fedora host OS for building images, CentOS as a host OS has not been tested well.
 
 For users:
 
-1. Use your environment (export / setenv) to alter the scripts behavior. Environment variables the script accepts are 'DIB_HADOOP_VERSION_1' and 'DIB_HADOOP_VERSION_2', 'JAVA_DOWNLOAD_URL', 'JAVA_TARGET_LOCATION', 'OOZIE_DOWNLOAD_URL', 'HIVE_VERSION', 'ubuntu_[vanilla|spark|cloudera]_[hadoop_1|hadoop_2]_image_name', 'fedora_vanilla_hadoop_[1|2]_image_name', 'centos_[vanilla|hdp|cloudera]_[hadoop_1|hadoop_2|plain]_image_name'.
+1. Use your environment (export / setenv) to alter the scripts behavior. Environment variables the script accepts are 'DIB_HADOOP_VERSION_1' and 'DIB_HADOOP_VERSION_2', 'JAVA_DOWNLOAD_URL', 'JAVA_TARGET_LOCATION', 'OOZIE_DOWNLOAD_URL', 'HIVE_VERSION', 'ubuntu_[vanilla|spark|cloudera|plain]_[hadoop_1|hadoop_2]_image_name', 'fedora_[vanilla|plain]_hadoop_[1|2]_image_name', 'centos_[vanilla|hdp|cloudera|plain]_[hadoop_1|hadoop_2]_image_name'.
 
 2. For creating all images just clone this repository and run script.
 
@@ -27,7 +27,7 @@ NOTE: Do not create all images for all plugins with the same mirrors. Different 
 
 .. sourcecode:: bash
 
-  tox -e venv -- sahara-image-create -p [vanilla|spark|hdp|cloudera|storm|mapr|ambari]
+  tox -e venv -- sahara-image-create -p [vanilla|spark|hdp|cloudera|storm|mapr|ambari|plain]
 
 5. To select which hadoop version to target use the '-v' commandline option like this:
 
@@ -47,8 +47,8 @@ NOTE for 4, 5, 6:
 
 For Vanilla you can create ubuntu, fedora and centos cloud image with hadoop 1.x.x and 2.x.x versions. Use environment variables 'DIB_HADOOP_VERSION_1' and 'DIB_HADOOP_VERSION_2' to change defaults.
 For Spark you can create only ubuntu images, so you shouldn't specify an image type. The default Spark and HDFS versions included in the build are tested and known working together with the Sahara Spark plugin, other combinations should be used only for evaluation or testing purposes. You can select a different Spark version with commandline option '-s' and Hadoop HDFS version with '-v', but only Cludera CDH versions are available for now.
-For HDP you can create only centos image with hadoop 1.3.0 or 2.0 and without hadoop ('plain' image). You shouldn't specify image type.
 For Cloudera you can create ubuntu and centos images with preinstalled cloudera hadoop. You shouldn't specify hadoop version.
+You can create centos, ubuntu, fedora images without hadoop ('plain' image)
 
 NOTE for CentOS images (for vanilla, hdp and cloudera plugins):
 
