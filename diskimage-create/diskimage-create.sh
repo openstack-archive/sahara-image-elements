@@ -29,7 +29,7 @@ usage() {
     echo "Usage: $(basename $0)"
     echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr|plain]"
     echo "         [-i ubuntu|fedora|centos|centos7]"
-    echo "         [-v 2|2.6|2.7.1|4|5.0|5.3|5.4]"
+    echo "         [-v 2|2.6|2.7.1|4|5.0|5.3|5.4|5.5]"
     echo "         [-r 3.1.1|4.0.1|4.0.2|5.0.0]"
     echo "         [-s <Spark version>]"
     echo "         [-d]"
@@ -167,7 +167,7 @@ case "$PLUGIN" in
         esac
 
         case "$HADOOP_VERSION" in
-            "" | "5.0" | "5.3" | "5.4");;
+            "" | "5.0" | "5.3" | "5.4" | "5.5");;
             *)
                 echo -e "Unknown hadoop version selected.\nAborting"
                 exit 1
@@ -192,7 +192,7 @@ case "$PLUGIN" in
             "4")
                 HADOOP_VERSION="CDH4"
             ;;
-            "5.0" | "5.3" | "5.4");;
+            "5.0" | "5.3" | "5.4" | "5.5");;
             *)
                 echo -e "Unknown hadoop version selected.\nAborting"
                 exit 1
@@ -682,6 +682,16 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             image_create ubuntu $cloudera_5_4_ubuntu_image_name $cloudera_elements_sequence
             unset DIB_CDH_VERSION DIB_RELEASE
         fi
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.5" ]; then
+            cloudera_5_5_ubuntu_image_name=${cloudera_5_5_ubuntu_image_name:-ubuntu_sahara_cloudera_5_5_0}
+            cloudera_elements_sequence="hadoop-cloudera"
+
+            # Cloudera supports 14.04 Ubuntu in 5.5
+            export DIB_CDH_VERSION="5.5"
+            export DIB_RELEASE="trusty"
+            image_create ubuntu $cloudera_5_5_ubuntu_image_name $cloudera_elements_sequence
+            unset DIB_CDH_VERSION DIB_RELEASE
+        fi
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
@@ -712,6 +722,16 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             cloudera_elements_sequence="hadoop-cloudera selinux-permissive disable-firewall"
 
             image_create centos $cloudera_5_4_centos_image_name $cloudera_elements_sequence
+
+            unset DIB_CDH_VERSION
+        fi
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.5" ]; then
+            export DIB_CDH_VERSION="5.5"
+
+            cloudera_5_5_centos_image_name=${cloudera_5_5_centos_image_name:-centos_sahara_cloudera_5_5_0}
+            cloudera_elements_sequence="hadoop-cloudera selinux-permissive disable-firewall"
+
+            image_create centos $cloudera_5_5_centos_image_name $cloudera_elements_sequence
 
             unset DIB_CDH_VERSION
         fi
