@@ -5,4 +5,4 @@
 pbr>=1.6
 
 dib-utils # Apache-2.0
-diskimage-builder>=1.1.2
+diskimage-builder!=1.6.0,>=1.1.2
