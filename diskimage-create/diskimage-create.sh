@@ -15,6 +15,9 @@ DIB_DEFAULT_MAPR_VERSION="5.0.0"
 # The default version for Spark plugin
 DIB_DEFAULT_SPARK_VERSION="1.3.1"
 
+# Bare metal image generation is enabled with the -b flag, it is off by default
+SIE_BAREMETAL="false"
+
 # Default list of datasource modules for ubuntu. Workaround for bug #1375645
 export CLOUD_INIT_DATASOURCES=${DIB_CLOUD_INIT_DATASOURCES:-"NoCloud, ConfigDrive, OVF, MAAS, Ec2"}
 
@@ -43,6 +46,7 @@ usage() {
     echo "   '-u' install missing packages necessary for building"
     echo "   '-j' is java distribution (default: openjdk)"
     echo "   '-x' turns on tracing"
+    echo "   '-b' generate a bare metal image"
     echo "   '-h' display this message"
     echo
     echo "You shouldn't specify image type for spark plugin"
@@ -53,7 +57,7 @@ usage() {
     echo
 }
 
-while getopts "p:i:v:dur:s:j:xh" opt; do
+while getopts "p:i:v:dur:s:j:xhb" opt; do
     case $opt in
         p)
             PLUGIN=$OPTARG
@@ -82,6 +86,9 @@ while getopts "p:i:v:dur:s:j:xh" opt; do
         x)
             TRACING="$TRACING -x"
             set -x
+        ;;
+        b)
+            SIE_BAREMETAL="true"
         ;;
         h)
             usage
@@ -396,7 +403,12 @@ image_create() {
     shift
 
     # the base elements and args, used in *all* the images
-    local elements="vm sahara-version ntp xfs-tools"
+    local elements="sahara-version ntp xfs-tools"
+    if [ $SIE_BAREMETAL = "true" ]; then
+        elements="grub2 baremetal dhcp-all-interfaces $elements"
+    else
+        elements="vm $elements"
+    fi
     local args=""
 
     # debug mode handling
