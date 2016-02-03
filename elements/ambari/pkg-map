@@ -4,7 +4,11 @@
       "nc": "netcat",
       "redhat-lsb": "",
       "snappy-devel": "",
-      "fuse-libs": "fuse"
+      "fuse-libs": "fuse",
+      "ambari-metrics-monitor": "ambari-metrics-assembly",
+      "ambari-metrics-collector": "ambari-metrics-assembly",
+      "ambari-metrics-hadoop-sink": "ambari-metrics-assembly",
+      "ambari-log4j": ""
     },
     "redhat": {
       "nc": "nc",
