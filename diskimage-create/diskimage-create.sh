@@ -27,7 +27,7 @@ TRACING=
 usage() {
     echo
     echo "Usage: $(basename $0)"
-    echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr|plain]"
+    echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr|ambari|plain]"
     echo "         [-i ubuntu|fedora|centos|centos7]"
     echo "         [-v 2|2.6|2.7.1|4|5.0|5.3|5.4|5.5]"
     echo "         [-r 3.1.1|4.0.1|4.0.2|5.0.0]"
