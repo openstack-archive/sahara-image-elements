@@ -13,7 +13,7 @@ DEBUG_MODE="false"
 DIB_DEFAULT_MAPR_VERSION="5.0.0"
 
 # The default version for Spark plugin
-DIB_DEFAULT_SPARK_VERSION="1.3.1"
+DIB_DEFAULT_SPARK_VERSION="1.6.0"
 
 # Bare metal image generation is enabled with the -b flag, it is off by default
 SIE_BAREMETAL="false"
@@ -31,7 +31,7 @@ usage() {
     echo "         [-i ubuntu|fedora|centos|centos7]"
     echo "         [-v 2|2.6|2.7.1|4|5.0|5.3|5.4|5.5]"
     echo "         [-r 3.1.1|4.0.1|4.0.2|5.0.0]"
-    echo "         [-s <Spark version>]"
+    echo "         [-s 1.3.1|1.6.0]"
     echo "         [-d]"
     echo "         [-u]"
     echo "         [-j openjdk|oracle-java]"
@@ -545,6 +545,9 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
         echo "Overriding CDH version, CDH 4 is required for this Spark version"
         export DIB_CDH_VERSION="CDH4"
         ubuntu_elements_sequence="$COMMON_ELEMENTS hadoop-cdh"
+    elif [ "$DIB_SPARK_VERSION" == "1.6.0" ]; then
+        export DIB_CDH_VERSION="5.4"
+        ubuntu_elements_sequence="$COMMON_ELEMENTS hadoop-cloudera"
     else
         export DIB_CDH_VERSION=$HADOOP_VERSION
         ubuntu_elements_sequence="$COMMON_ELEMENTS hadoop-cloudera"

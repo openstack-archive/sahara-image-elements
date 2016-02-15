@@ -41,7 +41,13 @@ NOTE: Do not create all images for all plugins with the same mirrors. Different 
 
   tox -e venv -- sahara-image-create -i [ubuntu|fedora|centos|centos7]
 
-7. If the host system is missing packages required for diskimage-create.sh, the '-u' commandline option will instruct the script to install them without prompt.
+7. To select which Spark version to target use the '-s' commandline option like this:
+
+.. sourcecode:: bash
+
+  tox -e venv -- sahara-image-create -p spark -s [1.3.1|1.6.0]
+
+8. If the host system is missing packages required for diskimage-create.sh, the '-u' commandline option will instruct the script to install them without prompt.
 
 NOTE for 4, 5, 6:
 
