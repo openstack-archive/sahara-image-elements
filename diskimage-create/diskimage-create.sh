@@ -356,6 +356,7 @@ if need_required_packages; then
     if [ -n "$DIB_UPDATE_REQUESTED" ]; then
         case "$platform" in
             "ubuntu")
+                sudo apt-get update
                 sudo apt-get install $package_list -y
                 ;;
             "opensuse")
