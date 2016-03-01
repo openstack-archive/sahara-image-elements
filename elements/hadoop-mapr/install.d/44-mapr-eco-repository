@@ -17,13 +17,13 @@ get_repo_url() {
 
     if [ "$DISTRO_NAME" = "ubuntu" ]; then
         case "$DIB_MAPR_VERSION" in
-            "5.0.0")
+            "5.0.0"|"5.1.0")
                 repo_url="${DIB_MAPR_ECO_DEB_REPO:-http://package.mapr.com/releases/ecosystem-5.x/ubuntu binary/}"
             ;;
         esac
     elif [ "$DISTRO_NAME" = "centos" -o "$DISTRO_NAME" = "rhel" ]; then
         case "$DIB_MAPR_VERSION" in
-            "5.0.0")
+            "5.0.0"|"5.1.0")
                 repo_url="${DIB_MAPR_ECO_RPM_REPO:-http://package.mapr.com/releases/ecosystem-5.x/redhat}"
             ;;
         esac

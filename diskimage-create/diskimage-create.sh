@@ -10,7 +10,7 @@ unset DIB_IMAGE_SIZE
 DEBUG_MODE="false"
 
 # The default version for a MapR plugin
-DIB_DEFAULT_MAPR_VERSION="5.0.0"
+DIB_DEFAULT_MAPR_VERSION="5.1.0"
 
 # The default version for Spark plugin
 DIB_DEFAULT_SPARK_VERSION="1.6.0"
@@ -30,7 +30,7 @@ usage() {
     echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr|ambari|plain]"
     echo "         [-i ubuntu|fedora|centos|centos7]"
     echo "         [-v 2|2.6|2.7.1|4|5.0|5.3|5.4|5.5]"
-    echo "         [-r 5.0.0]"
+    echo "         [-r 5.0.0|5.1.0]"
     echo "         [-s 1.3.1|1.6.0]"
     echo "         [-d]"
     echo "         [-u]"
@@ -269,7 +269,7 @@ case "$PLUGIN" in
                 echo "${DIB_DEFAULT_MAPR_VERSION} version would be used"
                 DIB_MAPR_VERSION=${DIB_DEFAULT_MAPR_VERSION}
             ;;
-            "5.0.0");;
+            "5.0.0" | "5.1.0");;
             *)
                 echo -e "Unknown MapR version.\nExit"
                 exit 1
