@@ -30,7 +30,7 @@ usage() {
     echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr|ambari|plain]"
     echo "         [-i ubuntu|fedora|centos|centos7]"
     echo "         [-v 2|2.6|2.7.1|4|5.0|5.3|5.4|5.5]"
-    echo "         [-r 3.1.1|4.0.1|4.0.2|5.0.0]"
+    echo "         [-r 5.0.0]"
     echo "         [-s 1.3.1|1.6.0]"
     echo "         [-d]"
     echo "         [-u]"
@@ -269,7 +269,7 @@ case "$PLUGIN" in
                 echo "${DIB_DEFAULT_MAPR_VERSION} version would be used"
                 DIB_MAPR_VERSION=${DIB_DEFAULT_MAPR_VERSION}
             ;;
-            "3.1.1" | "4.0.1" | "4.0.2" | "5.0.0");;
+            "5.0.0");;
             *)
                 echo -e "Unknown MapR version.\nExit"
                 exit 1
