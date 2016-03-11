@@ -21,5 +21,5 @@ DIB_HDFS_LIB_DIR
 
 DIB_HADOOP_SWIFT_JAR_NAME
   :Required: No
-  :Default: hadoop-swift.jar
+  :Default: hadoop-openstack.jar
   :Description: Filename of the deployed swift jar.

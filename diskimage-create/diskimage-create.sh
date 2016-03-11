@@ -452,11 +452,13 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
     export HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-native-libs-2.7.1.tar.gz"}
     export OOZIE_HADOOP_V2_7_1_DOWNLOAD_URL=${OOZIE_HADOOP_V2_7_1_FILE:-"http://sahara-files.mirantis.com/oozie-4.2.0-hadoop-2.7.1.tar.gz"}
+    export DIB_HDFS_LIB_DIR="/opt/hadoop/share/hadoop/tools/lib"
+    export plugin_type="vanilla"
 
-    ubuntu_elements_sequence="hadoop oozie mysql hive $JAVA_ELEMENT"
-    fedora_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT"
-    centos_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT"
-    centos7_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT"
+    ubuntu_elements_sequence="hadoop oozie mysql hive $JAVA_ELEMENT swift_hadoop"
+    fedora_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop"
+    centos_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop"
+    centos7_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop"
 
     # Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
     # https://bugs.launchpad.net/sahara/+bug/1252684
@@ -530,6 +532,9 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             image_create centos7 $centos7_image_name $centos7_elements_sequence
         fi
     fi
+
+    unset plugin_type
+    unset DIB_HDFS_LIB_DIR
 fi
 
 ##########################
@@ -537,9 +542,10 @@ fi
 ##########################
 
 if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
-    export DIB_HDFS_LIB_DIR="/usr/lib/hadoop"
+    export DIB_HDFS_LIB_DIR="/usr/lib/hadoop-mapreduce"
     export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
     export DIB_SPARK_VERSION
+    export plugin_type="spark"
 
     COMMON_ELEMENTS="$JAVA_ELEMENT swift_hadoop spark"
     if [ "$DIB_SPARK_VERSION" == "1.0.2" ]; then
@@ -567,6 +573,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
     unset DIB_CDH_VERSION
     unset DIB_SPARK_VERSION
     unset DIB_HADOOP_VERSION
+    unset plugin_type
 fi
 
 
@@ -627,23 +634,30 @@ fi
 
 if [ -z "$PLUGIN" -o "$PLUGIN" = "ambari" ]; then
     export DIB_AMBARI_VERSION="$HADOOP_VERSION"
+    export plugin_type="ambari"
+    # set the temporary folder for hadoop-openstack.jar file
+    export DIB_HDFS_LIB_DIR="/opt"
+
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         ambari_ubuntu_image_name=${ambari_ubuntu_image_name:-ubuntu_sahara_ambari}
-        ambari_element_sequence="ambari $JAVA_ELEMENT"
+        ambari_element_sequence="ambari $JAVA_ELEMENT swift_hadoop"
         export DIB_RELEASE="precise"
         image_create ubuntu $ambari_ubuntu_image_name $ambari_element_sequence
         unset DIB_RELEASE
     fi
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
         ambari_centos_image_name=${ambari_centos_image_name:-centos_sahara_ambari}
-        ambari_element_sequence="ambari $JAVA_ELEMENT disable-firewall"
+        ambari_element_sequence="ambari $JAVA_ELEMENT disable-firewall swift_hadoop"
         image_create centos $ambari_centos_image_name $ambari_element_sequence
     fi
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
         ambari_centos7_image_name=${ambari_centos7_image_name:-"centos7-sahara-ambari"}
-        ambari_element_sequence="disable-selinux ambari $JAVA_ELEMENT disable-firewall"
+        ambari_element_sequence="disable-selinux ambari $JAVA_ELEMENT disable-firewall swift_hadoop"
         image_create centos7 $ambari_centos7_image_name $ambari_element_sequence
     fi
+
+    unset DIB_HDFS_LIB_DIR
+    unset plugin_type
     unset DIB_AMBARI_VERSION
 fi
 
@@ -654,11 +668,13 @@ fi
 if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
     # Cloudera installation requires additional space
     export DIB_MIN_TMPFS=5
+    export plugin_type="cloudera"
+    export DIB_HDFS_LIB_DIR="/usr/lib/hadoop-mapreduce"
 
+    cloudera_elements_sequence="hadoop-cloudera swift_hadoop"
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.0" ]; then
             cloudera_5_0_ubuntu_image_name=${cloudera_5_0_ubuntu_image_name:-ubuntu_sahara_cloudera_5_0_0}
-            cloudera_elements_sequence="hadoop-cloudera"
 
             # Cloudera supports only 12.04 Ubuntu
             export DIB_CDH_VERSION="5.0"
@@ -668,7 +684,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.3" ]; then
             cloudera_5_3_ubuntu_image_name=${cloudera_5_3_ubuntu_image_name:-ubuntu_sahara_cloudera_5_3_0}
-            cloudera_elements_sequence="hadoop-cloudera"
 
             # Cloudera supports only 12.04 Ubuntu
             export DIB_CDH_VERSION="5.3"
@@ -678,7 +693,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.4" ]; then
             cloudera_5_4_ubuntu_image_name=${cloudera_5_4_ubuntu_image_name:-ubuntu_sahara_cloudera_5_4_0}
-            cloudera_elements_sequence="hadoop-cloudera"
 
             # Cloudera supports only 12.04 Ubuntu
             export DIB_CDH_VERSION="5.4"
@@ -688,7 +702,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.5" ]; then
             cloudera_5_5_ubuntu_image_name=${cloudera_5_5_ubuntu_image_name:-ubuntu_sahara_cloudera_5_5_0}
-            cloudera_elements_sequence="hadoop-cloudera"
 
             # Cloudera supports 14.04 Ubuntu in 5.5
             export DIB_CDH_VERSION="5.5"
@@ -699,12 +712,11 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
+        cloudera_elements_sequence+=" selinux-permissive disable-firewall"
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.0" ]; then
             export DIB_CDH_VERSION="5.0"
 
             cloudera_5_0_centos_image_name=${cloudera_5_0_centos_image_name:-centos_sahara_cloudera_5_0_0}
-            cloudera_elements_sequence="hadoop-cloudera selinux-permissive disable-firewall"
-
             image_create centos $cloudera_5_0_centos_image_name $cloudera_elements_sequence
 
             unset DIB_CDH_VERSION
@@ -713,8 +725,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             export DIB_CDH_VERSION="5.3"
 
             cloudera_5_3_centos_image_name=${cloudera_5_3_centos_image_name:-centos_sahara_cloudera_5_3_0}
-            cloudera_elements_sequence="hadoop-cloudera selinux-permissive disable-firewall"
-
             image_create centos $cloudera_5_3_centos_image_name $cloudera_elements_sequence
 
             unset DIB_CDH_VERSION
@@ -723,8 +733,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             export DIB_CDH_VERSION="5.4"
 
             cloudera_5_4_centos_image_name=${cloudera_5_4_centos_image_name:-centos_sahara_cloudera_5_4_0}
-            cloudera_elements_sequence="hadoop-cloudera selinux-permissive disable-firewall"
-
             image_create centos $cloudera_5_4_centos_image_name $cloudera_elements_sequence
 
             unset DIB_CDH_VERSION
@@ -733,14 +741,15 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             export DIB_CDH_VERSION="5.5"
 
             cloudera_5_5_centos_image_name=${cloudera_5_5_centos_image_name:-centos_sahara_cloudera_5_5_0}
-            cloudera_elements_sequence="hadoop-cloudera selinux-permissive disable-firewall"
-
             image_create centos $cloudera_5_5_centos_image_name $cloudera_elements_sequence
 
             unset DIB_CDH_VERSION
         fi
     fi
+
+    unset DIB_HDFS_LIB_DIR
     unset DIB_MIN_TMPFS
+    unset plugin_type
 fi
 
 ##########################

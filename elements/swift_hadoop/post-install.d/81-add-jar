@@ -6,9 +6,48 @@ fi
 set -eu
 set -o pipefail
 
+hadoop="2.7.1"
+case "$plugin_type" in
+    "vanilla")
+        case "$DIB_HADOOP_VERSION" in
+            "2.6" | "2.6.0")
+                hadoop="2.6.0";;
+            "2.7.1")
+                hadoop="2.7.1";;
+        esac
+        DIB_HADOOP_SWIFT_JAR_NAME="hadoop-openstack-$hadoop.jar"
+        ;;
+    "cloudera" | "spark")
+        case "$DIB_CDH_VERSION" in
+            "CDH4")
+                hadoop="2.2.0";;
+            "5.0")
+                hadoop="2.3.0";;
+            "5.3")
+                hadoop="2.5.0";;
+            "5.4" | "5.5")
+                hadoop="2.6.0";;
+        esac
+        case "$plugin_type" in
+            "cloudera")
+                DIB_HADOOP_SWIFT_JAR_NAME="hadoop-openstack-$hadoop-cdh$DIB_CDH_VERSION.0.jar";;
+            "spark")
+                DIB_HADOOP_SWIFT_JAR_NAME="hadoop-openstack.jar";;
+        esac
+        ;;
+    "ambari")
+        case "$DIB_AMBARI_VERSION" in
+            "" | "2.2.0.0")
+                hadoop="2.7.1";;
+        esac
+        DIB_HADOOP_SWIFT_JAR_NAME="hadoop-openstack.jar"
+    ;;
+esac
+
 HDFS_LIB_DIR=${DIB_HDFS_LIB_DIR:-"/usr/share/hadoop/lib"}
-SWIFT_LIB_URI="http://sahara-files.mirantis.com/hadoop-swift/hadoop-swift-latest.jar"
-HADOOP_SWIFT_JAR_NAME=${DIB_HADOOP_SWIFT_JAR_NAME:-"hadoop-swift.jar"}
+JAR_BUILD_DATE="2016-03-17"
+SWIFT_LIB_URI="http://sahara-files.mirantis.com/hadoop-swift/hadoop-openstack-${hadoop}-${JAR_BUILD_DATE}.jar"
+HADOOP_SWIFT_JAR_NAME=${DIB_HADOOP_SWIFT_JAR_NAME:-"hadoop-openstack.jar"}
 
 if [ -z "${swift_url:-}" ]; then
     wget -O $HDFS_LIB_DIR/$HADOOP_SWIFT_JAR_NAME $SWIFT_LIB_URI
