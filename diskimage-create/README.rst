@@ -53,6 +53,13 @@ like this:
 
   tox -e venv -- sahara-image-create -v [2.6|2.7.1|4|5.0|5.3|5.4|5.5]
 
+Also, if you are planning to select which ambari version to target use the
+'-v' commandline option like this:
+
+.. sourcecode:: bash
+
+  tox -e venv -- sahara-image-create -v [2.2.0.0|2.2.1.0]
+
 6. To select which operating system to target use the '-i' commandline option
 like this:
 

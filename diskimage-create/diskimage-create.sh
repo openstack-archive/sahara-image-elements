@@ -29,7 +29,7 @@ usage() {
     echo "Usage: $(basename $0)"
     echo "         [-p vanilla|spark|cloudera|storm|mapr|ambari|plain]"
     echo "         [-i ubuntu|fedora|centos|centos7]"
-    echo "         [-v 2.6|2.7.1|4|5.0|5.3|5.4|5.5]"
+    echo "         [-v 2.6|2.7.1|4|5.0|5.3|5.4|5.5|2.2.0.0|2.2.1.0]"
     echo "         [-r 5.0.0|5.1.0]"
     echo "         [-s 1.3.1|1.6.0]"
     echo "         [-d]"
@@ -241,7 +241,14 @@ case "$PLUGIN" in
                 exit 1
             ;;
         esac
-    ;;
+
+        case "$HADOOP_VERSION" in
+            "" | "2.2.0.0" | "2.2.1.0");;
+            *)
+                echo -e "Continuing image building with custom ambari version \"$HADOOP_VERSION\"\n"
+            ;;
+        esac
+        ;;
     "mapr")
         case "$BASE_IMAGE_OS" in
             "" | "ubuntu" | "centos");;
