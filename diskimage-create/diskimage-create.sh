@@ -159,7 +159,7 @@ case "$PLUGIN" in
         ;;
     "cloudera")
         case "$BASE_IMAGE_OS" in
-            "" | "ubuntu" | "centos");;
+            "" | "ubuntu" | "centos" | "centos7");;
             *)
                 echo -e "'$BASE_IMAGE_OS' image type is not supported by '$PLUGIN'.\nAborting"
                 exit 1
@@ -173,6 +173,12 @@ case "$PLUGIN" in
                 exit 1
             ;;
         esac
+        if [ "$BASE_IMAGE_OS" = "centos7"  ]; then
+            if [ ! -z "$HADOOP_VERSION" -a ! "$HADOOP_VERSION" = "5.5" ]; then
+                echo -e "Unsupported version combination, Centos 7 can only be used with CDH 5.5"
+                exit 1
+            fi
+        fi
         ;;
     "spark")
         case "$BASE_IMAGE_OS" in
@@ -717,12 +723,12 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
-        cloudera_elements_sequence+=" selinux-permissive disable-firewall"
+        centos_cloudera_elements_sequence="selinux-permissive disable-firewall"
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.0" ]; then
             export DIB_CDH_VERSION="5.0"
 
             cloudera_5_0_centos_image_name=${cloudera_5_0_centos_image_name:-centos_sahara_cloudera_5_0_0}
-            image_create centos $cloudera_5_0_centos_image_name $cloudera_elements_sequence
+            image_create centos $cloudera_5_0_centos_image_name $cloudera_elements_sequence $centos_cloudera_elements_sequence
 
             unset DIB_CDH_VERSION
         fi
@@ -730,7 +736,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             export DIB_CDH_VERSION="5.3"
 
             cloudera_5_3_centos_image_name=${cloudera_5_3_centos_image_name:-centos_sahara_cloudera_5_3_0}
-            image_create centos $cloudera_5_3_centos_image_name $cloudera_elements_sequence
+            image_create centos $cloudera_5_3_centos_image_name $cloudera_elements_sequence $centos_cloudera_elements_sequence
 
             unset DIB_CDH_VERSION
         fi
@@ -738,7 +744,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             export DIB_CDH_VERSION="5.4"
 
             cloudera_5_4_centos_image_name=${cloudera_5_4_centos_image_name:-centos_sahara_cloudera_5_4_0}
-            image_create centos $cloudera_5_4_centos_image_name $cloudera_elements_sequence
+            image_create centos $cloudera_5_4_centos_image_name $cloudera_elements_sequence $centos_cloudera_elements_sequence
 
             unset DIB_CDH_VERSION
         fi
@@ -746,7 +752,19 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             export DIB_CDH_VERSION="5.5"
 
             cloudera_5_5_centos_image_name=${cloudera_5_5_centos_image_name:-centos_sahara_cloudera_5_5_0}
-            image_create centos $cloudera_5_5_centos_image_name $cloudera_elements_sequence
+            image_create centos $cloudera_5_5_centos_image_name $cloudera_elements_sequence $centos_cloudera_elements_sequence
+
+            unset DIB_CDH_VERSION
+        fi
+    fi
+
+    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
+        centos7_cloudera_elements_sequence="selinux-permissive disable-firewall"
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.5" ]; then
+            export DIB_CDH_VERSION="5.5"
+
+            cloudera_5_5_centos7_image_name=${cloudera_5_5_centos7_image_name:-centos7_sahara_cloudera_5_5_0}
+            image_create centos7 $cloudera_5_5_centos7_image_name $cloudera_elements_sequence $centos7_cloudera_elements_sequence
 
             unset DIB_CDH_VERSION
         fi
