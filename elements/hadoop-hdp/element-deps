@@ -1,6 +1,0 @@
-disable-firewall
-disable-selinux
-java
-package-installs
-sahara-version
-source-repositories
