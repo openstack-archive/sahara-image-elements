@@ -25,12 +25,12 @@ case "$plugin_type" in
                 hadoop="2.3.0";;
             "5.3")
                 hadoop="2.5.0";;
-            "5.4" | "5.5")
+            "5.4" | "5.5" | "5.7")
                 hadoop="2.6.0";;
         esac
         case "$plugin_type" in
             "cloudera")
-                DIB_HADOOP_SWIFT_JAR_NAME="hadoop-openstack-$hadoop-cdh$DIB_CDH_VERSION.0.jar";;
+                DIB_HADOOP_SWIFT_JAR_NAME="hadoop-openstack-$hadoop-cdh$DIB_CDH_MINOR_VERSION.jar";;
             "spark")
                 DIB_HADOOP_SWIFT_JAR_NAME="hadoop-openstack.jar";;
         esac

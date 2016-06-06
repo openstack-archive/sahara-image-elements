@@ -7,19 +7,16 @@ case "$PLUGIN" in
         # manually call each distro for cloudera, so we can cleanup
         # cache and generated images from the previous run
         # (saving space a bit)
-        for distro in ubuntu centos; do
+        for distro in ubuntu centos centos7; do
             # NOTE(vgridnev): Number of versions are growing; testing only 2 latest
             # releases of CDH
-            for version in 5.4 5.5; do
+            # NOTE(mionkin) centos7 is available only for CDH 5.5 and 5.7
+            for version in 5.5 5.7; do
               tox -e venv -- sahara-image-create -x -u -p $PLUGIN -i $distro -v $version
               find . -maxdepth 1 -name '*cloudera*.qcow2' -delete
               sudo rm -rf ~/.cache/image-create
             done
         done
-        # NOTE(mionkin) centos7 is available only for cloudera 5.5
-        tox -e venv -- sahara-image-create -x -u -p $PLUGIN -i centos7 -v 5.5
-        find . -maxdepth 1 -name '*cloudera*.qcow2' -delete
-        sudo rm -rf ~/.cache/image-create
         ;;
     *)
         tox -e venv -- sahara-image-create -x -u -p $PLUGIN

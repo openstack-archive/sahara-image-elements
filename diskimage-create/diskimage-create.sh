@@ -29,7 +29,7 @@ usage() {
     echo "Usage: $(basename $0)"
     echo "         [-p vanilla|spark|cloudera|storm|mapr|ambari|plain]"
     echo "         [-i ubuntu|fedora|centos|centos7]"
-    echo "         [-v 2.6|2.7.1|4|5.0|5.3|5.4|5.5|2.2.0.0|2.2.1.0]"
+    echo "         [-v 2.6|2.7.1|4|5.0|5.3|5.4|5.5|5.7|2.2.0.0|2.2.1.0]"
     echo "         [-r 5.0.0|5.1.0]"
     echo "         [-s 1.3.1|1.6.0]"
     echo "         [-d]"
@@ -166,17 +166,22 @@ case "$PLUGIN" in
         esac
 
         case "$HADOOP_VERSION" in
-            "" | "5.0" | "5.3" | "5.4" | "5.5");;
+            "" | "5.0" | "5.3" | "5.4" | "5.5" | "5.7");;
             *)
                 echo -e "Unknown hadoop version selected.\nAborting"
                 exit 1
             ;;
         esac
+
         if [ "$BASE_IMAGE_OS" = "centos7"  ]; then
-            if [ ! -z "$HADOOP_VERSION" -a ! "$HADOOP_VERSION" = "5.5" ]; then
-                echo -e "Unsupported version combination, Centos 7 can only be used with CDH 5.5"
+            if [ ! -z "$HADOOP_VERSION" -a ! "$HADOOP_VERSION" = "5.5"  -a ! "$HADOOP_VERSION" = "5.7" ]; then
+                echo -e "Unsupported version combination, Centos 7 can only be used with CDH 5.5 and CDH 5.7"
                 exit 1
             fi
+        fi
+
+        if [ -n "$DIB_CDH_MINOR_VERSION" ]; then
+            echo -e "Continuing image building with custom CDH version: \"$DIB_CDH_MINOR_VERSION\".\n"
         fi
         ;;
     "spark")
@@ -637,6 +642,14 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
     export plugin_type="cloudera"
     export DIB_HDFS_LIB_DIR="/usr/lib/hadoop-mapreduce"
 
+    if [ -n "$DIB_CDH_MINOR_VERSION" ]; then
+        # cut minor version number, e.g. from 5.7.1 to  5.7
+        # this is needed if user specified minor version but didn't specify
+        # hadoop version by '-v' parameter
+        HADOOP_VERSION=${DIB_CDH_MINOR_VERSION%.*}
+    fi
+    export DIB_CDH_MINOR_VERSION=${DIB_CDH_MINOR_VERSION:-$HADOOP_VERSION.0}
+
     cloudera_elements_sequence="hadoop-cloudera swift_hadoop"
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.0" ]; then
@@ -673,6 +686,14 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             export DIB_CDH_VERSION="5.5"
             export DIB_RELEASE="trusty"
             image_create ubuntu $cloudera_5_5_ubuntu_image_name $cloudera_elements_sequence
+            unset DIB_CDH_VERSION DIB_RELEASE
+        fi
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.7" ]; then
+            cloudera_5_7_ubuntu_image_name=${cloudera_5_7_ubuntu_image_name:-ubuntu_sahara_cloudera_$DIB_CDH_MINOR_VERSION}
+
+            export DIB_CDH_VERSION="5.7"
+            export DIB_RELEASE="trusty"
+            image_create ubuntu $cloudera_5_7_ubuntu_image_name $cloudera_elements_sequence
             unset DIB_CDH_VERSION DIB_RELEASE
         fi
     fi
@@ -723,8 +744,17 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
 
             unset DIB_CDH_VERSION
         fi
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.7" ]; then
+            export DIB_CDH_VERSION="5.7"
+
+            cloudera_5_7_centos7_image_name=${cloudera_5_7_centos7_image_name:-centos7_sahara_cloudera_$DIB_CDH_MINOR_VERSION}
+            image_create centos7 $cloudera_5_7_centos7_image_name $cloudera_elements_sequence $centos7_cloudera_elements_sequence
+
+            unset DIB_CDH_VERSION
+        fi
     fi
 
+    unset DIB_CDH_MINOR_VERSION
     unset DIB_HDFS_LIB_DIR
     unset DIB_MIN_TMPFS
     unset plugin_type

@@ -28,3 +28,7 @@ DIB_CDH_HDFS_ONLY
   :Description: If set will install only the namenode and datanode
     packages with their dependencies.
 
+DIB_CDH_MINOR_VERSION
+  :Required: No
+  :Description: If set will install minor version of CDH. Available minor
+    versions are 5.7.x.
