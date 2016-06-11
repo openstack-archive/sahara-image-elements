@@ -200,10 +200,15 @@ case "$PLUGIN" in
         esac
 
         case "$DIB_SPARK_VERSION" in
+            "1.3.1" | "1.6.0");;
             "")
                 echo "Spark version not specified"
                 echo "Spark ${DIB_DEFAULT_SPARK_VERSION} will be used"
                 DIB_SPARK_VERSION=${DIB_DEFAULT_SPARK_VERSION}
+            ;;
+            *)
+                echo -e "Unknown Spark version selected.\nAborting"
+                exit 1
             ;;
         esac
 
