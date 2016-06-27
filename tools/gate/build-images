@@ -21,10 +21,6 @@ case "$PLUGIN" in
         find . -maxdepth 1 -name '*cloudera*.qcow2' -delete
         sudo rm -rf ~/.cache/image-create
         ;;
-    # this case is needed until we use ambari version <= 2.1.1
-    "ambari")
-        tox -e venv -- sahara-image-create -x -u -p $PLUGIN -i "centos"
-        ;;
     *)
         tox -e venv -- sahara-image-create -x -u -p $PLUGIN
         ;;
