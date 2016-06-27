@@ -17,10 +17,6 @@ case "$PLUGIN" in
             done
         done
         ;;
-    # this case is needed until we use ambari version <= 2.1.1
-    "ambari")
-        tox -e venv -- sahara-image-create -x -u -p $PLUGIN -i "centos"
-        ;;
     *)
         tox -e venv -- sahara-image-create -x -u -p $PLUGIN
         ;;
