@@ -11,6 +11,7 @@ set -o pipefail
 tmp_dir=$TARGET_ROOT/tmp/storm
 mkdir -p $tmp_dir
 
+echo $DIB_STORM_VERSION
 echo "Downloading Storm"
 # The user is not providing his own Spark distribution package
 if [ -z "${STORM_DOWNLOAD_URL:-}" ]; then
@@ -18,6 +19,10 @@ if [ -z "${STORM_DOWNLOAD_URL:-}" ]; then
     case "$DIB_STORM_VERSION" in
         0.9.*)
             STORM_DOWNLOAD_URL="http://archive.apache.org/dist/incubator/storm/apache-storm-$DIB_STORM_VERSION-incubating/apache-storm-$DIB_STORM_VERSION-incubating.tar.gz"
+        ;;
+        1.0.*)
+            STORM_DOWNLOAD_URL="https://archive.apache.org/dist/storm/apache-storm-$DIB_STORM_VERSION/apache-storm-$DIB_STORM_VERSION.tar.gz"
+            echo $STORM_DOWNLOAD_URL
         ;;
         *)
             echo -e "WARNING: Storm version $DIB_STORM_VERSION not supported."
