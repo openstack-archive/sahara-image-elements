@@ -27,9 +27,9 @@ TRACING=
 usage() {
     echo
     echo "Usage: $(basename $0)"
-    echo "         [-p vanilla|spark|hdp|cloudera|storm|mapr|ambari|plain]"
+    echo "         [-p vanilla|spark|cloudera|storm|mapr|ambari|plain]"
     echo "         [-i ubuntu|fedora|centos|centos7]"
-    echo "         [-v 2|2.6|2.7.1|4|5.0|5.3|5.4|5.5]"
+    echo "         [-v 2.6|2.7.1|4|5.0|5.3|5.4|5.5]"
     echo "         [-r 5.0.0|5.1.0]"
     echo "         [-s 1.3.1|1.6.0]"
     echo "         [-d]"
@@ -50,7 +50,6 @@ usage() {
     echo "   '-h' display this message"
     echo
     echo "You shouldn't specify image type for spark plugin"
-    echo "You shouldn't specify image type for hdp plugin"
     echo "You shouldn't specify hadoop version for plain images"
     echo "Debug mode should only be enabled for local debugging purposes, not for production systems"
     echo "By default all images for all plugins will be created"
@@ -232,23 +231,6 @@ case "$PLUGIN" in
             echo -e "You shouldn't specify hadoop version for '$PLUGIN'.\nAborting"
             exit 1
         fi
-        ;;
-    "hdp")
-        case "$BASE_IMAGE_OS" in
-            "" | "centos");;
-            *)
-                echo -e "'$BASE_IMAGE_OS' image type is not supported by 'hdp'.\nAborting"
-                exit 1
-            ;;
-        esac
-
-        case "$HADOOP_VERSION" in
-            "" | "1" | "2");;
-            *)
-                echo -e "Unknown hadoop version selected.\nAborting"
-                exit 1
-            ;;
-        esac
         ;;
     "ambari")
         case "$BASE_IMAGE_OS" in
@@ -603,40 +585,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "storm" ]; then
     # Creating Ubuntu cloud image
     image_create ubuntu $ubuntu_image_name $ubuntu_elements_sequence
     unset DIB_CLOUD_INIT_DATASOURCES
-fi
-#########################
-# Images for HDP plugin #
-#########################
-
-if [ -z "$PLUGIN" -o "$PLUGIN" = "hdp" ]; then
-    echo "For hdp plugin option -i is ignored"
-
-    # Generate HDP images
-
-    # Parameter 'DIB_IMAGE_SIZE' should be specified for CentOS only
-    export DIB_IMAGE_SIZE=${IMAGE_SIZE:-"10"}
-
-    # Ignoring image type option
-    if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "1" ]; then
-        export centos_image_name_hdp_1_3=${centos_hdp_hadoop_1_image_name:-"centos-6_6-64-hdp-1-3"}
-        # Elements to include in an HDP-based image
-        centos_elements_sequence="hadoop-hdp yum $JAVA_ELEMENT"
-
-        # generate image with HDP 1.3
-        export DIB_HDP_VERSION="1.3"
-        image_create centos $centos_image_name_hdp_1_3 $centos_elements_sequence
-    fi
-
-    if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2" ]; then
-        export centos_image_name_hdp_2_0=${centos_hdp_hadoop_2_image_name:-"centos-6_6-64-hdp-2-0"}
-        # Elements to include in an HDP-based image
-        centos_elements_sequence="hadoop-hdp yum $JAVA_ELEMENT"
-
-        # generate image with HDP 2.0
-        export DIB_HDP_VERSION="2.0"
-        image_create centos $centos_image_name_hdp_2_0 $centos_elements_sequence
-    fi
-    unset DIB_IMAGE_SIZE
 fi
 
 ############################
