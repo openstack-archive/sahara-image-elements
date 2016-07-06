@@ -18,12 +18,17 @@ chmod 700 /app/home/storm
 chage -I -1 -E -1 -m -1 -M -1 -W -1 -E -1 storm
 
 echo "Extracting Storm"
-# The user is not providing his own Spark distribution package
+# The user is not providing his own Storm distribution package
 if [ -z "${STORM_DOWNLOAD_URL:-}" ]; then
 # Check storm version
     case "$DIB_STORM_VERSION" in
         0.9.*)
             STORM_DOWNLOAD_URL="http://archive.apache.org/dist/incubator/storm/apache-storm-$DIB_STORM_VERSION-incubating/apache-storm-$DIB_STORM_VERSION-incubating.tar.gz"
+            STORM_FOLDER=apache-storm-$DIB_STORM_VERSION-incubating
+        ;;
+        1.0.*)
+            STORM_DOWNLOAD_URL="https://archive.apache.org/dist/storm/apache-storm-$DIB_STORM_VERSION/apache-storm-$DIB_STORM_VERSION.tar.gz"
+            STORM_FOLDER=apache-storm-$DIB_STORM_VERSION
         ;;
         *)
             echo -e "WARNING: Storm version $DIB_STORM_VERSION not supported."
@@ -34,10 +39,11 @@ if [ -z "${STORM_DOWNLOAD_URL:-}" ]; then
 fi
 
 storm_file=$(basename "$STORM_DOWNLOAD_URL")
+echo $storm_file
 cd /usr/local
 tar -xvf $tmp_dir/$storm_file
-chown -R storm:storm apache-storm-$DIB_STORM_VERSION-incubating
-ln -s apache-storm-$DIB_STORM_VERSION-incubating storm
+chown -R storm:storm $STORM_FOLDER
+ln -s $STORM_FOLDER storm
 rm -r $tmp_dir
 
 
@@ -46,7 +52,7 @@ mkdir -p /app/storm
 chown -R storm:storm /app/storm
 chmod 750 /app/storm
 
-echo "Installing Supervisor Deamon"
+echo "Installing Supervisor Daemon"
 
 update-rc.d supervisor defaults
 chmod 600 /etc/supervisor/supervisord.conf

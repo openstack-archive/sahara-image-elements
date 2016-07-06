@@ -15,6 +15,9 @@ DIB_DEFAULT_MAPR_VERSION="5.1.0"
 # The default version for Spark plugin
 DIB_DEFAULT_SPARK_VERSION="1.6.0"
 
+# The default version for Storm plugin
+DIB_DEFAULT_STORM_VERSION="1.0.1"
+
 # Bare metal image generation is enabled with the -b flag, it is off by default
 SIE_BAREMETAL="false"
 
@@ -32,6 +35,7 @@ usage() {
     echo "         [-v 2.6|2.7.1|4|5.0|5.3|5.4|5.5|2.2.0.0|2.2.1.0]"
     echo "         [-r 5.0.0|5.1.0]"
     echo "         [-s 1.3.1|1.6.0]"
+    echo "         [-t 0.9.2|1.0.1]"
     echo "         [-d]"
     echo "         [-u]"
     echo "         [-j openjdk|oracle-java]"
@@ -56,7 +60,7 @@ usage() {
     echo
 }
 
-while getopts "p:i:v:dur:s:j:xhb" opt; do
+while getopts "p:i:v:dur:s:t:j:xhb" opt; do
     case $opt in
         p)
             PLUGIN=$OPTARG
@@ -75,6 +79,9 @@ while getopts "p:i:v:dur:s:j:xhb" opt; do
         ;;
         s)
             DIB_SPARK_VERSION=$OPTARG
+        ;;
+        t)
+            DIB_STORM_VERSION=$OPTARG
         ;;
         u)
             DIB_UPDATE_REQUESTED=true
@@ -223,6 +230,19 @@ case "$PLUGIN" in
             "" | "ubuntu");;
             *)
                 echo -e "'$BASE_IMAGE_OS' image type is not supported by '$PLUGIN'.\nAborting"
+                exit 1
+            ;;
+        esac
+
+        case "$DIB_STORM_VERSION" in
+            "0.9.2" | "1.0.1");;
+            "")
+                echo "Storm version not specified"
+                echo "Storm ${DIB_DEFAULT_STORM_VERSION} will be used"
+                DIB_STORM_VERSION=${DIB_DEFAULT_STORM_VERSION}
+            ;;
+            *)
+                echo -e "Unknown Storm version selected.\nAborting"
                 exit 1
             ;;
         esac
@@ -584,7 +604,7 @@ fi
 if [ -z "$PLUGIN" -o "$PLUGIN" = "storm" ]; then
     export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
 
-    export DIB_STORM_VERSION=${DIB_STORM_VERSION:-0.9.2}
+    export DIB_STORM_VERSION
     export ubuntu_image_name=${ubuntu_storm_image_name:-"ubuntu_sahara_storm_latest_$DIB_STORM_VERSION"}
 
     ubuntu_elements_sequence="$JAVA_ELEMENT zookeeper storm"
