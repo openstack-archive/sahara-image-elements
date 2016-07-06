@@ -32,7 +32,7 @@ usage() {
     echo "Usage: $(basename $0)"
     echo "         [-p vanilla|spark|cloudera|storm|mapr|ambari|plain]"
     echo "         [-i ubuntu|fedora|centos|centos7]"
-    echo "         [-v 2.6|2.7.1|4|5.0|5.3|5.4|5.5|5.7|2.2.0.0|2.2.1.0]"
+    echo "         [-v 2.7.1|4|5.0|5.3|5.4|5.5|5.7|2.2.0.0|2.2.1.0]"
     echo "         [-r 5.0.0|5.1.0]"
     echo "         [-s 1.3.1|1.6.0]"
     echo "         [-t 0.9.2|1.0.1]"
@@ -149,7 +149,7 @@ case "$PLUGIN" in
     "");;
     "vanilla")
         case "$HADOOP_VERSION" in
-            "" | "2.6" | "2.7.1");;
+            "" | "2.7.1");;
             *)
                 echo -e "Unknown hadoop version selected.\nAborting"
                 exit 1
@@ -472,8 +472,6 @@ image_create() {
 #############################
 
 if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
-    export OOZIE_HADOOP_V2_6_DOWNLOAD_URL=${OOZIE_HADOOP_V2_6_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/oozie-4.0.1-hadoop-2.6.0.tar.gz"}
-    export HADOOP_V2_6_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_6_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-native-libs-2.6.0.tar.gz"}
     export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
     export HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL:-"http://sahara-files.mirantis.com/hadoop-native-libs-2.7.1.tar.gz"}
     export OOZIE_HADOOP_V2_7_1_DOWNLOAD_URL=${OOZIE_HADOOP_V2_7_1_FILE:-"http://sahara-files.mirantis.com/oozie-4.2.0-hadoop-2.7.1.tar.gz"}
@@ -503,11 +501,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
 
-        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
-            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
-            export ubuntu_image_name=${ubuntu_vanilla_hadoop_2_6_image_name:-"ubuntu_sahara_vanilla_hadoop_2_6_latest"}
-            image_create ubuntu $ubuntu_image_name $ubuntu_elements_sequence
-        fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.7.1" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_7_1:-"2.7.1"}
             export ubuntu_image_name=${ubuntu_vanilla_hadoop_2_7_1_image_name:-"ubuntu_sahara_vanilla_hadoop_2_7_1_latest"}
@@ -518,11 +511,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
 
     # Fedora cloud image
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "fedora" ]; then
-        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
-            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
-            export fedora_image_name=${fedora_vanilla_hadoop_2_6_image_name:-"fedora_sahara_vanilla_hadoop_2_6_latest$suffix"}
-            image_create fedora $fedora_image_name $fedora_elements_sequence
-        fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.7.1" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_7_1:-"2.7.1"}
             export fedora_image_name=${fedora_vanilla_hadoop_2_7_1_image_name:-"fedora_sahara_vanilla_hadoop_2_7_1_latest$suffix"}
@@ -532,11 +520,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
 
     # CentOS 6 cloud image
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
-        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
-            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
-            export centos_image_name=${centos_vanilla_hadoop_2_6_image_name:-"centos_sahara_vanilla_hadoop_2_6_latest$suffix"}
-            image_create centos $centos_image_name $centos_elements_sequence
-        fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.7.1" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_7_1:-"2.7.1"}
             export centos_image_name=${centos_vanilla_hadoop_2_7_1_image_name:-"centos_sahara_vanilla_hadoop_2_7_1_latest$suffix"}
@@ -546,11 +529,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
 
     # CentOS 7 cloud image
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
-        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.6" ]; then
-            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_6:-"2.6.0"}
-            export centos7_image_name=${centos7_vanilla_hadoop_2_6_image_name:-"centos7_sahara_vanilla_hadoop_2_6_latest$suffix"}
-            image_create centos7 $centos7_image_name $centos7_elements_sequence
-        fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.7.1" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_7_1:-"2.7.1"}
             export centos7_image_name=${centos7_vanilla_hadoop_2_7_1_image_name:-"centos7_sahara_vanilla_hadoop_2_7_1_latest$suffix"}

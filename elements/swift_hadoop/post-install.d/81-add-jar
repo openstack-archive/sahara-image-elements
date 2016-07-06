@@ -10,8 +10,6 @@ hadoop="2.7.1"
 case "$plugin_type" in
     "vanilla")
         case "$DIB_HADOOP_VERSION" in
-            "2.6" | "2.6.0")
-                hadoop="2.6.0";;
             "2.7.1")
                 hadoop="2.7.1";;
         esac

@@ -11,10 +11,10 @@ version.
 For users:
 
 1. Use your environment (export / setenv) to alter the scripts behavior.
-Environment variables the script accepts are 'DIB_HADOOP_VERSION_[2_6|2_7_1]',
+Environment variables the script accepts are 'DIB_HADOOP_VERSION_2_7_1',
 'JAVA_DOWNLOAD_URL', 'JAVA_TARGET_LOCATION', 'OOZIE_DOWNLOAD_URL',
 'HIVE_VERSION',
-'[ubuntu|fedora|centos|centos7]_vanilla_[hadoop_2_6|hadoop_2_7_1]_image_name',
+'[ubuntu|fedora|centos|centos7]_vanilla_hadoop_2_7_1_image_name',
 'ubuntu_spark_image_name', 'ubuntu_storm_image_name',
 'ambari_[ubuntu|centos|centos7]_image_name',
 'cloudera_[5_0|5_3|5_4|5_5]_[ubuntu|centos]_image_name',
@@ -51,7 +51,7 @@ like this:
 
 .. sourcecode:: bash
 
-  tox -e venv -- sahara-image-create -v [2.6|2.7.1|4|5.0|5.3|5.4|5.5]
+  tox -e venv -- sahara-image-create -v [2.7.1|4|5.0|5.3|5.4|5.5]
 
 Also, if you are planning to select which ambari version to target use the
 '-v' commandline option like this:
