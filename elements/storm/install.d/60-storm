@@ -59,3 +59,7 @@ chmod 600 /etc/supervisor/supervisord.conf
 
 mkdir -p /var/log/storm
 chown -R storm:storm /var/log/storm
+
+apt-get install -y python-dev
+apt-get install -y python-pip
+pip install pyleus
