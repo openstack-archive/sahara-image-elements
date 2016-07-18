@@ -479,11 +479,13 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     export OOZIE_HADOOP_V2_7_1_DOWNLOAD_URL=${OOZIE_HADOOP_V2_7_1_FILE:-"http://sahara-files.mirantis.com/oozie-4.2.0-hadoop-2.7.1.tar.gz"}
     export DIB_HDFS_LIB_DIR="/opt/hadoop/share/hadoop/tools/lib"
     export plugin_type="vanilla"
+    export DIB_SPARK_VERSION=1.6.0
+    export SPARK_HADOOP_DL=hadoop2.6
 
-    ubuntu_elements_sequence="hadoop oozie mysql hive $JAVA_ELEMENT swift_hadoop"
-    fedora_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop"
-    centos_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop"
-    centos7_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop"
+    ubuntu_elements_sequence="hadoop oozie mysql hive $JAVA_ELEMENT swift_hadoop spark"
+    fedora_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark"
+    centos_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark"
+    centos7_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark"
 
     # Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
     # https://bugs.launchpad.net/sahara/+bug/1252684
@@ -560,6 +562,8 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
 
     unset plugin_type
     unset DIB_HDFS_LIB_DIR
+    unset DIB_SPARK_VERSION
+    unset SPARK_HADOOP_DL
 fi
 
 ##########################

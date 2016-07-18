@@ -11,10 +11,17 @@ set -o pipefail
 # and we need to execute this code the first time the VM boots.
 
 firstboot_script_name="/opt/spark/firstboot.sh"
-
-sed -i -e "s,^exit 0$,[ -f $firstboot_script_name ] \&\& sh $firstboot_script_name; exit 0," /etc/rc.local
-
-user_and_group_names="ubuntu:ubuntu"
+if [ "$DISTRO_NAME" == "ubuntu" ]; then
+    sed -i -e "s,^exit 0$,[ -f $firstboot_script_name ] \&\& sh $firstboot_script_name; exit 0," /etc/rc.local
+    if [ "$plugin_type" == "vanilla" ]; then
+        user_and_group_names="hadoop:hadoop"
+    elif [ "$plugin_type" == "spark" ]; then
+        user_and_group_names="ubuntu:ubuntu"
+    fi
+else
+    sed -i -e "s,^exit 0$,[ -f $firstboot_script_name ] \&\& sh $firstboot_script_name; exit 0," /etc/rc.d/rc.local
+    user_and_group_names="hadoop:hadoop"
+fi
 
 cat >> $firstboot_script_name <<EOF
 #!/bin/sh
