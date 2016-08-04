@@ -609,19 +609,19 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "ambari" ]; then
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         ambari_ubuntu_image_name=${ambari_ubuntu_image_name:-ubuntu_sahara_ambari}
-        ambari_element_sequence="ambari $JAVA_ELEMENT swift_hadoop"
+        ambari_element_sequence="ambari $JAVA_ELEMENT swift_hadoop kdc"
         export DIB_RELEASE="trusty"
         image_create ubuntu $ambari_ubuntu_image_name $ambari_element_sequence
         unset DIB_RELEASE
     fi
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
         ambari_centos_image_name=${ambari_centos_image_name:-centos_sahara_ambari}
-        ambari_element_sequence="ambari $JAVA_ELEMENT disable-firewall swift_hadoop"
+        ambari_element_sequence="ambari $JAVA_ELEMENT disable-firewall swift_hadoop kdc"
         image_create centos $ambari_centos_image_name $ambari_element_sequence
     fi
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
         ambari_centos7_image_name=${ambari_centos7_image_name:-"centos7-sahara-ambari"}
-        ambari_element_sequence="disable-selinux ambari $JAVA_ELEMENT disable-firewall swift_hadoop"
+        ambari_element_sequence="disable-selinux ambari $JAVA_ELEMENT disable-firewall swift_hadoop kdc"
         image_create centos7 $ambari_centos7_image_name $ambari_element_sequence
     fi
 
@@ -648,7 +648,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
     fi
     export DIB_CDH_MINOR_VERSION=${DIB_CDH_MINOR_VERSION:-$HADOOP_VERSION.0}
 
-    cloudera_elements_sequence="hadoop-cloudera swift_hadoop"
+    cloudera_elements_sequence="hadoop-cloudera swift_hadoop kdc"
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.0" ]; then
             cloudera_5_0_ubuntu_image_name=${cloudera_5_0_ubuntu_image_name:-ubuntu_sahara_cloudera_5_0_0}
