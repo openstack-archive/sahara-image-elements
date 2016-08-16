@@ -3,6 +3,13 @@
 PLUGIN=$1
 export DIB_MIN_TMPFS=10
 case "$PLUGIN" in
+    "vanilla")
+        # temporary don't test building fedora image
+        for distro in ubuntu centos centos7; do
+            # testing only 2.7.1 for speed up
+            tox -e venv -- sahara-image-create -x -u -p $PLUGIN -i $distro -v 2.7.1
+        done
+        ;;
     "cloudera")
         # manually call each distro for cloudera, so we can cleanup
         # cache and generated images from the previous run
