@@ -150,6 +150,10 @@ function add_repo_5_5_0 {
             wget -O /etc/apt/sources.list.d/kms.list http://archive.cloudera.com/navigator-keytrustee5/ubuntu/trusty/amd64/navigator-keytrustee/cloudera.list
             wget -qO - http://archive.cloudera.com/navigator-keytrustee5/ubuntu/trusty/amd64/navigator-keytrustee/archive.key | apt-key add -
 
+            # add Kafka repository
+            echo -e 'deb http://archive.cloudera.com/kafka/ubuntu/trusty/amd64/kafka/ trusty-kafka2.0.2 contrib' >> /etc/apt/sources.list
+            wget -qO - https://archive.cloudera.com/kafka/ubuntu/trusty/amd64/kafka/archive.key | apt-key add -
+
             #change repository priority
             echo -e 'Package: zookeeper\nPin: origin "archive.cloudera.com"\nPin-Priority: 1001' > /etc/apt/preferences.d/cloudera-pin
 
@@ -182,6 +186,12 @@ function add_repo_5_5_0 {
             echo "gpgkey = http://archive.cloudera.com/navigator-keytrustee5/redhat/$releasever/x86_64/navigator-keytrustee/RPM-GPG-KEY-cloudera" >> /etc/yum.repos.d/kms.repo
             echo 'gpgcheck = 1' >> /etc/yum.repos.d/kms.repo
 
+            echo "[cloudera-kafka]" > /etc/yum.repos.d/cloudera-kafka.repo
+            echo "name=Cloudera's Distribution for kafka, Version 2.0.2" >> /etc/yum.repos.d/cloudera-kafka.repo
+            echo "baseurl=http://archive.cloudera.com/kafka/redhat/$releasever/x86_64/kafka/2.0.2/" >> /etc/yum.repos.d/cloudera-kafka.repo
+            echo "gpgkey = http://archive.cloudera.com/kafka/redhat/$releasever/x86_64/kafka/RPM-GPG-KEY-cloudera" >> /etc/yum.repos.d/cloudera-kafka.repo
+            echo "gpgcheck = 1" >> /etc/yum.repos.d/cloudera-kafka.repo
+
             yum clean all
         ;;
     esac
@@ -207,6 +217,10 @@ function add_repo_5_7_x {
 
             wget -O /etc/apt/sources.list.d/kms.list http://archive.cloudera.com/navigator-keytrustee5/ubuntu/trusty/amd64/navigator-keytrustee/cloudera.list
             wget -qO - http://archive.cloudera.com/navigator-keytrustee5/ubuntu/trusty/amd64/navigator-keytrustee/archive.key | apt-key add -
+
+            # add Kafka repository
+            echo -e 'deb http://archive.cloudera.com/kafka/ubuntu/trusty/amd64/kafka/ trusty-kafka2.0.2 contrib' >> /etc/apt/sources.list
+            wget -qO - https://archive.cloudera.com/kafka/ubuntu/trusty/amd64/kafka/archive.key | apt-key add -
 
             #change repository priority
             echo -e 'Package: zookeeper\nPin: origin "archive.cloudera.com"\nPin-Priority: 1001' > /etc/apt/preferences.d/cloudera-pin
@@ -239,6 +253,12 @@ function add_repo_5_7_x {
             echo "baseurl=http://archive.cloudera.com/navigator-keytrustee5/redhat/$releasever/x86_64/navigator-keytrustee/$DIB_CDH_MINOR_VERSION/" >> /etc/yum.repos.d/kms.repo
             echo "gpgkey = http://archive.cloudera.com/navigator-keytrustee5/redhat/$releasever/x86_64/navigator-keytrustee/RPM-GPG-KEY-cloudera" >> /etc/yum.repos.d/kms.repo
             echo 'gpgcheck = 1' >> /etc/yum.repos.d/kms.repo
+
+            echo "[cloudera-kafka]" > /etc/yum.repos.d/cloudera-kafka.repo
+            echo "name=Cloudera's Distribution for kafka, Version 2.0.2" >> /etc/yum.repos.d/cloudera-kafka.repo
+            echo "baseurl=http://archive.cloudera.com/kafka/redhat/$releasever/x86_64/kafka/2.0.2/" >> /etc/yum.repos.d/cloudera-kafka.repo
+            echo "gpgkey = http://archive.cloudera.com/kafka/redhat/$releasever/x86_64/kafka/RPM-GPG-KEY-cloudera" >> /etc/yum.repos.d/cloudera-kafka.repo
+            echo "gpgcheck = 1" >> /etc/yum.repos.d/cloudera-kafka.repo
 
             yum clean all
         ;;

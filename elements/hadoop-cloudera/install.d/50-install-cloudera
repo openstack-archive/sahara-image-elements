@@ -52,6 +52,13 @@ if [ -z "${DIB_CDH_HDFS_ONLY:-}" ]; then
             spark-history-server \
             sqoop2
     fi
+
+    if [ $DIB_CDH_VERSION \> "5.4" ]; then
+        # we support Kafka from CDH 5.5
+        install-packages \
+            kafka \
+            kafka-server
+    fi
 fi
 
 case "$DIB_CDH_VERSION" in
