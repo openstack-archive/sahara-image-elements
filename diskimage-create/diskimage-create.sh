@@ -276,7 +276,7 @@ case "$PLUGIN" in
         ;;
     "mapr")
         case "$BASE_IMAGE_OS" in
-            "" | "ubuntu" | "centos");;
+            "" | "ubuntu" | "centos" | "centos7");;
             *)
                 echo -e "'$BASE_IMAGE_OS' image type is not supported by '$PLUGIN'.\nAborting"
                 exit 1
@@ -790,6 +790,15 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
 
         unset DIB_CLOUD_INIT_DATASOURCES
     fi
+
+    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
+        mapr_centos7_image_name=${mapr_centos7_image_name:-centos_7_mapr_${DIB_MAPR_VERSION}_latest}
+
+        image_create centos7 $mapr_centos7_image_name $mapr_centos_elements_sequence
+
+        unset DIB_CLOUD_INIT_DATASOURCES
+    fi
+
 fi
 
 ################

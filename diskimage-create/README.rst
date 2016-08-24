@@ -18,7 +18,7 @@ Environment variables the script accepts are 'DIB_HADOOP_VERSION_2_7_1',
 'ubuntu_spark_image_name', 'ubuntu_storm_image_name',
 'ambari_[ubuntu|centos|centos7]_image_name',
 'cloudera_[5_0|5_3|5_4|5_5]_[ubuntu|centos]_image_name',
-'mapr_[ubuntu|centos]_image_name',
+'mapr_[ubuntu|centos|centos7]_image_name',
 'plain_[ubuntu|fedora|centos|centos7]_image_name'.
 
 2. For creating all images just clone this repository and run script.
