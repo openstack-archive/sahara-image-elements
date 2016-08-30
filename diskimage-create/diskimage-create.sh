@@ -610,7 +610,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "ambari" ]; then
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         ambari_ubuntu_image_name=${ambari_ubuntu_image_name:-ubuntu_sahara_ambari}
         ambari_element_sequence="ambari $JAVA_ELEMENT swift_hadoop"
-        export DIB_RELEASE="precise"
+        export DIB_RELEASE="trusty"
         image_create ubuntu $ambari_ubuntu_image_name $ambari_element_sequence
         unset DIB_RELEASE
     fi
