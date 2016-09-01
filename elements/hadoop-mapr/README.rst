@@ -13,7 +13,7 @@ following syntax to select the ``MapR`` plugin:
 
 .. sourcecode:: bash
 
-  diskimage-create.sh -p mapr [-i ubuntu|centos|centos7] [-r 5.0.0 | 5.1.0]
+  diskimage-create.sh -p mapr [-i ubuntu|centos|centos7] [-r 5.0.0 | 5.1.0 | 5.2.0]
 
 In order to speed up image creation process you can download archives with MapR
 repositories and specify environment variables:
@@ -24,11 +24,11 @@ For example:
 
 .. sourcecode:: bash
 
-  export DIB_MAPR_CORE_DEB_REPO="file://<path-to-archive>/mapr-v5.1.0GA.deb.tgz"
-  export DIB_MAPR_CORE_RPM_REPO="file://<path-to-archive>/mapr-v5.1.0GA.rpm.tgz"
+  export DIB_MAPR_CORE_DEB_REPO="file://<path-to-archive>/mapr-v5.2.0GA.deb.tgz"
+  export DIB_MAPR_CORE_RPM_REPO="file://<path-to-archive>/mapr-v5.2.0GA.rpm.tgz"
   export DIB_MAPR_ECO_DEB_REPO="http://<URL>/mapr-ecosystem.deb.tgz"
   export DIB_MAPR_ECO_RPM_REPO="http://<URL>/mapr-ecosystem.rpm.tgz"
-  diskimage-create.sh -p mapr -r 5.1.0
+  diskimage-create.sh -p mapr -r 5.2.0
 
 Environment Variables
 ---------------------
@@ -36,4 +36,4 @@ Environment Variables
 DIB_MAPR_VERSION
   :Required: Yes
   :Description: Version of MapR to install.
-  :Example: ``DIB_MAPR_VERSION=5.1.0``
+  :Example: ``DIB_MAPR_VERSION=5.2.0``
