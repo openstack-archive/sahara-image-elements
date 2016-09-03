@@ -6,7 +6,7 @@ fi
 set -eu
 set -o pipefail
 
-DIB_AMBARI_VERSION="${DIB_AMBARI_VERSION:-2.2.1.0}"
+DIB_AMBARI_VERSION="${DIB_AMBARI_VERSION:-2.2.2.0}"
 
 case "${DISTRO_NAME}" in
     rhel | centos )
