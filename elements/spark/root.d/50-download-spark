@@ -13,25 +13,27 @@ mkdir -p $tmp_dir
 if [ -z "${SPARK_DOWNLOAD_URL:-}" ]; then
     # Check hadoop version
     # INFO on hadoop versions: http://spark.apache.org/docs/latest/hadoop-third-party-distributions.html
-    case "$DIB_CDH_VERSION" in
-        5.0)
-            SPARK_HADOOP_DL=hadoop2.3
-        ;;
-        5.3)
-            SPARK_HADOOP_DL=hadoop2.4
-        ;;
-        5.4)
-            SPARK_HADOOP_DL=hadoop2.6
-        ;;
-        CDH4)
-            SPARK_HADOOP_DL=cdh4
-        ;;
-        *)
-            echo "WARNING: Cloudera CDH version $DIB_CDH_VERSION not supported."
-            echo "WARNING: use the SPARK_DOWNLOAD_URL variable to install a custom Spark version."
-            exit 1
-        ;;
-    esac
+    if [ -z "${SPARK_HADOOP_DL:-}" ]; then
+        case "${DIB_CDH_VERSION:-}" in
+            5.0)
+                SPARK_HADOOP_DL=hadoop2.3
+            ;;
+            5.3)
+                SPARK_HADOOP_DL=hadoop2.4
+            ;;
+            5.4)
+                SPARK_HADOOP_DL=hadoop2.6
+            ;;
+            CDH4)
+                SPARK_HADOOP_DL=cdh4
+            ;;
+            *)
+                echo "WARNING: Cloudera CDH $DIB_CDH_VERSION not supported."
+                echo "WARNING: use the SPARK_DOWNLOAD_URL variable to install a custom Spark version."
+                exit 1
+            ;;
+        esac
+    fi
 
     SPARK_DOWNLOAD_URL="http://archive.apache.org/dist/spark/spark-$DIB_SPARK_VERSION/spark-$DIB_SPARK_VERSION-bin-$SPARK_HADOOP_DL.tgz"
 fi

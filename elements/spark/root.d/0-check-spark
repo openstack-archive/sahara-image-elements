@@ -28,7 +28,9 @@ elif [ "${major_v}" == "1" -a "${minor_v}" == "0" ]; then
     print_deprecation_warning
 fi
 
-if [ -z "${SPARK_DOWNLOAD_URL:-}" -a -z "${DIB_CDH_VERSION:-}" ]; then
-    echo -e "Neither DIB_CDH_VERSION nor SPARK_DOWNLOAD_URL are set. Impossible to install Spark.\nAborting"
-    exit 1
+if [ "$plugin_type" == "spark" ]; then
+    if [ -z "${SPARK_DOWNLOAD_URL:-}" -a -z "${DIB_CDH_VERSION:-}" ]; then
+        echo -e "Neither DIB_CDH_VERSION nor SPARK_DOWNLOAD_URL are set. Impossible to install Spark.\nAborting"
+        exit 1
+    fi
 fi
