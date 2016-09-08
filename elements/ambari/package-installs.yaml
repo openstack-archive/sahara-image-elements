@@ -15,3 +15,4 @@ zip:
 rpcbind:
 fuse-libs:
 snappy-devel:
+rng-tools:
