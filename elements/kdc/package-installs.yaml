@@ -1,0 +1,7 @@
+wget:
+  phase: pre-install.d
+krb-server:
+krb-libs:
+ldap-utils:
+krb-client:
+rng-tools:

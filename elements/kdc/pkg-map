@@ -1,0 +1,18 @@
+{
+  "family": {
+    "debian": {
+      "krb-server": "krb5-admin-server",
+      "krb-libs": "libpam-krb5",
+      "ldap-utils": "ldap-utils",
+      "krb-client": "krb5-user",
+      "rng-tools": "rng-tools"
+    },
+    "redhat": {
+      "krb-server": "krb5-server",
+      "ldap-utils": "",
+      "krb-libs": "krb5-libs",
+      "krb-client": "krb5-workstation",
+      "rng-tools": "rng-tools"
+    }
+  }
+}
