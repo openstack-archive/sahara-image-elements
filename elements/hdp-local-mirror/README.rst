@@ -15,4 +15,4 @@ DIB_HDP_STACK_URL
 DIB_HDP_UTILS_URL
   :Required: Yes
   :Description: URL of HDP Utils
-  :Example: ``DIB_HDP_UTILS_VERSION="http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.20/repos/centos6/HDP-UTILS-1.1.0.20-centos6.tar.gz"``
+  :Example: ``DIB_HDP_UTILS_URL="http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.20/repos/centos6/HDP-UTILS-1.1.0.20-centos6.tar.gz"``
