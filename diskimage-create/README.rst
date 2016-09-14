@@ -79,7 +79,7 @@ this:
 
 .. sourcecode:: bash
 
-  tox -e venv -- sahara-image-create -p mapr -r [5.0.0|5.1.0]
+  tox -e venv -- sahara-image-create -p mapr -r [5.0.0|5.1.0|5.2.0]
 
 9. If the host system is missing packages required for sahara-image-create,
 the '-u' commandline option will instruct the script to install them without
