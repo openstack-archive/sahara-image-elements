@@ -47,7 +47,7 @@ else
 fi
 
 echo "Creating local MapR ecosystem repository"
-#localize_repo "$MAPR_REPO_NAME" "$MAPR_REPO_URL" "$MAPR_PKG_GROUPS" "$MAPR_SPEC" "$MAPR_REPO_DIR"
+localize_repo "$MAPR_REPO_NAME" "$MAPR_REPO_URL" "$MAPR_PKG_GROUPS" "$MAPR_SPEC" "$MAPR_REPO_DIR"
 echo $MAPR_SPEC
 
 echo "END: installing MapR ecosystem repository"
