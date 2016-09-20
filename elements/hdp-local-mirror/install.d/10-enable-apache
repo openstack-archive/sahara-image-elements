@@ -7,7 +7,7 @@ set -eu
 set -o pipefail
 
 case "${DISTRO_NAME}" in
-    centos | rhel )
+    centos | centos7 | rhel | rhel7 )
         chkconfig httpd on
     ;;
 esac

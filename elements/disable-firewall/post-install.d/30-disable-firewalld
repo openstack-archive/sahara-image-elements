@@ -7,7 +7,7 @@ set -eu
 set -o pipefail
 
 case "${DISTRO_NAME}" in
-    fedora | centos | rhel )
+    fedora | centos | rhel | rhel7 )
         if which systemctl; then
             systemctl disable firewalld
         fi

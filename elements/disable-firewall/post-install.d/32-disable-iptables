@@ -7,13 +7,13 @@ set -eu
 set -o pipefail
 
 case "$DISTRO_NAME" in
-    fedora | centos7 )
+    fedora | centos7 | rhel7)
         install-packages iptables-services
         ;;
 esac
 
 case "${DISTRO_NAME}" in
-    fedora | centos | rhel )
+    fedora | centos | rhel | rhel7)
         if which service; then
             service iptables save
             chkconfig iptables off

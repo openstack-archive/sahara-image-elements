@@ -15,7 +15,7 @@ get_repo_url() {
 
     if [ "$DISTRO_NAME" = "ubuntu" ]; then
         repo_url="${DIB_MAPR_CORE_DEB_REPO:-http://package.mapr.com/releases/v${DIB_MAPR_VERSION}/ubuntu/mapr-v${DIB_MAPR_VERSION}GA.deb.tgz}"
-    elif [ "$DISTRO_NAME" = "centos" -o "$DISTRO_NAME" = "centos7" -o "$DISTRO_NAME" = "rhel" ]; then
+    elif [ "$DISTRO_NAME" = "centos" -o "$DISTRO_NAME" = "centos7" -o "$DISTRO_NAME" = "rhel" -o "$DISTRO_NAME" = "rhel7" ]; then
         repo_url="${DIB_MAPR_CORE_RPM_REPO:-http://package.mapr.com/releases/v${DIB_MAPR_VERSION}/redhat/mapr-v${DIB_MAPR_VERSION}GA.rpm.tgz}"
     fi
 

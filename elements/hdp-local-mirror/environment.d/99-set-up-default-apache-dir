@@ -7,7 +7,7 @@ set -eu
 set -o pipefail
 
 case "${DISTRO_NAME}" in
-    centos | centos7 | rhel | fedora )
+    centos | centos7 | rhel | rhel7 | fedora )
         export DIB_DEFAULT_APACHE_DIR="/var/www/html"
     ;;
     ubuntu )

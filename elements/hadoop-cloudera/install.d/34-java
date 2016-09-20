@@ -14,7 +14,7 @@ if [ -z "${DIB_CDH_HDFS_ONLY:-}" ]; then
 
     JDK_HOME=""
     case $DISTRO_NAME in
-        centos | centos7 | rhel )
+        centos | centos7 | rhel | rhel7 )
             JDK_HOME=$(find /usr/java -name 'jdk*cloudera' -print)
         ;;
         ubuntu )
