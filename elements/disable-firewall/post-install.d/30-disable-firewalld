@@ -7,8 +7,8 @@ set -eu
 set -o pipefail
 
 case "${DISTRO_NAME}" in
-    fedora | centos | rhel | rhel7 )
-        if which systemctl; then
+    fedora | centos | centos7 | rhel | rhel7 )
+        if which systemctl && [[ $(systemctl --no-pager list-unit-files firewalld) =~ 'enabled' ]]; then
             systemctl disable firewalld
         fi
     ;;
