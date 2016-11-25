@@ -32,8 +32,8 @@ usage() {
     echo "Usage: $(basename $0)"
     echo "         [-p vanilla|spark|cloudera|storm|mapr|ambari|plain]"
     echo "         [-i ubuntu|fedora|centos|centos7]"
-    echo "         [-v 2.7.1|4|5.0|5.3|5.4|5.5|5.7|5.9|2.2.0.0|2.2.1.0]"
-    echo "         [-r 5.0.0|5.1.0|5.2.0]"
+    echo "         [-v 2.7.1|5.5|5.7|5.9|2.2.0.0|2.2.1.0]"
+    echo "         [-r 5.1.0|5.2.0]"
     echo "         [-s 1.3.1|1.6.0]"
     echo "         [-t 0.9.2|1.0.1]"
     echo "         [-d]"
@@ -173,7 +173,7 @@ case "$PLUGIN" in
         esac
 
         case "$HADOOP_VERSION" in
-            "" | "5.0" | "5.3" | "5.4" | "5.5" | "5.7" | "5.9");;
+            "" | "5.5" | "5.7" | "5.9");;
             *)
                 echo -e "Unknown hadoop version selected.\nAborting"
                 exit 1
@@ -203,13 +203,10 @@ case "$PLUGIN" in
         case "$HADOOP_VERSION" in
             "")
                 echo "CDH version not specified"
-                echo "CDH version 5.3 will be used"
-                HADOOP_VERSION="5.3"
+                echo "CDH version 5.5 will be used"
+                HADOOP_VERSION="5.5"
             ;;
-            "4")
-                HADOOP_VERSION="CDH4"
-            ;;
-            "5.0" | "5.3" | "5.4" | "5.5");;
+            "5.5");;
             *)
                 echo -e "Unknown hadoop version selected.\nAborting"
                 exit 1
@@ -294,7 +291,7 @@ case "$PLUGIN" in
                 echo "${DIB_DEFAULT_MAPR_VERSION} version would be used"
                 DIB_MAPR_VERSION=${DIB_DEFAULT_MAPR_VERSION}
             ;;
-            "5.0.0" | "5.1.0" | "5.2.0");;
+            "5.1.0" | "5.2.0");;
             *)
                 echo -e "Unknown MapR version.\nExit"
                 exit 1
@@ -557,11 +554,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
     export plugin_type="spark"
 
     COMMON_ELEMENTS="$JAVA_ELEMENT swift_hadoop spark"
-    if [ "$DIB_SPARK_VERSION" == "1.0.2" ]; then
-        echo "Overriding CDH version, CDH 4 is required for this Spark version"
-        export DIB_CDH_VERSION="CDH4"
-        ubuntu_elements_sequence="$COMMON_ELEMENTS hadoop-cdh"
-    elif [ "$DIB_SPARK_VERSION" == "1.6.0" ]; then
+    if [ "$DIB_SPARK_VERSION" == "1.6.0" ]; then
         export DIB_CDH_VERSION="5.4"
         ubuntu_elements_sequence="$COMMON_ELEMENTS hadoop-cloudera"
     else
