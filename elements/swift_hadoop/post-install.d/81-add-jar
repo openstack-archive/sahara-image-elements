@@ -23,7 +23,7 @@ case "$plugin_type" in
                 hadoop="2.3.0";;
             "5.3")
                 hadoop="2.5.0";;
-            "5.4" | "5.5" | "5.7")
+            "5.4" | "5.5" | "5.7" | "5.9")
                 hadoop="2.6.0";;
         esac
         case "$plugin_type" in
