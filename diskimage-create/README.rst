@@ -17,7 +17,7 @@ Environment variables the script accepts are 'DIB_HADOOP_VERSION_2_7_1',
 '[ubuntu|fedora|centos|centos7]_vanilla_hadoop_2_7_1_image_name',
 'ubuntu_spark_image_name', 'ubuntu_storm_image_name',
 'ambari_[ubuntu|centos|centos7]_image_name',
-'cloudera_[5_0|5_3|5_4|5_5]_[ubuntu|centos]_image_name',
+'cloudera_[5_0|5_3|5_4|5_5|5_7|5_9]_[ubuntu|centos]_image_name',
 'mapr_[ubuntu|centos|centos7]_image_name',
 'plain_[ubuntu|fedora|centos|centos7]_image_name'.
 
@@ -37,6 +37,14 @@ Fedora, CentOS and Ubuntu mirrors using parameters 'FEDORA_MIRROR',
   CENTOS_MIRROR="url_for_centos_mirror" \
   UBUNTU_MIRROR="url_for_ubuntu_mirror" tox -e venv -- sahara-image-create
 
+If you want to use your local image, you can specify path of image file using
+parameters 'DIB_LOCAL_IMAGE', which defined in project `[diskimage-builder]
+(https://github.com/openstack/diskimage-builder)`, like this:
+
+.. sourcecode:: bash
+
+  DIB_LOCAL_IMAGE="path_of_image" tox -e venv -- sahara-image-create
+
 NOTE: Do not create all images for all plugins with the same mirrors.
 Different plugins use different OS version.
 
@@ -51,7 +59,7 @@ like this:
 
 .. sourcecode:: bash
 
-  tox -e venv -- sahara-image-create -v [2.7.1|4|5.0|5.3|5.4|5.5]
+  tox -e venv -- sahara-image-create -v [2.7.1|4|5.0|5.3|5.4|5.5|5.7|5.9]
 
 Also, if you are planning to select which ambari version to target use the
 '-v' commandline option like this:
