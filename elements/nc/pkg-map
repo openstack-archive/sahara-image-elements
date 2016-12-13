@@ -1,0 +1,10 @@
+{
+  "family": {
+    "debian": {
+      "nc": "netcat"
+    },
+    "redhat": {
+      "nc": "nc"
+    }
+  }
+}
