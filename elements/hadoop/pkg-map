@@ -1,0 +1,10 @@
+{
+  "family": {
+    "debian": {
+      "redhat-lsb-core": ""
+    },
+    "redhat": {
+      "redhat-lsb-core": "redhat-lsb-core"
+    }
+  }
+}

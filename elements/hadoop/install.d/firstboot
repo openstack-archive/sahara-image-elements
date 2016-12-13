@@ -38,6 +38,9 @@ function firstboot_common {
                 6.*)
                     chown -R cloud-user:cloud-user /home/cloud-user
                     ;;
+                7.*)
+                    chown -R centos:centos /home/centos
+                    ;;
             esac
         ;;
         * )
