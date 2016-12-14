@@ -268,7 +268,7 @@ case "$PLUGIN" in
         esac
 
         case "$HADOOP_VERSION" in
-            "" | "2.2.0.0" | "2.2.1.0");;
+            "" | "2.2.0.0" | "2.2.1.0" | "2.4.2.0");;
             *)
                 echo -e "Continuing image building with custom ambari version \"$HADOOP_VERSION\"\n"
             ;;
