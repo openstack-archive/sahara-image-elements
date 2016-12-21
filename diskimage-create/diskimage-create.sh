@@ -482,8 +482,8 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
 
     ubuntu_elements_sequence="hadoop oozie mysql hive $JAVA_ELEMENT swift_hadoop spark"
     fedora_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark"
-    centos_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark"
-    centos7_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark"
+    centos_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark nc"
+    centos7_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark nc"
 
     # Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
     # https://bugs.launchpad.net/sahara/+bug/1252684
@@ -498,7 +498,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
         centos7_elements_sequence="$centos7_elements_sequence selinux-permissive"
         suffix=".selinux-permissive"
     fi
-
     # Ubuntu cloud image
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
@@ -626,12 +625,12 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "ambari" ]; then
     fi
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
         ambari_centos_image_name=${ambari_centos_image_name:-centos_sahara_ambari}
-        ambari_element_sequence="ambari $JAVA_ELEMENT disable-firewall swift_hadoop kdc"
+        ambari_element_sequence="ambari $JAVA_ELEMENT disable-firewall swift_hadoop kdc nc"
         image_create centos $ambari_centos_image_name $ambari_element_sequence
     fi
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
         ambari_centos7_image_name=${ambari_centos7_image_name:-"centos7-sahara-ambari"}
-        ambari_element_sequence="disable-selinux ambari $JAVA_ELEMENT disable-firewall swift_hadoop kdc"
+        ambari_element_sequence="disable-selinux ambari $JAVA_ELEMENT disable-firewall swift_hadoop kdc nc"
         image_create centos7 $ambari_centos7_image_name $ambari_element_sequence
     fi
 
@@ -715,7 +714,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
-        centos_cloudera_elements_sequence="selinux-permissive disable-firewall"
+        centos_cloudera_elements_sequence="selinux-permissive disable-firewall nc"
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.0" ]; then
             export DIB_CDH_VERSION="5.0"
 
@@ -751,7 +750,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
-        centos7_cloudera_elements_sequence="selinux-permissive disable-firewall"
+        centos7_cloudera_elements_sequence="selinux-permissive disable-firewall nc"
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.5" ]; then
             export DIB_CDH_VERSION="5.5"
 
@@ -797,7 +796,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
     export DIB_MIN_TMPFS=10
 
     mapr_ubuntu_elements_sequence="ssh hadoop-mapr $JAVA_ELEMENT"
-    mapr_centos_elements_sequence="ssh hadoop-mapr selinux-permissive $JAVA_ELEMENT disable-firewall"
+    mapr_centos_elements_sequence="ssh hadoop-mapr selinux-permissive $JAVA_ELEMENT disable-firewall nc"
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         export DIB_RELEASE=${DIB_RELEASE:-trusty}
@@ -837,8 +836,8 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "plain" ]; then
 
     ubuntu_elements_sequence="$common_elements"
     fedora_elements_sequence="$common_elements"
-    centos_elements_sequence="$common_elements disable-firewall disable-selinux"
-    centos7_elements_sequence="$common_elements disable-firewall disable-selinux"
+    centos_elements_sequence="$common_elements disable-firewall disable-selinux nc"
+    centos7_elements_sequence="$common_elements disable-firewall disable-selinux nc"
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         plain_image_name=${plain_ubuntu_image_name:-ubuntu_plain}
