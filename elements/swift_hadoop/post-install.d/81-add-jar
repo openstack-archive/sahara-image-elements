@@ -28,6 +28,7 @@ case "$plugin_type" in
         esac
         case "$plugin_type" in
             "cloudera")
+                DIB_CDH_MINOR_VERSION=${DIB_CDH_MINOR_VERSION:-$DIB_CDH_VERSION.0}
                 DIB_HADOOP_SWIFT_JAR_NAME="hadoop-openstack-$hadoop-cdh$DIB_CDH_MINOR_VERSION.jar";;
             "spark")
                 DIB_HADOOP_SWIFT_JAR_NAME="hadoop-openstack.jar";;

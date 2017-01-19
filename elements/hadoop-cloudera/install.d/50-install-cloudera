@@ -61,6 +61,8 @@ if [ -z "${DIB_CDH_HDFS_ONLY:-}" ]; then
     fi
 fi
 
+DIB_CDH_MINOR_VERSION=${DIB_CDH_MINOR_VERSION:-$DIB_CDH_VERSION.0}
+
 case "$DIB_CDH_VERSION" in
     5.7)
         HADOOP_OPENSTACK_5_7_x_URL="https://repository.cloudera.com/artifactory/repo/org/apache/hadoop/hadoop-openstack/2.6.0-cdh$DIB_CDH_MINOR_VERSION/hadoop-openstack-2.6.0-cdh$DIB_CDH_MINOR_VERSION.jar"
