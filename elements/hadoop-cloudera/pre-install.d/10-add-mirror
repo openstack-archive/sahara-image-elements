@@ -333,6 +333,8 @@ function add_repo_5_9_x {
     esac
 }
 
+DIB_CDH_MINOR_VERSION=${DIB_CDH_MINOR_VERSION:-$DIB_CDH_VERSION.0}
+
 # Call version-specific script to install the desired version of CDH
 case "$DIB_CDH_VERSION" in
     5.0)

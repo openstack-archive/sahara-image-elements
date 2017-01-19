@@ -648,61 +648,62 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
         # hadoop version by '-v' parameter
         HADOOP_VERSION=${DIB_CDH_MINOR_VERSION%.*}
     fi
-    export DIB_CDH_MINOR_VERSION=${DIB_CDH_MINOR_VERSION:-$HADOOP_VERSION.0}
 
     cloudera_elements_sequence="hadoop-cloudera swift_hadoop kdc"
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.0" ]; then
+            export DIB_CDH_VERSION="5.0"
             cloudera_5_0_ubuntu_image_name=${cloudera_5_0_ubuntu_image_name:-ubuntu_sahara_cloudera_5_0_0}
 
             # Cloudera supports only 12.04 Ubuntu
-            export DIB_CDH_VERSION="5.0"
             export DIB_RELEASE="precise"
             image_create ubuntu $cloudera_5_0_ubuntu_image_name $cloudera_elements_sequence
             unset DIB_CDH_VERSION DIB_RELEASE
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.3" ]; then
+            export DIB_CDH_VERSION="5.3"
             cloudera_5_3_ubuntu_image_name=${cloudera_5_3_ubuntu_image_name:-ubuntu_sahara_cloudera_5_3_0}
 
             # Cloudera supports only 12.04 Ubuntu
-            export DIB_CDH_VERSION="5.3"
             export DIB_RELEASE="precise"
             image_create ubuntu $cloudera_5_3_ubuntu_image_name $cloudera_elements_sequence
             unset DIB_CDH_VERSION DIB_RELEASE
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.4" ]; then
+            export DIB_CDH_VERSION="5.4"
             cloudera_5_4_ubuntu_image_name=${cloudera_5_4_ubuntu_image_name:-ubuntu_sahara_cloudera_5_4_0}
 
             # Cloudera supports only 12.04 Ubuntu
-            export DIB_CDH_VERSION="5.4"
             export DIB_RELEASE="precise"
             image_create ubuntu $cloudera_5_4_ubuntu_image_name $cloudera_elements_sequence
             unset DIB_CDH_VERSION DIB_RELEASE
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.5" ]; then
+            export DIB_CDH_VERSION="5.5"
             cloudera_5_5_ubuntu_image_name=${cloudera_5_5_ubuntu_image_name:-ubuntu_sahara_cloudera_5_5_0}
 
             # Cloudera supports 14.04 Ubuntu in 5.5
-            export DIB_CDH_VERSION="5.5"
             export DIB_RELEASE="trusty"
             image_create ubuntu $cloudera_5_5_ubuntu_image_name $cloudera_elements_sequence
             unset DIB_CDH_VERSION DIB_RELEASE
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.7" ]; then
+            export DIB_CDH_VERSION="5.7"
+            export DIB_CDH_MINOR_VERSION=${DIB_CDH_MINOR_VERSION:-$DIB_CDH_VERSION.0}
             cloudera_5_7_ubuntu_image_name=${cloudera_5_7_ubuntu_image_name:-ubuntu_sahara_cloudera_$DIB_CDH_MINOR_VERSION}
 
-            export DIB_CDH_VERSION="5.7"
             export DIB_RELEASE="trusty"
             image_create ubuntu $cloudera_5_7_ubuntu_image_name $cloudera_elements_sequence
-            unset DIB_CDH_VERSION DIB_RELEASE
+            unset DIB_CDH_VERSION DIB_RELEASE DIB_CDH_MINOR_VERSION
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.9" ]; then
+            export DIB_CDH_VERSION="5.9"
+            export DIB_CDH_MINOR_VERSION=${DIB_CDH_MINOR_VERSION:-$DIB_CDH_VERSION.0}
             cloudera_5_9_ubuntu_image_name=${cloudera_5_9_ubuntu_image_name:-ubuntu_sahara_cloudera_$DIB_CDH_MINOR_VERSION}
 
-            export DIB_CDH_VERSION="5.9"
             export DIB_RELEASE="trusty"
             image_create ubuntu $cloudera_5_9_ubuntu_image_name $cloudera_elements_sequence
-            unset DIB_CDH_VERSION DIB_RELEASE
+            unset DIB_CDH_VERSION DIB_RELEASE DIB_CDH_MINOR_VERSION
         fi
     fi
 
@@ -754,19 +755,21 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.7" ]; then
             export DIB_CDH_VERSION="5.7"
+            export DIB_CDH_MINOR_VERSION=${DIB_CDH_MINOR_VERSION:-$DIB_CDH_VERSION.0}
 
             cloudera_5_7_centos7_image_name=${cloudera_5_7_centos7_image_name:-centos7_sahara_cloudera_$DIB_CDH_MINOR_VERSION}
             image_create centos7 $cloudera_5_7_centos7_image_name $cloudera_elements_sequence $centos7_cloudera_elements_sequence
 
-            unset DIB_CDH_VERSION
+            unset DIB_CDH_VERSION DIB_CDH_MINOR_VERSION
         fi
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.9" ]; then
             export DIB_CDH_VERSION="5.9"
+            export DIB_CDH_MINOR_VERSION=${DIB_CDH_MINOR_VERSION:-$DIB_CDH_VERSION.0}
 
             cloudera_5_9_centos7_image_name=${cloudera_5_9_centos7_image_name:-centos7_sahara_cloudera_$DIB_CDH_MINOR_VERSION}
             image_create centos7 $cloudera_5_9_centos7_image_name $cloudera_elements_sequence $centos7_cloudera_elements_sequence
 
-            unset DIB_CDH_VERSION
+            unset DIB_CDH_VERSION DIB_CDH_MINOR_VERSION
         fi
     fi
 
