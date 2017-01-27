@@ -20,25 +20,19 @@
       "mapr-hbase-internal",
       "mapr-hbase-master",
       "mapr-hbase-regionserver",
-      "mapr-hbasethrift"
-    ],
-    "0.98.7": [
-      "mapr-hbase",
-      "mapr-hbase-internal",
-      "mapr-hbase-master",
-      "mapr-hbase-regionserver",
-      "mapr-hbasethrift",
-      "mapr-libhbase"
-    ],
-    "0.98.9": [
-      "mapr-hbase",
-      "mapr-hbase-internal",
-      "mapr-hbase-master",
-      "mapr-hbase-regionserver",
       "mapr-hbasethrift",
       "mapr-hbase-rest"
     ],
     "0.98.12": [
+      "mapr-hbase",
+      "mapr-hbase-internal",
+      "mapr-hbase-master",
+      "mapr-hbase-regionserver",
+      "mapr-hbasethrift",
+      "mapr-libhbase",
+      "mapr-hbase-rest"
+    ],
+    "1.1.1": [
       "mapr-hbase",
       "mapr-hbase-internal",
       "mapr-hbase-master",
@@ -62,11 +56,12 @@
   },
   "hue": {
     "all": [
-      "mapr-hue"
-    ],
-    "3.8.1": [
       "mapr-hue",
       "mapr-hue-base",
+      "mapr-hue-livy"
+    ],
+    "3.10.0": [
+      "mapr-hue",
       "mapr-hue-livy"
     ]
   },
@@ -124,6 +119,22 @@
   "tez": {
     "all": [
       "mapr-tez"
+    ]
+  },
+  "kafka": {
+    "all": [
+      "mapr-kafka"
+    ]
+  },
+  "kafka-connect": {
+    "all": [
+      "mapr-kafka-connect-hdfs",
+      "mapr-kafka-connect-jdbc"
+    ]
+  },
+  "kafka-rest": {
+    "all": [
+      "mapr-kafka-rest"
     ]
   }
 }
