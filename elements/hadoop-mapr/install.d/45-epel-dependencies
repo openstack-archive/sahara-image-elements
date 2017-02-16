@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+if [ "$DISTRO_NAME" = "rhel7" -o "$DISTRO_NAME" = "centos7" ]; then
+    yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    yum install -y soci soci-mysql
+    yum remove -y epel-release
+fi
