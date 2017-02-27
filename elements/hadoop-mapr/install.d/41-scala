@@ -17,7 +17,7 @@ if [ "$RETURN_CODE" != "200" ]; then
     echo "http://www.scala-lang.org is unreachable" && exit 1
 fi
 
-if [ "trusty" == "${DIB_RELEASE}" ]; then
+if [ "trusty" == "${DIB_RELEASE:-}" ]; then
     # scale >= 2.12 for ubuntu depends on openjdk-8, not available on trusty
     VERSION=${DEF_VERSION}
 else
