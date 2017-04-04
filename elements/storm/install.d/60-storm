@@ -20,13 +20,14 @@ chage -I -1 -E -1 -m -1 -M -1 -W -1 -E -1 storm
 echo "Extracting Storm"
 # The user is not providing his own Storm distribution package
 if [ -z "${STORM_DOWNLOAD_URL:-}" ]; then
+
 # Check storm version
     case "$DIB_STORM_VERSION" in
         0.9.*)
             STORM_DOWNLOAD_URL="http://archive.apache.org/dist/incubator/storm/apache-storm-$DIB_STORM_VERSION-incubating/apache-storm-$DIB_STORM_VERSION-incubating.tar.gz"
             STORM_FOLDER=apache-storm-$DIB_STORM_VERSION-incubating
         ;;
-        1.0.*)
+        1.*)
             STORM_DOWNLOAD_URL="https://archive.apache.org/dist/storm/apache-storm-$DIB_STORM_VERSION/apache-storm-$DIB_STORM_VERSION.tar.gz"
             STORM_FOLDER=apache-storm-$DIB_STORM_VERSION
         ;;
