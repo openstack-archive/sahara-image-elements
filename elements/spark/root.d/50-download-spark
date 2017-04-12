@@ -15,17 +15,8 @@ if [ -z "${SPARK_DOWNLOAD_URL:-}" ]; then
     # INFO on hadoop versions: http://spark.apache.org/docs/latest/hadoop-third-party-distributions.html
     if [ -z "${SPARK_HADOOP_DL:-}" ]; then
         case "${DIB_CDH_VERSION:-}" in
-            5.0)
-                SPARK_HADOOP_DL=hadoop2.3
-            ;;
-            5.3)
-                SPARK_HADOOP_DL=hadoop2.4
-            ;;
             5.4)
                 SPARK_HADOOP_DL=hadoop2.6
-            ;;
-            CDH4)
-                SPARK_HADOOP_DL=cdh4
             ;;
             *)
                 echo "WARNING: Cloudera CDH $DIB_CDH_VERSION not supported."
