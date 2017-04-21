@@ -17,7 +17,7 @@ Environment variables the script accepts are 'DIB_HADOOP_VERSION_2_7_1',
 '[ubuntu|fedora|centos|centos7]_vanilla_hadoop_2_7_1_image_name',
 'ubuntu_spark_image_name', 'ubuntu_storm_image_name',
 'ambari_[ubuntu|centos|centos7]_image_name',
-'cloudera_[5_0|5_3|5_4|5_5|5_7|5_9]_[ubuntu|centos]_image_name',
+'cloudera_[5_5|5_7|5_9]_[ubuntu|centos]_image_name',
 'mapr_[ubuntu|centos|centos7]_image_name',
 'plain_[ubuntu|fedora|centos|centos7]_image_name'.
 
@@ -59,14 +59,14 @@ like this:
 
 .. sourcecode:: bash
 
-  tox -e venv -- sahara-image-create -v [2.7.1|4|5.0|5.3|5.4|5.5|5.7|5.9]
+  tox -e venv -- sahara-image-create -v [2.7.1|5.5|5.7|5.9]
 
 Also, if you are planning to select which ambari version to target use the
 '-v' commandline option like this:
 
 .. sourcecode:: bash
 
-  tox -e venv -- sahara-image-create -v [2.2.0.0|2.2.1.0]
+  tox -e venv -- sahara-image-create -v [2.2.0.0|2.2.1.0|2.4.2.0]
 
 6. To select which operating system to target use the '-i' commandline option
 like this:
