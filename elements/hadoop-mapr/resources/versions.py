@@ -39,9 +39,6 @@ def _load_json(path):
 
 
 def _version_matches(version, group_version):
-    if group_version == _ALL_GROUP_VERSION:
-        return True
-
     for gv in group_version.split(_GROUP_VERSION_SEPARATOR):
         if version.startswith(gv):
             return True
