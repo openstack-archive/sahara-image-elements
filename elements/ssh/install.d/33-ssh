@@ -7,12 +7,22 @@ set -ue
 set -o pipefail
 echo "Begin: install and configure SSH"
 
+case "$DISTRO_NAME" in
+    fedora )
+        # the main config file is empty in F25+
+        SSH_CONFIG_FILE="/etc/ssh/ssh_config.d/05-redhat.conf"
+        ;;
+    * )
+        SSH_CONFIG_FILE="/etc/ssh/ssh_config"
+        ;;
+esac
+
 augtool <<EOF
 set /files/etc/ssh/sshd_config/GSSAPIAuthentication no
 set /files/etc/ssh/sshd_config/UseDNS no
 set /files/etc/ssh/sshd_config/PermitTunnel yes
-set /files/etc/ssh/ssh_config/Host/StrictHostKeyChecking no
-set /files/etc/ssh/ssh_config/Host/GSSAPIAuthentication no
+set /files${SSH_CONFIG_FILE}/Host/StrictHostKeyChecking no
+set /files${SSH_CONFIG_FILE}/Host/GSSAPIAuthentication no
 save
 EOF
 
