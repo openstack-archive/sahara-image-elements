@@ -20,7 +20,7 @@ if [ -z "${STORM_DOWNLOAD_URL:-}" ]; then
         0.9.*)
             STORM_DOWNLOAD_URL="http://archive.apache.org/dist/incubator/storm/apache-storm-$DIB_STORM_VERSION-incubating/apache-storm-$DIB_STORM_VERSION-incubating.tar.gz"
         ;;
-        1.0.*)
+        1.*)
             STORM_DOWNLOAD_URL="https://archive.apache.org/dist/storm/apache-storm-$DIB_STORM_VERSION/apache-storm-$DIB_STORM_VERSION.tar.gz"
             echo $STORM_DOWNLOAD_URL
         ;;
