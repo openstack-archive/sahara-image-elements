@@ -200,19 +200,6 @@ case "$PLUGIN" in
             ;;
         esac
 
-        case "$HADOOP_VERSION" in
-            "")
-                echo "CDH version not specified"
-                echo "CDH version 5.5 will be used"
-                HADOOP_VERSION="5.5"
-            ;;
-            "5.5");;
-            *)
-                echo -e "Unknown hadoop version selected.\nAborting"
-                exit 1
-            ;;
-        esac
-
         case "$DIB_SPARK_VERSION" in
             "1.3.1" | "1.6.0");;
             "")
@@ -551,19 +538,11 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
     export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
     export DIB_SPARK_VERSION
     export plugin_type="spark"
-
-    COMMON_ELEMENTS="$JAVA_ELEMENT swift_hadoop spark"
-    if [ "$DIB_SPARK_VERSION" == "1.6.0" ]; then
-        export DIB_CDH_VERSION="5.4"
-        ubuntu_elements_sequence="$COMMON_ELEMENTS hadoop-cloudera"
-    else
-        export DIB_CDH_VERSION=$HADOOP_VERSION
-        ubuntu_elements_sequence="$COMMON_ELEMENTS hadoop-cloudera"
-    fi
-
+    export DIB_CDH_VERSION="5.5"
     # Tell the cloudera element to install only hdfs
     export DIB_CDH_HDFS_ONLY=1
 
+    ubuntu_elements_sequence="$JAVA_ELEMENT swift_hadoop spark hadoop-cloudera"
     export ubuntu_image_name=${ubuntu_spark_image_name:-"ubuntu_sahara_spark_latest"}
 
     # Creating Ubuntu cloud image

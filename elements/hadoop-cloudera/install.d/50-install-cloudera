@@ -31,28 +31,24 @@ if [ -z "${DIB_CDH_HDFS_ONLY:-}" ]; then
         hue \
         oozie \
         spark-core \
-        zookeeper
-
-    if [ $DIB_CDH_VERSION \> "5.0" ]; then
-        install-packages \
-            flume-ng \
-            hadoop-kms \
-            hbase-solr \
-            impala \
-            impala-server \
-            impala-state-store \
-            impala-catalog \
-            impala-shell \
-            keytrustee-keyprovider \
-            sentry \
-            solr-server \
-            solr-doc \
-            search \
-            spark-history-server \
-            sqoop2 \
-            kafka \
-            kafka-server
-    fi
+        zookeeper \
+        flume-ng \
+        hadoop-kms \
+        hbase-solr \
+        impala \
+        impala-server \
+        impala-state-store \
+        impala-catalog \
+        impala-shell \
+        keytrustee-keyprovider \
+        sentry \
+        solr-server \
+        solr-doc \
+        search \
+        spark-history-server \
+        sqoop2 \
+        kafka \
+        kafka-server
 fi
 
 DIB_CDH_MINOR_VERSION=${DIB_CDH_MINOR_VERSION:-$DIB_CDH_VERSION.0}
