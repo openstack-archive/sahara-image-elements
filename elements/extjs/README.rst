@@ -20,7 +20,7 @@ EXTJS_DESTINATION_DIR
 
 EXTJS_DOWNLOAD_URL
   :Required: No
-  :Default: ``http://dev.sencha.com/deploy/ext-2.2.zip``
+  :Default: ``http://sahara-files.mirantis.com/ext-2.2.zip``
   :Description: The URL from where to download extjs.
 
 EXTJS_NO_UNPACK
