@@ -14,7 +14,7 @@ esac
 
 case "${DISTRO_NAME}" in
     fedora | centos | rhel | rhel7)
-        if which service; then
+        if type -p service; then
             service ip6tables save
             chkconfig ip6tables off
         fi

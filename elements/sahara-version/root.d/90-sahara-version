@@ -7,7 +7,7 @@ set -eu
 set -o pipefail
 
 function _get_version_package {
-    if which pbr > /dev/null; then
+    if type -p pbr > /dev/null; then
         local version=$(pbr info $1 | awk '{print $2}')
         echo "${version}"
     fi
