@@ -13,7 +13,7 @@ DEBUG_MODE="false"
 DIB_DEFAULT_MAPR_VERSION="5.2.0"
 
 # The default version for Spark plugin
-DIB_DEFAULT_SPARK_VERSION="1.6.0"
+DIB_DEFAULT_SPARK_VERSION="2.1.0"
 
 # The default version for Storm plugin
 DIB_DEFAULT_STORM_VERSION="1.1.0"
@@ -34,7 +34,7 @@ usage() {
     echo "         [-i ubuntu|fedora|centos|centos7]"
     echo "         [-v 2.7.1|5.5|5.7|5.9|2.2.0.0|2.2.1.0|2.4.2.0]"
     echo "         [-r 5.1.0|5.2.0]"
-    echo "         [-s 1.3.1|1.6.0]"
+    echo "         [-s 1.3.1|1.6.0|2.1.0]"
     echo "         [-t 0.9.2|1.0.1|1.1.0]"
     echo "         [-d]"
     echo "         [-u]"
@@ -201,7 +201,7 @@ case "$PLUGIN" in
         esac
 
         case "$DIB_SPARK_VERSION" in
-            "1.3.1" | "1.6.0");;
+            "1.3.1" | "1.6.0" | "2.1.0");;
             "")
                 echo "Spark version not specified"
                 echo "Spark ${DIB_DEFAULT_SPARK_VERSION} will be used"
