@@ -5,7 +5,7 @@ export DIB_MIN_TMPFS=10
 case "$PLUGIN" in
     "vanilla")
         # temporary don't test building fedora image
-        for distro in ubuntu centos centos7; do
+        for distro in ubuntu centos7; do
             # testing only 2.7.1 for speed up
             tox -e venv -- sahara-image-create -x -u -p $PLUGIN -i $distro -v 2.7.1
         done
@@ -14,10 +14,9 @@ case "$PLUGIN" in
         # manually call each distro for cloudera, so we can cleanup
         # cache and generated images from the previous run
         # (saving space a bit)
-        for distro in ubuntu centos centos7; do
+        for distro in ubuntu centos7; do
             # NOTE(vgridnev): Number of versions are growing; testing only 2 latest
             # releases of CDH
-            # NOTE(mionkin) centos7 is available only for CDH 5.5 and 5.7
             for version in 5.7 5.9; do
               tox -e venv -- sahara-image-create -x -u -p $PLUGIN -i $distro -v $version
               find . -maxdepth 1 -name '*cloudera*.qcow2' -delete

@@ -42,7 +42,8 @@ usage() {
     echo "         [-x]"
     echo "         [-h]"
     echo "   '-p' is plugin version (default: all plugins)"
-    echo "   '-i' is operating system of the base image (default: all supported by plugin)"
+    echo "   '-i' is operating system of the base image (default: all non-deprecated"
+    echo "        by plugin). 'centos' images (CentOS 6) are deprecated."
     echo "   '-v' is hadoop version (default: all supported by plugin)"
     echo "   '-r' is MapR Version (default: ${DIB_DEFAULT_MAPR_VERSION})"
     echo "   '-s' is Spark version (default: ${DIB_DEFAULT_SPARK_VERSION})"
@@ -143,6 +144,20 @@ if [ "$DEBUG_MODE" = "true" -a "$platform" != 'ubuntu' ]; then
         echo "Debug mode cannot be used from this platform while SELinux is enabled, see https://bugs.launchpad.net/sahara/+bug/1292614"
         exit 1
     fi
+fi
+
+# Deprecation
+if [ "$BASE_IMAGE_OS" = "centos" ]; then
+    echo "*************************************************"
+    echo "* __        ___    ____  _   _ ___ _   _  ____  *"
+    echo "* \ \      / / \  |  _ \| \ | |_ _| \ | |/ ___| *"
+    echo "*  \ \ /\ / / _ \ | |_) |  \| || ||  \| | |  _  *"
+    echo "*   \ V  V / ___ \|  _ <| |\  || || |\  | |_| | *"
+    echo "*    \_/\_/_/   \_\_| \_\_| \_|___|_| \_|\____| *"
+    echo "*                                               *"
+    echo "*        CentOS 6 images are deprecated !       *"
+    echo "*          Please switch to 'centos7'           *"
+    echo "*************************************************"
 fi
 
 case "$PLUGIN" in
@@ -506,7 +521,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     fi
 
     # CentOS 6 cloud image
-    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
+    if [ "$BASE_IMAGE_OS" = "centos" ]; then
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.7.1" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_7_1:-"2.7.1"}
             export centos_image_name=${centos_vanilla_hadoop_2_7_1_image_name:-"centos_sahara_vanilla_hadoop_2_7_1_latest$suffix"}
@@ -595,7 +610,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "ambari" ]; then
         image_create ubuntu $ambari_ubuntu_image_name $ambari_element_sequence
         unset DIB_RELEASE
     fi
-    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
+    if [ "$BASE_IMAGE_OS" = "centos" ]; then
         ambari_centos_image_name=${ambari_centos_image_name:-centos_sahara_ambari}
         ambari_element_sequence="ambari $JAVA_ELEMENT disable-firewall swift_hadoop kdc nc"
         image_create centos $ambari_centos_image_name $ambari_element_sequence
@@ -659,7 +674,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
         fi
     fi
 
-    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
+    if [ "$BASE_IMAGE_OS" = "centos" ]; then
         centos_cloudera_elements_sequence="selinux-permissive disable-firewall nc"
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.5" ]; then
             export DIB_CDH_VERSION="5.5"
@@ -732,7 +747,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
         unset DIB_RELEASE
     fi
 
-    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
+    if [ "$BASE_IMAGE_OS" = "centos" ]; then
         mapr_centos_image_name=${mapr_centos_image_name:-centos_6.6_mapr_${DIB_MAPR_VERSION}_latest}
 
         image_create centos $mapr_centos_image_name $mapr_centos_elements_sequence
@@ -775,7 +790,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "plain" ]; then
         image_create fedora $plain_image_name $fedora_elements_sequence
     fi
 
-    if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos" ]; then
+    if [ "$BASE_IMAGE_OS" = "centos" ]; then
         plain_image_name=${plain_centos_image_name:-centos_plain}
 
         image_create centos $plain_image_name $centos_elements_sequence
