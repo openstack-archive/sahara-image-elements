@@ -17,11 +17,13 @@ if [ "$RETURN_CODE" != "200" ]; then
     echo "http://www.scala-lang.org is unreachable" && exit 1
 fi
 
-if [ "trusty" == "${DIB_RELEASE:-}" ]; then
+if [ -n "${SCALA_VERSION:-}" ]; then
+    VERSION=${SCALA_VERSION}
+elif [ "trusty" == "${DIB_RELEASE:-}" ]; then
     # scale >= 2.12 for ubuntu depends on openjdk-8, not available on trusty
     VERSION=${DEF_VERSION}
 else
-    VERSION="$(curl -s --fail http://www.scala-lang.org|grep 'scala-version'|grep -Eo '([0-9]\.?)+')"
+    VERSION="$(curl -s --fail http://www.scala-lang.org| tr -d '\n' | sed 's/^.*<div[^<]\+scala-version">[^0-9]\+\([0-9\.\?]\+\)<.\+$/\1/')"
 
     if [ $? != 0 -o -z "${VERSION}" ]; then
         echo "Installing default version $DEF_VERSION"
@@ -31,7 +33,7 @@ fi
 
 PKG=scala-${VERSION}
 
-URL="http://downloads.typesafe.com/scala/${VERSION}"
+URL="http://downloads.lightbend.com/scala/${VERSION}"
 
 if [ "$DISTRO_NAME" = "ubuntu" ]; then
     wget -N ${URL}/${PKG}.deb
