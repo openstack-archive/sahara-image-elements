@@ -37,3 +37,8 @@ DIB_MAPR_VERSION
   :Required: Yes
   :Description: Version of MapR to install.
   :Example: ``DIB_MAPR_VERSION=5.2.0``
+
+SCALA_VERSION
+  :Required: No
+  :Description: Force a specific version of Scala (disable autodetection).
+  :Example: ``SCALA_VERSION=2.12.2``
