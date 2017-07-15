@@ -9,5 +9,5 @@ Environment Variables
 
 DIB_UNLIMITED_SECURITY_LOCATION
   :Required: No
-  :Default: http://sahara-files.mirantis.com/kerberos-artifacts/
+  :Default: http://tarballs.openstack.org/sahara/dist/common-artifacts/
   :Description: Place where UnlimitedSecurity polices are located
