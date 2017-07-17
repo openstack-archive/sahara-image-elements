@@ -160,6 +160,21 @@ if [ "$BASE_IMAGE_OS" = "centos" ]; then
     echo "*************************************************"
 fi
 
+check_spark_version () {
+    case "$DIB_SPARK_VERSION" in
+        "1.3.1" | "1.6.0" | "2.1.0");;
+        "")
+            echo "Spark version not specified"
+            echo "Spark ${DIB_DEFAULT_SPARK_VERSION} will be used"
+            DIB_SPARK_VERSION=${DIB_DEFAULT_SPARK_VERSION}
+        ;;
+        *)
+            echo -e "Unknown Spark version selected.\nAborting"
+            exit 1
+        ;;
+    esac
+}
+
 case "$PLUGIN" in
     "");;
     "vanilla")
@@ -177,6 +192,7 @@ case "$PLUGIN" in
                 exit 1
             ;;
         esac
+        check_spark_version
         ;;
     "cloudera")
         case "$BASE_IMAGE_OS" in
@@ -214,20 +230,7 @@ case "$PLUGIN" in
                 exit 1
             ;;
         esac
-
-        case "$DIB_SPARK_VERSION" in
-            "1.3.1" | "1.6.0" | "2.1.0");;
-            "")
-                echo "Spark version not specified"
-                echo "Spark ${DIB_DEFAULT_SPARK_VERSION} will be used"
-                DIB_SPARK_VERSION=${DIB_DEFAULT_SPARK_VERSION}
-            ;;
-            *)
-                echo -e "Unknown Spark version selected.\nAborting"
-                exit 1
-            ;;
-        esac
-
+        check_spark_version
         ;;
     "storm")
         case "$BASE_IMAGE_OS" in
@@ -476,8 +479,19 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     export OOZIE_HADOOP_V2_7_1_DOWNLOAD_URL=${OOZIE_HADOOP_V2_7_1_FILE:-"http://sahara-files.mirantis.com/oozie-4.2.0-hadoop-2.7.1.tar.gz"}
     export DIB_HDFS_LIB_DIR="/opt/hadoop/share/hadoop/tools/lib"
     export plugin_type="vanilla"
-    export DIB_SPARK_VERSION=1.6.0
-    export SPARK_HADOOP_DL=hadoop2.6
+
+    if [ "$DIB_SPARK_VERSION" = "1.3.1" ]; then
+        echo "Cannot use Spark 1.3.1 with Vanilla plugin"
+        exit 1
+    fi
+
+    export DIB_SPARK_VERSION
+
+    if [ "$DIB_SPARK_VERSION" = "1.6.0" ]; then
+        export SPARK_HADOOP_DL=hadoop2.6
+    else
+        export SPARK_HADOOP_DL=hadoop2.7
+    fi
 
     ubuntu_elements_sequence="hadoop oozie mysql hive $JAVA_ELEMENT swift_hadoop spark"
     fedora_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark"
