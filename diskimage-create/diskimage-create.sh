@@ -504,7 +504,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.7.1" ]; then
             export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_7_1:-"2.7.1"}
             export ubuntu_image_name=${ubuntu_vanilla_hadoop_2_7_1_image_name:-"ubuntu_sahara_vanilla_hadoop_2_7_1_latest"}
-            export DIB_RELEASE=${DIB_RELEASE:-trusty}
+            export DIB_RELEASE=${DIB_RELEASE:-xenial}
             image_create ubuntu $ubuntu_image_name $ubuntu_elements_sequence
             unset DIB_RELEASE
         fi
@@ -587,7 +587,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "storm" ]; then
     ubuntu_elements_sequence="$JAVA_ELEMENT zookeeper storm"
 
     # Creating Ubuntu cloud image
-    export DIB_RELEASE=${DIB_RELEASE:-trusty}
+    export DIB_RELEASE=${DIB_RELEASE:-xenial}
     image_create ubuntu $ubuntu_image_name $ubuntu_elements_sequence
     unset DIB_RELEASE
     unset DIB_CLOUD_INIT_DATASOURCES

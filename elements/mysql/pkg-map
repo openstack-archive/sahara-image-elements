@@ -19,13 +19,23 @@
       "mysql_java_package": "mysql-connector-java"
     }
   },
+  "release": {
+    "ubuntu": {
+      "trusty": {
+        "mysql_package": "mysql-client-5.5",
+        "mysql_libs_package": "",
+        "mysql_server_package": "mysql-server-5.5",
+        "mysql_java_package": "libmysql-java"
+      },
+      "xenial": {
+        "mysql_package": "mysql-client-5.7",
+        "mysql_libs_package": "",
+        "mysql_server_package": "mysql-server-5.7",
+        "mysql_java_package": "libmysql-java"
+      }
+    }
+  },
   "family": {
-    "debian": {
-      "mysql_package": "mysql-client-5.5",
-      "mysql_libs_package": "",
-      "mysql_server_package": "mysql-server-5.5",
-      "mysql_java_package": "libmysql-java"
-    },
     "redhat": {
       "mysql_package": "mysql",
       "mysql_libs_package": "mysql-libs",

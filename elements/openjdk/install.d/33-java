@@ -10,7 +10,7 @@ echo "Installing OpenJDK"
 
 default_jdk_version_for_distro () {
     case "$DISTRO_NAME" in
-        centos | rhel | ubuntu )
+        centos | rhel )
             echo "7"
         ;;
         fedora )
@@ -22,6 +22,13 @@ default_jdk_version_for_distro () {
         ;;
         centos7 | rhel7 )
             echo "8"
+        ;;
+        ubuntu )
+            if [ "$DIB_RELEASE" = "trusty" ]; then
+                echo "7"
+            elif [ "$DIB_RELEASE" = "xenial" ]; then
+                echo "8"
+            fi
         ;;
         *)
             echo "Unknown OpenJDK distro: $DISTRO_NAME" >&2

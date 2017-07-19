@@ -63,4 +63,10 @@ chown -R storm:storm /var/log/storm
 
 apt-get install -y python-dev
 apt-get install -y python-pip
+
+if [ "$DIB_RELEASE" = "xenial" ]; then
+    apt-get install -y python-setuptools # See launchpad bug 1556681
+    apt-get install -y python-wheel
+fi
+
 pip install pyleus
