@@ -32,7 +32,7 @@ usage() {
     echo "Usage: $(basename $0)"
     echo "         [-p vanilla|spark|cloudera|storm|mapr|ambari|plain]"
     echo "         [-i ubuntu|fedora|centos|centos7]"
-    echo "         [-v 2.7.1|5.5|5.7|5.9|2.2.0.0|2.2.1.0|2.4.2.0]"
+    echo "         [-v 2.7.1|5.5|5.7|5.9|5.11|2.2.0.0|2.2.1.0|2.4.2.0]"
     echo "         [-r 5.1.0|5.2.0]"
     echo "         [-s 1.3.1|1.6.0|2.1.0]"
     echo "         [-t 0.9.2|1.0.1|1.1.0]"
@@ -188,7 +188,7 @@ case "$PLUGIN" in
         esac
 
         case "$HADOOP_VERSION" in
-            "" | "5.5" | "5.7" | "5.9");;
+            "" | "5.5" | "5.7" | "5.9" | "5.11");;
             *)
                 echo -e "Unknown hadoop version selected.\nAborting"
                 exit 1
@@ -196,8 +196,8 @@ case "$PLUGIN" in
         esac
 
         if [ "$BASE_IMAGE_OS" = "centos7"  ]; then
-            if [ ! -z "$HADOOP_VERSION" -a ! "$HADOOP_VERSION" = "5.5"  -a ! "$HADOOP_VERSION" = "5.7" -a ! "$HADOOP_VERSION" = "5.9" ]; then
-                echo -e "Unsupported version combination, Centos 7 can only be used with CDH 5.5, CDH 5.7 and CDH 5.9"
+            if [ ! -z "$HADOOP_VERSION" -a ! "$HADOOP_VERSION" = "5.5"  -a ! "$HADOOP_VERSION" = "5.7" -a ! "$HADOOP_VERSION" = "5.9" -a ! "$HADOOP_VERSION" = "5.11" ]; then
+                echo -e "Unsupported version combination, Centos 7 can only be used with CDH 5.5 or higher version"
                 exit 1
             fi
         fi
@@ -672,6 +672,15 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             image_create ubuntu $cloudera_5_9_ubuntu_image_name $cloudera_elements_sequence
             unset DIB_CDH_VERSION DIB_RELEASE DIB_CDH_MINOR_VERSION
         fi
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.11" ]; then
+            export DIB_CDH_VERSION="5.11"
+            export DIB_CDH_MINOR_VERSION=${DIB_CDH_MINOR_VERSION:-$DIB_CDH_VERSION.0}
+            cloudera_5_11_ubuntu_image_name=${cloudera_5_11_ubuntu_image_name:-ubuntu_sahara_cloudera_$DIB_CDH_MINOR_VERSION}
+
+            export DIB_RELEASE="xenial"
+            image_create ubuntu $cloudera_5_11_ubuntu_image_name $cloudera_elements_sequence
+            unset DIB_CDH_VERSION DIB_RELEASE DIB_CDH_MINOR_VERSION
+        fi
     fi
 
     if [ "$BASE_IMAGE_OS" = "centos" ]; then
@@ -711,6 +720,15 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
 
             cloudera_5_9_centos7_image_name=${cloudera_5_9_centos7_image_name:-centos7_sahara_cloudera_$DIB_CDH_MINOR_VERSION}
             image_create centos7 $cloudera_5_9_centos7_image_name $cloudera_elements_sequence $centos7_cloudera_elements_sequence
+
+            unset DIB_CDH_VERSION DIB_CDH_MINOR_VERSION
+        fi
+        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.11" ]; then
+            export DIB_CDH_VERSION="5.11"
+            export DIB_CDH_MINOR_VERSION=${DIB_CDH_MINOR_VERSION:-$DIB_CDH_VERSION.0}
+
+            cloudera_5_11_centos7_image_name=${cloudera_5_11_centos7_image_name:-centos7_sahara_cloudera_$DIB_CDH_MINOR_VERSION}
+            image_create centos7 $cloudera_5_11_centos7_image_name $cloudera_elements_sequence $centos7_cloudera_elements_sequence
 
             unset DIB_CDH_VERSION DIB_CDH_MINOR_VERSION
         fi

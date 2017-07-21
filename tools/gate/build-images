@@ -17,7 +17,7 @@ case "$PLUGIN" in
         for distro in ubuntu centos7; do
             # NOTE(vgridnev): Number of versions are growing; testing only 2 latest
             # releases of CDH
-            for version in 5.7 5.9; do
+            for version in 5.9 5.11; do
               tox -e venv -- sahara-image-create -x -u -p $PLUGIN -i $distro -v $version
               find . -maxdepth 1 -name '*cloudera*.qcow2' -delete
               sudo rm -rf ~/.cache/image-create
