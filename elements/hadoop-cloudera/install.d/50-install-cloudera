@@ -60,6 +60,9 @@ case "$DIB_CDH_VERSION" in
     5.9)
         HADOOP_OPENSTACK_5_9_x_URL="https://repository.cloudera.com/artifactory/repo/org/apache/hadoop/hadoop-openstack/2.6.0-cdh$DIB_CDH_MINOR_VERSION/hadoop-openstack-2.6.0-cdh$DIB_CDH_MINOR_VERSION.jar"
         ;;
+    5.11)
+        HADOOP_OPENSTACK_5_11_x_URL="https://repository.cloudera.com/artifactory/repo/org/apache/hadoop/hadoop-openstack/2.6.0-cdh$DIB_CDH_MINOR_VERSION/hadoop-openstack-2.6.0-cdh$DIB_CDH_MINOR_VERSION.jar"
+        ;;
 esac
 HADOOP_OPENSTACK_5_5_0_URL="https://repository.cloudera.com/artifactory/repo/org/apache/hadoop/hadoop-openstack/2.6.0-cdh5.5.0/hadoop-openstack-2.6.0-cdh5.5.0.jar"
 
@@ -85,6 +88,15 @@ case "$DIB_CDH_VERSION" in
         ;;
     5.9)
         wget -O $dest $HADOOP_OPENSTACK_5_9_x_URL
+        if [ -z "${DIB_CDH_HDFS_ONLY:-}" ]; then
+            # Create links to keep backward version support.
+            ln -s /usr/lib/oozie/oozie-sharelib-yarn /usr/lib/oozie/oozie-sharelib-yarn.tar.gz
+            ln -s /usr/lib/oozie/oozie-sharelib-mr1 /usr/lib/oozie/oozie-sharelib-mr1.tar.gz
+            ln -s /usr/lib/oozie/oozie-sharelib-yarn.tar.gz /usr/lib/oozie/oozie-sharelib.tar.gz
+        fi
+        ;;
+    5.11)
+        wget -O $dest $HADOOP_OPENSTACK_5_11_x_URL
         if [ -z "${DIB_CDH_HDFS_ONLY:-}" ]; then
             # Create links to keep backward version support.
             ln -s /usr/lib/oozie/oozie-sharelib-yarn /usr/lib/oozie/oozie-sharelib-yarn.tar.gz

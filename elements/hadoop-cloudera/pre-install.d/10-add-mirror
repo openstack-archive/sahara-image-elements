@@ -231,6 +231,81 @@ function add_repo_5_9_x {
     esac
 }
 
+function add_repo_5_11_x {
+    case $DISTRO_NAME in
+        ubuntu )
+            # Add repository with postgresql package (it's dependency of cloudera packages)
+            # Base image doesn't contain this repo
+            echo -e 'deb http://nova.clouds.archive.ubuntu.com/ubuntu/ xenial universe multiverse main' >> /etc/apt/sources.list
+
+            # Cloudera repositories
+            echo "deb [arch=amd64] http://archive.cloudera.com/cdh5/ubuntu/xenial/amd64/cdh xenial-cdh$DIB_CDH_MINOR_VERSION contrib" > /etc/apt/sources.list.d/cdh5.list
+            echo "deb-src http://archive.cloudera.com/cdh5/ubuntu/xenial/amd64/cdh xenial-cdh$DIB_CDH_MINOR_VERSION contrib" >> /etc/apt/sources.list.d/cdh5.list
+
+            wget -qO - http://archive-primary.cloudera.com/cdh5/ubuntu/xenial/amd64/cdh/archive.key | apt-key add -
+
+            echo "deb [arch=amd64] http://archive.cloudera.com/cm5/ubuntu/xenial/amd64/cm xenial-cm$DIB_CDH_MINOR_VERSION contrib" > /etc/apt/sources.list.d/cm5.list
+            echo "deb-src http://archive.cloudera.com/cm5/ubuntu/xenial/amd64/cm xenial-cm$DIB_CDH_MINOR_VERSION contrib" >> /etc/apt/sources.list.d/cm5.list
+
+            wget -qO - http://archive-primary.cloudera.com/cm5/ubuntu/xenial/amd64/cm/archive.key | apt-key add -
+
+            wget -O /etc/apt/sources.list.d/kms.list http://archive.cloudera.com/navigator-keytrustee5/ubuntu/xenial/amd64/navigator-keytrustee/cloudera.list
+            wget -qO - http://archive.cloudera.com/navigator-keytrustee5/ubuntu/xenial/amd64/navigator-keytrustee/archive.key | apt-key add -
+
+            # add Kafka repository
+            echo -e 'deb http://archive.cloudera.com/kafka/ubuntu/xenial/amd64/kafka/ xenial-kafka2.2.0 contrib' >> /etc/apt/sources.list
+            wget -qO - https://archive.cloudera.com/kafka/ubuntu/xenial/amd64/kafka/archive.key | apt-key add -
+
+            #change repository priority
+            echo -e 'Package: zookeeper\nPin: origin "archive.cloudera.com"\nPin-Priority: 1001' > /etc/apt/preferences.d/cloudera-pin
+
+            apt-get update
+        ;;
+        centos | rhel | centos7 | rhel7 )
+            case $DISTRO_NAME in
+                centos | rhel )
+                    releasever=6
+                ;;
+                centos7 | rhel7 )
+                    releasever=7
+                ;;
+            esac
+            echo '[cloudera-cdh5]' > /etc/yum.repos.d/cloudera-cdh5.repo
+            echo "name=Cloudera's Distribution for Hadoop, Version 5" >> /etc/yum.repos.d/cloudera-cdh5.repo
+            echo "baseurl=http://archive.cloudera.com/cdh5/redhat/$releasever/x86_64/cdh/$DIB_CDH_MINOR_VERSION/" >> /etc/yum.repos.d/cloudera-cdh5.repo
+            echo "gpgkey = http://archive.cloudera.com/cdh5/redhat/$releasever/x86_64/cdh/RPM-GPG-KEY-cloudera" >> /etc/yum.repos.d/cloudera-cdh5.repo
+            echo 'gpgcheck = 1' >> /etc/yum.repos.d/cloudera-cdh5.repo
+
+            echo '[cloudera-manager]' > /etc/yum.repos.d/cloudera-manager.repo
+            echo 'name=Cloudera Manager' >> /etc/yum.repos.d/cloudera-manager.repo
+            echo "baseurl=http://archive.cloudera.com/cm5/redhat/$releasever/x86_64/cm/$DIB_CDH_MINOR_VERSION/" >> /etc/yum.repos.d/cloudera-manager.repo
+            echo "gpgkey = http://archive.cloudera.com/cm5/redhat/$releasever/x86_64/cm/RPM-GPG-KEY-cloudera" >> /etc/yum.repos.d/cloudera-manager.repo
+            echo 'gpgcheck = 1' >> /etc/yum.repos.d/cloudera-manager.repo
+
+            echo '[navigator-keytrustee]' > /etc/yum.repos.d/kms.repo
+            echo "name=Cloudera's Distribution for navigator-Keytrustee, Version 5" >> /etc/yum.repos.d/kms.repo
+
+            RETURN_CODE="$(curl -s -o /dev/null -w "%{http_code}" http://archive.cloudera.com/navigator-keytrustee5/redhat/$releasever/x86_64/navigator-keytrustee/$DIB_CDH_MINOR_VERSION/)"
+            if [ "$RETURN_CODE" == "404" ]; then
+                echo "baseurl=http://archive.cloudera.com/navigator-keytrustee5/redhat/$releasever/x86_64/navigator-keytrustee/$DIB_CDH_VERSION/" >> /etc/yum.repos.d/kms.repo
+            else
+                echo "baseurl=http://archive.cloudera.com/navigator-keytrustee5/redhat/$releasever/x86_64/navigator-keytrustee/$DIB_CDH_MINOR_VERSION/" >> /etc/yum.repos.d/kms.repo
+            fi
+
+            echo "gpgkey = http://archive.cloudera.com/navigator-keytrustee5/redhat/$releasever/x86_64/navigator-keytrustee/RPM-GPG-KEY-cloudera" >> /etc/yum.repos.d/kms.repo
+            echo 'gpgcheck = 1' >> /etc/yum.repos.d/kms.repo
+
+            echo "[cloudera-kafka]" > /etc/yum.repos.d/cloudera-kafka.repo
+            echo "name=Cloudera's Distribution for kafka, Version 2.2.0" >> /etc/yum.repos.d/cloudera-kafka.repo
+            echo "baseurl=http://archive.cloudera.com/kafka/redhat/$releasever/x86_64/kafka/2.2.0/" >> /etc/yum.repos.d/cloudera-kafka.repo
+            echo "gpgkey = http://archive.cloudera.com/kafka/redhat/$releasever/x86_64/kafka/RPM-GPG-KEY-cloudera" >> /etc/yum.repos.d/cloudera-kafka.repo
+            echo "gpgcheck = 1" >> /etc/yum.repos.d/cloudera-kafka.repo
+
+            yum clean all
+        ;;
+    esac
+}
+
 DIB_CDH_MINOR_VERSION=${DIB_CDH_MINOR_VERSION:-$DIB_CDH_VERSION.0}
 
 # Call version-specific script to install the desired version of CDH
@@ -246,6 +321,10 @@ case "$DIB_CDH_VERSION" in
     5.9)
         echo "Installing CDH Version $DIB_CDH_MINOR_VERSION..."
         add_repo_5_9_x
+        ;;
+    5.11)
+        echo "Installing CDH Version $DIB_CDH_MINOR_VERSION..."
+        add_repo_5_11_x
         ;;
     *)
         echo "Invalid CDH Version : $DIB_CDH_VERSION specified, exiting install."
