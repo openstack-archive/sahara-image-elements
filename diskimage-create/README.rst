@@ -80,7 +80,8 @@ like this:
 
 .. sourcecode:: bash
 
-  tox -e venv -- sahara-image-create -p spark -s [1.3.1|1.6.0]
+  tox -e venv -- sahara-image-create -p spark -s [1.3.1|1.6.0|2.1.0] # spark standalone
+  tox -e venv -- sahara-image-create -p vanilla -v 2.7.1 -s [1.6.0|2.1.0] # spark on vanilla
 
 8. To select which MapR version to target use the '-r' commandline option like
 this:
