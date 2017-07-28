@@ -17,7 +17,7 @@ swift_url
 DIB_HDFS_LIB_DIR
   :Required: No
   :Default: /usr/share/hadoop/lib
-  :Description: Directory in the guest where to save the swift jar.
+  :Description: Directory in the guest where to save the swift jar. Shared with s3_hadoop.
 
 DIB_HADOOP_SWIFT_JAR_NAME
   :Required: No

@@ -61,8 +61,9 @@ EOF
         $HADOOP_HOME/etc/hadoop/yarn-env.sh
     echo "source $JAVA_RC" >> $HADOOP_HOME/etc/hadoop/yarn-env.sh
 
-    # enable swiftfs
-    ln -s ${HADOOP_HOME}/share/hadoop/tools/lib/hadoop-openstack-${DIB_HADOOP_VERSION}.jar ${HADOOP_HOME}/share/hadoop/common/lib/
+    # remove apache-built swiftfs
+    rm ${HADOOP_HOME}/share/hadoop/tools/lib/hadoop-openstack-${DIB_HADOOP_VERSION}.jar
+
 }
 
 case "$DISTRO_NAME" in
