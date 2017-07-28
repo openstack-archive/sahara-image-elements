@@ -474,15 +474,15 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
     export HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL:-"https://tarballs.openstack.org/sahara/dist/common-artifacts/hadoop-native-libs-2.7.1.tar.gz"}
     export OOZIE_HADOOP_V2_7_1_DOWNLOAD_URL=${OOZIE_HADOOP_V2_7_1_FILE:-"http://sahara-files.mirantis.com/oozie-4.2.0-hadoop-2.7.1.tar.gz"}
-    export DIB_HDFS_LIB_DIR="/opt/hadoop/share/hadoop/tools/lib"
+    export DIB_HDFS_LIB_DIR="/opt/hadoop/share/hadoop/common/lib"
     export plugin_type="vanilla"
     export DIB_SPARK_VERSION=1.6.0
     export SPARK_HADOOP_DL=hadoop2.6
 
-    ubuntu_elements_sequence="hadoop oozie mysql hive $JAVA_ELEMENT swift_hadoop spark"
-    fedora_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark"
-    centos_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark nc"
-    centos7_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark nc"
+    ubuntu_elements_sequence="hadoop oozie mysql hive $JAVA_ELEMENT swift_hadoop spark s3_hadoop"
+    fedora_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark s3_hadoop"
+    centos_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark nc s3_hadoop"
+    centos7_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark nc s3_hadoop"
 
     # Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
     # https://bugs.launchpad.net/sahara/+bug/1252684
@@ -557,7 +557,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
     # Tell the cloudera element to install only hdfs
     export DIB_CDH_HDFS_ONLY=1
 
-    ubuntu_elements_sequence="$JAVA_ELEMENT swift_hadoop spark hadoop-cloudera"
+    ubuntu_elements_sequence="$JAVA_ELEMENT swift_hadoop spark hadoop-cloudera s3_hadoop"
     export ubuntu_image_name=${ubuntu_spark_image_name:-"ubuntu_sahara_spark_latest"}
 
     # Creating Ubuntu cloud image
@@ -605,19 +605,19 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "ambari" ]; then
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         ambari_ubuntu_image_name=${ambari_ubuntu_image_name:-ubuntu_sahara_ambari}
-        ambari_element_sequence="ambari $JAVA_ELEMENT swift_hadoop kdc"
+        ambari_element_sequence="ambari $JAVA_ELEMENT swift_hadoop kdc s3_hadoop"
         export DIB_RELEASE="trusty"
         image_create ubuntu $ambari_ubuntu_image_name $ambari_element_sequence
         unset DIB_RELEASE
     fi
     if [ "$BASE_IMAGE_OS" = "centos" ]; then
         ambari_centos_image_name=${ambari_centos_image_name:-centos_sahara_ambari}
-        ambari_element_sequence="ambari $JAVA_ELEMENT disable-firewall swift_hadoop kdc nc"
+        ambari_element_sequence="ambari $JAVA_ELEMENT disable-firewall swift_hadoop kdc nc s3_hadoop"
         image_create centos $ambari_centos_image_name $ambari_element_sequence
     fi
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
         ambari_centos7_image_name=${ambari_centos7_image_name:-"centos7-sahara-ambari"}
-        ambari_element_sequence="disable-selinux ambari $JAVA_ELEMENT disable-firewall swift_hadoop kdc nc"
+        ambari_element_sequence="disable-selinux ambari $JAVA_ELEMENT disable-firewall swift_hadoop kdc nc s3_hadoop"
         image_create centos7 $ambari_centos7_image_name $ambari_element_sequence
     fi
 
@@ -643,7 +643,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
         HADOOP_VERSION=${DIB_CDH_MINOR_VERSION%.*}
     fi
 
-    cloudera_elements_sequence="hadoop-cloudera swift_hadoop kdc"
+    cloudera_elements_sequence="hadoop-cloudera swift_hadoop kdc s3_hadoop"
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.5" ]; then
             export DIB_CDH_VERSION="5.5"
@@ -684,7 +684,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
     fi
 
     if [ "$BASE_IMAGE_OS" = "centos" ]; then
-        centos_cloudera_elements_sequence="selinux-permissive disable-firewall nc"
+        centos_cloudera_elements_sequence="selinux-permissive disable-firewall nc s3_hadoop"
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.5" ]; then
             export DIB_CDH_VERSION="5.5"
 
@@ -696,7 +696,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
-        centos7_cloudera_elements_sequence="selinux-permissive disable-firewall nc"
+        centos7_cloudera_elements_sequence="selinux-permissive disable-firewall nc s3_hadoop"
         if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.5" ]; then
             export DIB_CDH_VERSION="5.5"
 
@@ -745,6 +745,7 @@ fi
 ##########################
 if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
     export DIB_MAPR_VERSION=${DIB_MAPR_VERSION:-${DIB_DEFAULT_MAPR_VERSION}}
+    export plugin_type="mapr"
 
     export DIB_CLOUD_INIT_DATASOURCES=$CLOUD_INIT_DATASOURCES
 
@@ -752,8 +753,8 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
     #MapR repository requires additional space
     export DIB_MIN_TMPFS=10
 
-    mapr_ubuntu_elements_sequence="ssh hadoop-mapr $JAVA_ELEMENT"
-    mapr_centos_elements_sequence="ssh hadoop-mapr selinux-permissive $JAVA_ELEMENT disable-firewall nc"
+    mapr_ubuntu_elements_sequence="ssh hadoop-mapr $JAVA_ELEMENT s3_hadoop"
+    mapr_centos_elements_sequence="ssh hadoop-mapr selinux-permissive $JAVA_ELEMENT disable-firewall nc s3_hadoop"
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         export DIB_RELEASE=${DIB_RELEASE:-trusty}
@@ -780,6 +781,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
 
         unset DIB_CLOUD_INIT_DATASOURCES
     fi
+    unset plugin_type
 
 fi
 

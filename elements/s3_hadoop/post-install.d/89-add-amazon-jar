@@ -1,0 +1,36 @@
+#!/bin/bash
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+if [ -z "${HADOOP_S3_JAR_ORIGIN:-}" ]; then
+    # The jar is not locally available during image-gen on Ambari/MapR plugins: relevant packages are installed later.
+    # The jar is not appropriate for the Storm plugin: you cannot stream data from an object store.
+    # For plugins not found in the switch statement below, a user-specified jar can still be downloaded.
+    case "$plugin_type" in
+        "vanilla")
+            HADOOP_S3_JAR_ORIGIN="/opt/hadoop/share/hadoop/tools/lib/hadoop-aws-$DIB_HADOOP_VERSION.jar"
+            ;;
+        "cloudera" | "spark" )
+            HADOOP_S3_JAR_ORIGIN="/usr/lib/hadoop/hadoop-aws.jar"
+            ;;
+    esac
+fi
+
+HDFS_LIB_DIR=${DIB_HDFS_LIB_DIR:-"/usr/share/hadoop/lib"} # matches swift_hadoop default
+
+if [ -z "${HADOOP_S3_JAR_DOWNLOAD:-}" ]; then
+    if [ "${HADOOP_S3_JAR_ORIGIN:-}" ]; then
+        cp $HADOOP_S3_JAR_ORIGIN $HDFS_LIB_DIR/hadoop-aws.jar
+    fi
+else
+    wget -O $HDFS_LIB_DIR/hadoop-aws.jar $HADOOP_S3_JAR_DOWNLOAD
+fi
+
+path=$HDFS_LIB_DIR/hadoop-aws.jar
+
+if [ -f $path ]; then
+    chmod 0644 $path
+fi
