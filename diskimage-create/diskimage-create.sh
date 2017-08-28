@@ -36,6 +36,7 @@ usage() {
     echo "         [-r 5.1.0|5.2.0]"
     echo "         [-s 1.3.1|1.6.0|2.1.0]"
     echo "         [-t 0.9.2|1.0.1|1.1.0]"
+    echo "         [-f qcow2|raw]"
     echo "         [-d]"
     echo "         [-u]"
     echo "         [-j openjdk|oracle-java]"
@@ -47,6 +48,7 @@ usage() {
     echo "   '-v' is hadoop version (default: all supported by plugin)"
     echo "   '-r' is MapR Version (default: ${DIB_DEFAULT_MAPR_VERSION})"
     echo "   '-s' is Spark version (default: ${DIB_DEFAULT_SPARK_VERSION})"
+    echo "   '-f' is the image format (default: qcow2)"
     echo "   '-d' enable debug mode, root account will have password 'hadoop'"
     echo "   '-u' install missing packages necessary for building"
     echo "   '-j' is java distribution (default: openjdk)"
@@ -61,7 +63,7 @@ usage() {
     echo
 }
 
-while getopts "p:i:v:dur:s:t:j:xhb" opt; do
+while getopts "p:i:v:f:dur:s:t:j:xhb" opt; do
     case $opt in
         p)
             PLUGIN=$OPTARG
@@ -83,6 +85,9 @@ while getopts "p:i:v:dur:s:t:j:xhb" opt; do
         ;;
         t)
             DIB_STORM_VERSION=$OPTARG
+        ;;
+        f)
+            IMAGE_FORMAT="-t $OPTARG"
         ;;
         u)
             DIB_UPDATE_REQUESTED=true
@@ -459,7 +464,7 @@ image_create() {
         ;;
     esac
 
-    disk-image-create $TRACING -o "$output" $args "$distro" $elements "$@"
+    disk-image-create $IMAGE_FORMAT $TRACING -o "$output" $args "$distro" $elements "$@"
 
     # cleanup
     case "$distro" in
