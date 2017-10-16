@@ -1,0 +1,3 @@
+---
+sahara_build_directory: /var/tmp/sahara-image-build
+sahara_plugin: vanilla
