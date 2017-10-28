@@ -20,7 +20,7 @@
 - job:
     name: sahara-image-elements-buildimages-basejob
     timeout: 5400
-    run: playbooks/buildimages/run
+    run: playbooks/buildimages/run.yaml
 
 - job:
     name: sahara-image-elements-buildimages-ambari
