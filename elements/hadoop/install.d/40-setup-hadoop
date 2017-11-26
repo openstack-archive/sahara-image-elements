@@ -61,8 +61,11 @@ EOF
         $HADOOP_HOME/etc/hadoop/yarn-env.sh
     echo "source $JAVA_RC" >> $HADOOP_HOME/etc/hadoop/yarn-env.sh
 
-    # remove apache-built swiftfs
-    rm ${HADOOP_HOME}/share/hadoop/tools/lib/hadoop-openstack-${DIB_HADOOP_VERSION}.jar
+    # enable swiftfs
+    # Sahara expects the jar to be in both folders, even though only one is
+    #   the "official" classpath. Until images and Sahara become more strictly
+    #   coupled we must maintain this legacy behavior.
+    ln -s ${HADOOP_HOME}/share/hadoop/tools/lib/hadoop-openstack-${DIB_HADOOP_VERSION}.jar ${HADOOP_HOME}/share/hadoop/common/lib/
 
 }
 
