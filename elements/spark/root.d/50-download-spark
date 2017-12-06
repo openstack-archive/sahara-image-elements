@@ -18,6 +18,9 @@ if [ -z "${SPARK_DOWNLOAD_URL:-}" ]; then
             5.5)
                 SPARK_HADOOP_DL=hadoop2.6
             ;;
+            5.11)
+                SPARK_HADOOP_DL=hadoop2.6
+            ;;
             *)
                 echo "WARNING: Cloudera CDH $DIB_CDH_VERSION not supported."
                 echo "WARNING: use the SPARK_DOWNLOAD_URL variable to install a custom Spark version."
