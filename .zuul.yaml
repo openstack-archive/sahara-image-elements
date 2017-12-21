@@ -1,0 +1,65 @@
+- project:
+    name: openstack/sahara-image-elements
+    check:
+      jobs:
+        - sahara-image-elements-buildimages-ambari:
+            voting: false
+        - sahara-image-elements-buildimages-cloudera:
+            voting: false
+        - sahara-image-elements-buildimages-mapr:
+            voting: false
+        - sahara-image-elements-buildimages-plain:
+            voting: false
+        - sahara-image-elements-buildimages-spark:
+            voting: false
+        - sahara-image-elements-buildimages-storm:
+            voting: false
+        - sahara-image-elements-buildimages-vanilla:
+            voting: false
+
+- job:
+    name: sahara-image-elements-buildimages-basejob
+    timeout: 5400
+    run: playbooks/buildimages/run.yaml
+
+- job:
+    name: sahara-image-elements-buildimages-ambari
+    parent: sahara-image-elements-buildimages-basejob
+    vars:
+      sahara_plugin: ambari
+
+- job:
+    name: sahara-image-elements-buildimages-cloudera
+    parent: sahara-image-elements-buildimages-basejob
+    vars:
+      sahara_plugin: cloudera
+
+- job:
+    name: sahara-image-elements-buildimages-mapr
+    parent: sahara-image-elements-buildimages-basejob
+    vars:
+      sahara_plugin: mapr
+
+- job:
+    name: sahara-image-elements-buildimages-plain
+    parent: sahara-image-elements-buildimages-basejob
+    vars:
+      sahara_plugin: plain
+
+- job:
+    name: sahara-image-elements-buildimages-spark
+    parent: sahara-image-elements-buildimages-basejob
+    vars:
+      sahara_plugin: spark
+
+- job:
+    name: sahara-image-elements-buildimages-storm
+    parent: sahara-image-elements-buildimages-basejob
+    vars:
+      sahara_plugin: storm
+
+- job:
+    name: sahara-image-elements-buildimages-vanilla
+    parent: sahara-image-elements-buildimages-basejob
+    vars:
+      sahara_plugin: vanilla
