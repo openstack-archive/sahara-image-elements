@@ -1,0 +1,4 @@
+---
+sahara_image_elements_src_dir: "{{ zuul.projects['git.openstack.org/openstack/sahara-image-elements'].src_dir }}"
+sahara_build_directory: /var/tmp/sahara-image-build
+sahara_plugin: vanilla
