@@ -13,7 +13,13 @@ set -o pipefail
 if [ "$DISTRO_NAME" = "ubuntu" ]; then
     if [ -e "/etc/init/mysql.conf" ]; then
         sed -i "s/start on runlevel \[.*\]/start on never runlevel [2345]/g" /etc/init/mysql.conf
-        sed -i '/bind-address/d' /etc/mysql/my.cnf
+        # The mysql configuration file name and directory changed in Ubuntu Xenial.
+        # TODO(shuyingya): delete this if statement when we not support trusty
+        if [ "$DIB_RELEASE" = "trusty" ]; then
+            sed -i '/bind-address/d' /etc/mysql/my.cnf
+        elif [ "$DIB_RELEASE" = "xenial" ]; then
+            sed -i '/bind-address/d' /etc/mysql/mysql.conf.d/mysqld.cnf
+        fi
     else
         update-rc.d -f mysql remove
     fi
