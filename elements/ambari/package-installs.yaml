@@ -14,5 +14,6 @@ tar:
 zip:
 rpcbind:
 fuse-libs:
+fuse:
 snappy-devel:
 rng-tools:
