@@ -1,5 +1,4 @@
 - project:
-    name: openstack/sahara-image-elements
     check:
       jobs:
         - sahara-image-elements-buildimages-ambari:
