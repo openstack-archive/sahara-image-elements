@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ ${DIB_DEBUG_TRACE:-0} -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+case "${DISTRO_NAME}" in
+    rhel7 | centos7 )
+        config=/etc/python/cert-verification.cfg
+        [ -e $config ] && sed -i "s%^\(verify=\s*\).*$%verify=disable%" $config
+    ;;
+esac
