@@ -12,6 +12,9 @@ mkdir -p $tmp_dir
 if [[ "$DIB_HADOOP_VERSION" == "2.7.1" ]]; then
     OOZIE_DOWNLOAD_URL="${OOZIE_HADOOP_V2_7_1_DOWNLOAD_URL:-}"
     OOZIE_FILE="${OOZIE_HADOOP_V2_7_1_FILE:-}"
+elif [[ "$DIB_HADOOP_VERSION" == "2.8.2" ]]; then
+    OOZIE_DOWNLOAD_URL="${OOZIE_HADOOP_V2_8_2_DOWNLOAD_URL:-}"
+    OOZIE_FILE="${OOZIE_HADOOP_V2_8_2_FILE:-}"
 else
     echo "Unknown Hadoop version selected. Aborting."
     exit 1

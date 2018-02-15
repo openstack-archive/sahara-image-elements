@@ -10,7 +10,12 @@ tmp_dir=/tmp/hive
 cd $tmp_dir
 
 if [ -z "${HIVE_DOWNLOAD_URL:-}" ]; then
-    HIVE_FILE=hive-$HIVE_VERSION-bin.tar.gz
+    # hive package has renamed to "apache-hive-*" since 0.13.0
+    if [[ "$HIVE_VERSION" < "0.13.0" ]]; then
+        HIVE_FILE=hive-$HIVE_VERSION-bin.tar.gz
+    else
+        HIVE_FILE=apache-hive-$HIVE_VERSION-bin.tar.gz
+    fi
 else
     HIVE_FILE=$(basename $HIVE_DOWNLOAD_URL)
 fi
@@ -20,6 +25,15 @@ HIVE_DIR="${HIVE_DIR%.*}"
 mv $HIVE_DIR /opt/hive
 rm -r $tmp_dir
 chmod -R a+rw /opt/hive
+
+HIVE_MASTER_VERSION=${HIVE_VERSION%.*}.0
+
+# NOTE(jfreud): Hive 0.11.0 was released without this DB upgrade script.
+# All future versions of Hive do have the script.
+if [ "$HIVE_VERSION" != "0.11.0" ]; then
+    # replace the relative path with absolute path
+    sed -i "s/SOURCE hive-txn-schema-$HIVE_MASTER_VERSION.mysql.sql;/SOURCE \/opt\/hive\/scripts\/metastore\/upgrade\/mysql\/hive-txn-schema-$HIVE_MASTER_VERSION.mysql.sql;/" /opt/hive/scripts/metastore/upgrade/mysql/hive-schema-$HIVE_MASTER_VERSION.mysql.sql
+fi
 
 ln -s /usr/share/java/mysql-connector-java.jar /opt/hive/lib/libmysql-java.jar
 chown -R hadoop:hadoop /opt/hive
