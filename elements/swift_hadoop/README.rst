@@ -11,7 +11,7 @@ Environment Variables
 
 swift_url
   :Required: No
-  :Default: http://sahara-files.mirantis.com/hadoop-swift/hadoop-swift-latest.jar
+  :Default: https://tarballs.openstack.org/sahara-extra/dist/hadoop-openstack/master/hadoop-openstack-2.7.1.jar
   :Description: Location of the swift jar file.
 
 DIB_HDFS_LIB_DIR

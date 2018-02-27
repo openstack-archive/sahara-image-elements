@@ -37,7 +37,7 @@ case "$plugin_type" in
     ;;
 esac
 
-HADOOP_SWIFT_BUILD_LOCATION="http://tarballs.openstack.org/sahara/dist/hadoop-openstack/master"
+HADOOP_SWIFT_BUILD_LOCATION="https://tarballs.openstack.org/sahara-extra/dist/hadoop-openstack/master"
 HDFS_LIB_DIR=${DIB_HDFS_LIB_DIR:-"/usr/share/hadoop/lib"}
 SWIFT_LIB_URI="$HADOOP_SWIFT_BUILD_LOCATION/hadoop-openstack-${hadoop}.jar"
 HADOOP_SWIFT_JAR_NAME=${DIB_HADOOP_SWIFT_JAR_NAME:-"hadoop-openstack.jar"}

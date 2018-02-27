@@ -63,6 +63,7 @@ You can use 'JAVA_DOWNLOAD_URL' parameter to specify download link for JDK (tarb
 'DIB_IMAGE_SIZE' is parameter that specifes a volume of hard disk of instance. You need to specify it because Fedora and CentOS don't use all available volume.
 If you have already downloaded the jdk package, move it to "elements/hadoop/install.d/" and use its filename as 'JAVA_FILE' parameter.
 In order of working EDP components with Sahara DIB images you need pre-installed Oozie libs.
-Use OOZIE_DOWNLOAD_URL to specify link to Oozie archive (tar.gz). For example we have built Oozie libs here:
-http://sahara-files.mirantis.com/oozie-4.0.0.tar.gz
+Use OOZIE_DOWNLOAD_URL to specify link to Oozie archive (tar.gz). For example the Oozie libraries
+for Hadoop 2.7.1 are available from:
+https://tarballs.openstack.org/sahara-extra/dist/oozie/oozie-4.2.0-hadoop-2.7.1.tar.gz
 If you have already downloaded archive, move it to "elements/oozie/install.d/" and use its filename as 'OOZIE_FILE' parameter.

@@ -6,7 +6,7 @@ fi
 set -eu
 set -o pipefail
 
-EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"http://tarballs.openstack.org/sahara/dist/common-artifacts/ext-2.2.zip"}
+EXTJS_DOWNLOAD_URL=${EXTJS_DOWNLOAD_URL:-"https://tarballs.openstack.org/sahara-extra/dist/common-artifacts/ext-2.2.zip"}
 
 extjs_archive=/tmp/$(basename $EXTJS_DOWNLOAD_URL)
 

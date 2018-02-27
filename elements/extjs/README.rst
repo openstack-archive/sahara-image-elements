@@ -20,7 +20,7 @@ EXTJS_DESTINATION_DIR
 
 EXTJS_DOWNLOAD_URL
   :Required: No
-  :Default: ``http://tarballs.openstack.org/sahara/dist/common-artifacts/ext-2.2.zip``
+  :Default: ``https://tarballs.openstack.org/sahara-extra/dist/common-artifacts/ext-2.2.zip``
   :Description: The URL from where to download extjs.
 
 EXTJS_NO_UNPACK
