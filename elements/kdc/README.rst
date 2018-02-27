@@ -9,5 +9,5 @@ Environment Variables
 
 DIB_UNLIMITED_SECURITY_LOCATION
   :Required: No
-  :Default: http://tarballs.openstack.org/sahara/dist/common-artifacts/
+  :Default: https://tarballs.openstack.org/sahara-extra/dist/common-artifacts/
   :Description: Place where UnlimitedSecurity polices are located

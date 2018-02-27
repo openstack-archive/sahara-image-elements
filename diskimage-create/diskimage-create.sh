@@ -480,8 +480,8 @@ image_create() {
 
 if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     export HIVE_VERSION=${HIVE_VERSION:-"0.11.0"}
-    export HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL:-"https://tarballs.openstack.org/sahara/dist/common-artifacts/hadoop-native-libs-2.7.1.tar.gz"}
-    export OOZIE_HADOOP_V2_7_1_DOWNLOAD_URL=${OOZIE_HADOOP_V2_7_1_FILE:-"http://sahara-files.mirantis.com/oozie-4.2.0-hadoop-2.7.1.tar.gz"}
+    export HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL=${HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL:-"https://tarballs.openstack.org/sahara-extra/dist/common-artifacts/hadoop-native-libs-2.7.1.tar.gz"}
+    export OOZIE_HADOOP_V2_7_1_DOWNLOAD_URL=${OOZIE_HADOOP_V2_7_1_FILE:-"https://tarballs.openstack.org/sahara-extra/dist/oozie/oozie-4.2.0-hadoop-2.7.1.tar.gz"}
     export DIB_HDFS_LIB_DIR="/opt/hadoop/share/hadoop/tools/lib"
     export plugin_type="vanilla"
 
