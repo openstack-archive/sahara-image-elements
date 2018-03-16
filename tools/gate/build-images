@@ -6,8 +6,10 @@ case "$PLUGIN" in
     "vanilla")
         # temporary don't test building fedora image
         for distro in ubuntu centos7; do
-            # testing only 2.7.1 for speed up
-            tox -e venv -- sahara-image-create -x -u -p $PLUGIN -i $distro -v 2.7.1
+            # limit to 2 releases
+            for version in 2.7.1 2.8.2; do
+                tox -e venv -- sahara-image-create -x -u -p $PLUGIN -i $distro -v $version
+            done
         done
         ;;
     "cloudera")

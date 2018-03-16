@@ -10,7 +10,13 @@ tmp_dir=$TARGET_ROOT/tmp/hive
 mkdir -p $tmp_dir
 
 if [ -z ${HIVE_DOWNLOAD_URL:-} ]; then
-    HIVE_DOWNLOAD_URL=http://archive.apache.org/dist/hive/hive-$HIVE_VERSION/hive-$HIVE_VERSION-bin.tar.gz
+    # hive package has renamed to "apache-hive-*" since 0.13.0
+    if [[ "$HIVE_VERSION" < "0.13.0" ]]; then
+        HIVE_FILE=hive-$HIVE_VERSION-bin.tar.gz
+    else
+        HIVE_FILE=apache-hive-$HIVE_VERSION-bin.tar.gz
+    fi
+    HIVE_DOWNLOAD_URL=http://archive.apache.org/dist/hive/hive-$HIVE_VERSION/$HIVE_FILE
 fi
 HIVE_FILE=$(basename $HIVE_DOWNLOAD_URL)
 cached_tar="$DIB_IMAGE_CACHE/$HIVE_FILE"
