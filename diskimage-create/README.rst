@@ -111,7 +111,7 @@ without hadoop ('plain' image)
 NOTE for CentOS images (for vanilla, ambari, and cloudera plugins):
 
 Resizing disk space during firstboot on that images fails with errors
-(https://bugs.launchpad.net/sahara/+bug/1304100). So, you will get an instance
+(https://storyboard.openstack.org/#!/story/1304100). So, you will get an instance
 that will have a small available disk space. To solve this problem we build
 images with 10G available disk space as default. If you need in more available
 disk space you should export parameter DIB_IMAGE_SIZE:

@@ -141,7 +141,7 @@ fi
 # Checks of input
 if [ "$DEBUG_MODE" = "true" -a "$platform" != 'ubuntu' ]; then
     if [ "$(getenforce)" != "Disabled" ]; then
-        echo "Debug mode cannot be used from this platform while SELinux is enabled, see https://bugs.launchpad.net/sahara/+bug/1292614"
+        echo "Debug mode cannot be used from this platform while SELinux is enabled, see https://storyboard.openstack.org/#!/story/1292614"
         exit 1
     fi
 fi
@@ -499,7 +499,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
     centos7_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark nc s3_hadoop"
 
     # Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
-    # https://bugs.launchpad.net/sahara/+bug/1252684
+    # https://storyboard.openstack.org/#!/story/1252684
     if [ "$platform" = 'ubuntu' ]; then
         echo "**************************************************************"
         echo "WARNING: As a workaround for DIB bug 1204824, you are about to"
