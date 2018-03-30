@@ -1,7 +1,35 @@
 #!/bin/bash -xe
 
 PLUGIN=$1
+PLUGIN_VERSION=${2:-''}
+PLUGIN_DISTRO=${3:-''}
+
 export DIB_MIN_TMPFS=10
+
+# build a specific version if requested
+if [ -n "${PLUGIN}" ] && [ -n "${PLUGIN_VERSION}" ] && [ -n "${PLUGIN_DISTRO}" ]; then
+    case ${PLUGIN} in
+        vanilla|cloudera|ambari)
+            VERSION_FLAG="-v ${PLUGIN_VERSION}"
+            ;;
+        mapr)
+            VERSION_FLAG="-r ${PLUGIN_VERSION}"
+            ;;
+        spark)
+            VERSION_FLAG="-s ${PLUGIN_VERSION}"
+            ;;
+        storm)
+            VERSION_FLAG="-t ${PLUGIN_VERSION}"
+            ;;
+        *)
+            VERSION_FLAG=""
+            ;;
+    esac
+    tox -e venv -- sahara-image-create -x -u -p ${PLUGIN} -i ${PLUGIN_DISTRO} ${VERSION_FLAG}
+    exit
+fi
+
+# build (almost) all versions for a specified plugin
 case "$PLUGIN" in
     "vanilla")
         # temporary don't test building fedora image
