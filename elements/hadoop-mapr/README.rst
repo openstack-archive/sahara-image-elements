@@ -6,7 +6,7 @@ Creates images with local mirrors of MapR repositories:
 `core <http://package.mapr.com/releases/>`_ and
 `ecosystem <http://package.mapr.com/releases/ecosystem-4.x/>`_.
 Installs `OpenJDK <http://http://openjdk.java.net/>`_ and
-`Scala <http://www.scala-lang.org/>`_.
+`Scala <https://www.scala-lang.org/>`_.
 
 In order to create the MapR images with ``diskimage-create.sh``, use the
 following syntax to select the ``MapR`` plugin:
