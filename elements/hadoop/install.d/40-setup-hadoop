@@ -11,6 +11,9 @@ function install_hadoop_v2 {
         "2.7.1")
             hadoop_native_libs_url="${HADOOP_V2_7_1_NATIVE_LIBS_DOWNLOAD_URL}"
         ;;
+        "2.7.5")
+            hadoop_native_libs_url="${HADOOP_V2_7_5_NATIVE_LIBS_DOWNLOAD_URL}"
+        ;;
         "2.8.2")
             hadoop_native_libs_url="${HADOOP_V2_8_2_NATIVE_LIBS_DOWNLOAD_URL}"
         ;;
