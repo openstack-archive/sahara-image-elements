@@ -6,7 +6,7 @@ fi
 set -eu
 set -o pipefail
 
-if [ "$DISTRO_NAME" = "centos" -o "$DISTRO_NAME" = "centos7" -o "$DISTRO_NAME" = "rhel" -o "$DISTRO_NAME" = "rhel7" ]; then
+if [ "$DISTRO_NAME" = "centos7" -o "$DISTRO_NAME" = "rhel7" ]; then
     sed '/^Defaults    requiretty*/ s/^/#/' -i /etc/sudoers
 fi
 

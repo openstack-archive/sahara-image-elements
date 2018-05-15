@@ -36,15 +36,8 @@ function add_repo_5_5_0 {
 
             apt-get update
         ;;
-        centos | rhel | centos7 | rhel7 )
-            case $DISTRO_NAME in
-                centos | rhel )
-                    releasever=6
-                ;;
-                centos7 | rhel7 )
-                    releasever=7
-                ;;
-            esac
+        centos7 | rhel7 )
+            releasever=7
             echo '[cloudera-cdh5]' > /etc/yum.repos.d/cloudera-cdh5.repo
             echo "name=Cloudera's Distribution for Hadoop, Version 5" >> /etc/yum.repos.d/cloudera-cdh5.repo
             echo "baseurl=http://archive.cloudera.com/cdh5/redhat/$releasever/x86_64/cdh/5.5.0/" >> /etc/yum.repos.d/cloudera-cdh5.repo
@@ -111,15 +104,8 @@ function add_repo_5_7_x {
 
             apt-get update
         ;;
-        centos | rhel | centos7 | rhel7 )
-            case $DISTRO_NAME in
-                centos | rhel )
-                    releasever=6
-                ;;
-                centos7 | rhel7 )
-                    releasever=7
-                ;;
-            esac
+        centos7 | rhel7 )
+            releasever=7
             echo '[cloudera-cdh5]' > /etc/yum.repos.d/cloudera-cdh5.repo
             echo "name=Cloudera's Distribution for Hadoop, Version 5" >> /etc/yum.repos.d/cloudera-cdh5.repo
             echo "baseurl=http://archive.cloudera.com/cdh5/redhat/$releasever/x86_64/cdh/$DIB_CDH_MINOR_VERSION/" >> /etc/yum.repos.d/cloudera-cdh5.repo
@@ -186,15 +172,8 @@ function add_repo_5_9_x {
 
             apt-get update
         ;;
-        centos | rhel | centos7 | rhel7 )
-            case $DISTRO_NAME in
-                centos | rhel )
-                    releasever=6
-                ;;
-                centos7 | rhel7 )
-                    releasever=7
-                ;;
-            esac
+        centos7 | rhel7 )
+            releasever=7
             echo '[cloudera-cdh5]' > /etc/yum.repos.d/cloudera-cdh5.repo
             echo "name=Cloudera's Distribution for Hadoop, Version 5" >> /etc/yum.repos.d/cloudera-cdh5.repo
             echo "baseurl=http://archive.cloudera.com/cdh5/redhat/$releasever/x86_64/cdh/$DIB_CDH_MINOR_VERSION/" >> /etc/yum.repos.d/cloudera-cdh5.repo
@@ -261,15 +240,8 @@ function add_repo_5_11_x {
 
             apt-get update
         ;;
-        centos | rhel | centos7 | rhel7 )
-            case $DISTRO_NAME in
-                centos | rhel )
-                    releasever=6
-                ;;
-                centos7 | rhel7 )
-                    releasever=7
-                ;;
-            esac
+        centos7 | rhel7 )
+            releasever=7
             echo '[cloudera-cdh5]' > /etc/yum.repos.d/cloudera-cdh5.repo
             echo "name=Cloudera's Distribution for Hadoop, Version 5" >> /etc/yum.repos.d/cloudera-cdh5.repo
             echo "baseurl=http://archive.cloudera.com/cdh5/redhat/$releasever/x86_64/cdh/$DIB_CDH_MINOR_VERSION/" >> /etc/yum.repos.d/cloudera-cdh5.repo

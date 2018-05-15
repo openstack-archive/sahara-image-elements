@@ -10,9 +10,6 @@ echo "Installing OpenJDK"
 
 default_jdk_version_for_distro () {
     case "$DISTRO_NAME" in
-        centos | rhel )
-            echo "7"
-        ;;
         fedora )
             if [ $(lsb_release -rs) -ge '21' ]; then
                 echo "8"
@@ -48,7 +45,7 @@ case "$DISTRO_NAME" in
         JDK_PATH=$(update-alternatives --list javac)
         JDK_HOME=${JDK_PATH%/bin/javac}
     ;;
-    fedora | rhel | rhel7 | centos | centos7 )
+    fedora | rhel7 | centos7 )
         # NOTE: rpm -E "%{java_home}" command returns wrong java home
         # on CentOS, Fedora and RHEL
         JRE_HOME="/usr/lib/jvm/java-openjdk/jre"

@@ -9,9 +9,6 @@ set -o pipefail
 DIB_AMBARI_VERSION="${DIB_AMBARI_VERSION:-2.4.2.0}"
 
 case "${DISTRO_NAME}" in
-    rhel | centos )
-        wget http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/$DIB_AMBARI_VERSION/ambari.repo -O /etc/yum.repos.d/ambari.repo
-    ;;
     rhel7 | centos7 )
         wget http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/$DIB_AMBARI_VERSION/ambari.repo -O /etc/yum.repos.d/ambari.repo
     ;;

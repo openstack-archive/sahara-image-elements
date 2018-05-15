@@ -13,7 +13,7 @@ following syntax to select the ``MapR`` plugin:
 
 .. sourcecode:: bash
 
-  diskimage-create.sh -p mapr [-i ubuntu|centos|centos7|rhel|rhel7] [-r 5.1.0 | 5.2.0]
+  diskimage-create.sh -p mapr [-i ubuntu|centos7|rhel7] [-r 5.1.0 | 5.2.0]
 
 In order to speed up image creation process you can download archives with MapR
 repositories and specify environment variables:

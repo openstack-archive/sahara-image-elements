@@ -19,7 +19,7 @@ function download_hadoop_v2 {
 }
 
 case "$DISTRO_NAME" in
-    fedora | ubuntu | rhel | rhel7 | centos | centos7 )
+    fedora | ubuntu | rhel7 | centos7 )
     ;;
     *)
         echo "Unknown distro: $DISTRO_NAME. Exiting."

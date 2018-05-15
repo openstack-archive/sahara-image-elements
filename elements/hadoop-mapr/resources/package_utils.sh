@@ -40,7 +40,7 @@ download_package() {
 
     if [[ "$distro" == "ubuntu" ]]; then
         download_apt_package "$package" "$version" "$directory"
-    elif [[ "$distro" == "centos" || "$distro" == "centos7" || "$distro" == "rhel" || "$distro" == "rhel7" ]]; then
+    elif [[ "$distro" == "centos7" || "$distro" == "rhel7" ]]; then
         download_yum_package "$package" "$version" "$directory"
     fi
 }
@@ -93,7 +93,7 @@ create_repo() {
 
     if [[ "$distro" == "ubuntu" ]]; then
         create_apt_repo "$directory"
-    elif [[ "$distro" == "centos" || "$distro" == "centos7" || "$distro" == "rhel" || "$distro" == "rhel7" ]]; then
+    elif [[ "$distro" == "centos7" || "$distro" == "rhel7" ]]; then
         create_yum_repo "$directory"
     fi
 }
@@ -133,7 +133,7 @@ add_repo() {
 
     if [[ "$distro" == "ubuntu" ]]; then
         add_apt_repo "$repo_name" "$repo_url"
-    elif [[ "$distro" == "centos" || "$distro" == "centos7" || "$distro" == "rhel" || "$distro" == "rhel7" ]]; then
+    elif [[ "$distro" == "centos7" || "$distro" == "rhel7" ]]; then
         add_yum_repo "$repo_name" "$repo_url"
     fi
 }
@@ -164,7 +164,7 @@ add_local_repo() {
 
     if [[ "$distro" == "ubuntu" ]]; then
         add_local_apt_repo "$repo_name" "$directory"
-    elif [[ "$distro" == "centos" || "$distro" == "centos7" || "$distro" == "rhel" || "$distro" == "rhel7" ]]; then
+    elif [[ "$distro" == "centos7" || "$distro" == "rhel7" ]]; then
         add_local_yum_repo "$repo_name" "$directory"
     fi
 }
@@ -192,7 +192,7 @@ remove_repo() {
 
     if [[ "$distro" == "ubuntu" ]]; then
         remove_apt_repo "$repo_name"
-    elif [[ "$distro" == "centos" || "$distro" == "centos7" || "$distro" == "rhel" || "$distro" == "rhel7" ]]; then
+    elif [[ "$distro" == "centos7" || "$distro" == "rhel7" ]]; then
         remove_yum_repo "$repo_name"
     fi
 }

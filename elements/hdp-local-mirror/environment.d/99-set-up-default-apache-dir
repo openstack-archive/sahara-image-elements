@@ -1,5 +1,5 @@
 case "${DISTRO_NAME}" in
-    centos | centos7 | rhel | rhel7 | fedora )
+    centos7 | rhel7 | fedora )
         export DIB_DEFAULT_APACHE_DIR="/var/www/html"
     ;;
     ubuntu )

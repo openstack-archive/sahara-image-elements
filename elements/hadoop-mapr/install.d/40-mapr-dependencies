@@ -64,7 +64,7 @@ EOF
     watchdog \
     zlib1g-dev \
     zip
-elif [ "$DISTRO_NAME" = "centos" -o "$DISTRO_NAME" = "centos7" -o "$DISTRO_NAME" = "rhel" -o "$DISTRO_NAME" = "rhel7" ]; then
+elif [ "$DISTRO_NAME" = "centos7" -o "$DISTRO_NAME" = "rhel7" ]; then
     install-packages cdparanoia-libs \
     cups \
     cups-libs \

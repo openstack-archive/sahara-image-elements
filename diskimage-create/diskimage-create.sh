@@ -31,7 +31,7 @@ usage() {
     echo
     echo "Usage: $(basename $0)"
     echo "         [-p vanilla|spark|cloudera|storm|mapr|ambari|plain]"
-    echo "         [-i ubuntu|fedora|centos|centos7]"
+    echo "         [-i ubuntu|fedora|centos7]"
     echo "         [-v 2.7.1|2.7.5|2.8.2|5.5|5.7|5.9|5.11|2.2.0.0|2.2.1.0|2.4.2.0]"
     echo "         [-r 5.1.0|5.2.0]"
     echo "         [-s 1.3.1|1.6.0|2.1.0|2.2.0]"
@@ -44,7 +44,7 @@ usage() {
     echo "         [-h]"
     echo "   '-p' is plugin version (default: all plugins)"
     echo "   '-i' is operating system of the base image (default: all non-deprecated"
-    echo "        by plugin). 'centos' images (CentOS 6) are deprecated."
+    echo "        by plugin)."
     echo "   '-v' is hadoop version (default: all supported by plugin)"
     echo "   '-r' is MapR Version (default: ${DIB_DEFAULT_MAPR_VERSION})"
     echo "   '-s' is Spark version (default: ${DIB_DEFAULT_SPARK_VERSION})"
@@ -151,20 +151,6 @@ if [ "$DEBUG_MODE" = "true" -a "$platform" != 'ubuntu' ]; then
     fi
 fi
 
-# Deprecation
-if [ "$BASE_IMAGE_OS" = "centos" ]; then
-    echo "*************************************************"
-    echo "* __        ___    ____  _   _ ___ _   _  ____  *"
-    echo "* \ \      / / \  |  _ \| \ | |_ _| \ | |/ ___| *"
-    echo "*  \ \ /\ / / _ \ | |_) |  \| || ||  \| | |  _  *"
-    echo "*   \ V  V / ___ \|  _ <| |\  || || |\  | |_| | *"
-    echo "*    \_/\_/_/   \_\_| \_\_| \_|___|_| \_|\____| *"
-    echo "*                                               *"
-    echo "*        CentOS 6 images are deprecated !       *"
-    echo "*          Please switch to 'centos7'           *"
-    echo "*************************************************"
-fi
-
 check_spark_version () {
     case "$DIB_SPARK_VERSION" in
         "1.3.1" | "1.6.0" | "2.1.0" | "2.2.0");;
@@ -191,7 +177,7 @@ case "$PLUGIN" in
             ;;
         esac
         case "$BASE_IMAGE_OS" in
-            "" | "ubuntu" | "fedora" | "centos" | "centos7");;
+            "" | "ubuntu" | "fedora" | "centos7");;
             *)
                 echo -e "'$BASE_IMAGE_OS' image type is not supported by '$PLUGIN'.\nAborting"
                 exit 1
@@ -201,7 +187,7 @@ case "$PLUGIN" in
         ;;
     "cloudera")
         case "$BASE_IMAGE_OS" in
-            "" | "ubuntu" | "centos" | "centos7");;
+            "" | "ubuntu" | "centos7");;
             *)
                 echo -e "'$BASE_IMAGE_OS' image type is not supported by '$PLUGIN'.\nAborting"
                 exit 1
@@ -266,7 +252,7 @@ case "$PLUGIN" in
         ;;
     "ambari")
         case "$BASE_IMAGE_OS" in
-            "" | "centos" | "centos7" | "ubuntu" )
+            "" | "centos7" | "ubuntu" )
             ;;
             * )
                 echo "\"$BASE_IMAGE_OS\" image type is not supported by \"$PLUGIN\".\nAborting"
@@ -283,7 +269,7 @@ case "$PLUGIN" in
         ;;
     "mapr")
         case "$BASE_IMAGE_OS" in
-            "" | "ubuntu" | "centos" | "centos7");;
+            "" | "ubuntu" | "centos7");;
             *)
                 echo -e "'$BASE_IMAGE_OS' image type is not supported by '$PLUGIN'.\nAborting"
                 exit 1
@@ -310,7 +296,7 @@ case "$PLUGIN" in
         ;;
     "plain")
         case "$BASE_IMAGE_OS" in
-            "" | "ubuntu" | "fedora" | "centos" | "centos7");;
+            "" | "ubuntu" | "fedora" | "centos7");;
             *)
                 echo -e "'$BASE_IMAGE_OS' image type is not supported by '$PLUGIN'.\nAborting"
                 exit 1
@@ -364,10 +350,6 @@ need_required_packages() {
             ;;
         "rhel" | "centos")
             package_list="qemu-kvm qemu-img kpartx git"
-            if [ ${platform} = "centos" ]; then
-                # CentOS requires the python-argparse package be installed separately
-                package_list="$package_list python-argparse"
-            fi
             ;;
         *)
             echo -e "Unknown platform '$platform' for the package list.\nAborting"
@@ -393,13 +375,6 @@ if need_required_packages; then
                 ;;
             "opensuse")
                 sudo zypper --non-interactive --gpg-auto-import-keys in $package_list
-                ;;
-            "fedora" | "rhel" | "centos")
-                if [ ${platform} = "centos" ]; then
-                    # install EPEL repo, in order to install argparse
-                    sudo rpm -Uvh --force http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-                fi
-                sudo yum install $package_list -y
                 ;;
             *)
                 echo -e "Unknown platform '$platform' for installing packages.\nAborting"
@@ -453,25 +428,11 @@ image_create() {
         case "$distro" in
             ubuntu) elements="$elements apt-mirror" ;;
             fedora) elements="$elements fedora-mirror" ;;
-            centos | centos7) elements="$elements centos-mirror" ;;
+            centos7) elements="$elements centos-mirror" ;;
         esac
     fi
-    # use a custom cloud image for CentOS 6
-    case "$distro" in
-        centos)
-            export BASE_IMAGE_FILE=${BASE_IMAGE_FILE:-"CentOS-6.6-cloud-init-20150821.qcow2"}
-            export DIB_CLOUD_IMAGES=${DIB_CLOUD_IMAGES:-"http://sahara-files.mirantis.com"}
-        ;;
-    esac
 
     disk-image-create $IMAGE_FORMAT $TRACING -o "$output" $args "$distro" $elements "$@"
-
-    # cleanup
-    case "$distro" in
-        centos)
-            unset BASE_IMAGE_FILE DIB_CLOUD_IMAGES
-        ;;
-    esac
 }
 
 set_hive_version() {
@@ -524,7 +485,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
 
     ubuntu_elements_sequence="hadoop oozie mysql hive $JAVA_ELEMENT swift_hadoop spark s3_hadoop"
     fedora_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark s3_hadoop"
-    centos_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark nc s3_hadoop"
     centos7_elements_sequence="hadoop oozie mysql disable-firewall hive $JAVA_ELEMENT swift_hadoop spark nc s3_hadoop"
 
     # Workaround for https://bugs.launchpad.net/diskimage-builder/+bug/1204824
@@ -536,7 +496,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
         echo "         disabled. Do not use these images in production.       "
         echo "**************************************************************"
         fedora_elements_sequence="$fedora_elements_sequence selinux-permissive"
-        centos_elements_sequence="$centos_elements_sequence selinux-permissive"
         centos7_elements_sequence="$centos7_elements_sequence selinux-permissive"
         suffix=".selinux-permissive"
     fi
@@ -590,16 +549,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "vanilla" ]; then
             export fedora_image_name=${fedora_vanilla_hadoop_2_8_2_image_name:-"fedora_sahara_vanilla_hadoop_2_8_2_latest$suffix"}
             set_hive_version
             image_create fedora $fedora_image_name $fedora_elements_sequence
-        fi
-    fi
-
-    # CentOS 6 cloud image
-    if [ "$BASE_IMAGE_OS" = "centos" ]; then
-        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "2.7.1" ]; then
-            export DIB_HADOOP_VERSION=${DIB_HADOOP_VERSION_2_7_1:-"2.7.1"}
-            export centos_image_name=${centos_vanilla_hadoop_2_7_1_image_name:-"centos_sahara_vanilla_hadoop_2_7_1_latest$suffix"}
-            set_hive_version
-            image_create centos $centos_image_name $centos_elements_sequence
         fi
     fi
 
@@ -703,11 +652,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "ambari" ]; then
         image_create ubuntu $ambari_ubuntu_image_name $ambari_element_sequence
         unset DIB_RELEASE
     fi
-    if [ "$BASE_IMAGE_OS" = "centos" ]; then
-        ambari_centos_image_name=${ambari_centos_image_name:-centos_sahara_ambari}
-        ambari_element_sequence="ambari $JAVA_ELEMENT disable-firewall swift_hadoop kdc nc"
-        image_create centos $ambari_centos_image_name $ambari_element_sequence
-    fi
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
         ambari_centos7_image_name=${ambari_centos7_image_name:-"centos7-sahara-ambari"}
         ambari_element_sequence="disable-selinux ambari $JAVA_ELEMENT disable-firewall swift_hadoop kdc nc"
@@ -773,18 +717,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "cloudera" ]; then
             export DIB_RELEASE="xenial"
             image_create ubuntu $cloudera_5_11_ubuntu_image_name $cloudera_elements_sequence
             unset DIB_CDH_VERSION DIB_RELEASE DIB_CDH_MINOR_VERSION
-        fi
-    fi
-
-    if [ "$BASE_IMAGE_OS" = "centos" ]; then
-        centos_cloudera_elements_sequence="selinux-permissive disable-firewall nc"
-        if [ -z "$HADOOP_VERSION" -o "$HADOOP_VERSION" = "5.5" ]; then
-            export DIB_CDH_VERSION="5.5"
-
-            cloudera_5_5_centos_image_name=${cloudera_5_5_centos_image_name:-centos_sahara_cloudera_5_5_0}
-            image_create centos $cloudera_5_5_centos_image_name $cloudera_elements_sequence $centos_cloudera_elements_sequence
-
-            unset DIB_CDH_VERSION
         fi
     fi
 
@@ -859,14 +791,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "mapr" ]; then
         unset DIB_RELEASE
     fi
 
-    if [ "$BASE_IMAGE_OS" = "centos" ]; then
-        mapr_centos_image_name=${mapr_centos_image_name:-centos_6.6_mapr_${DIB_MAPR_VERSION}_latest}
-
-        image_create centos $mapr_centos_image_name $mapr_centos_elements_sequence
-
-        unset DIB_CLOUD_INIT_DATASOURCES
-    fi
-
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then
         mapr_centos7_image_name=${mapr_centos7_image_name:-centos_7_mapr_${DIB_MAPR_VERSION}_latest}
 
@@ -888,7 +812,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "plain" ]; then
 
     ubuntu_elements_sequence="$common_elements"
     fedora_elements_sequence="$common_elements"
-    centos_elements_sequence="$common_elements disable-firewall disable-selinux nc"
     centos7_elements_sequence="$common_elements disable-firewall disable-selinux nc"
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
@@ -901,12 +824,6 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "plain" ]; then
         plain_image_name=${plain_fedora_image_name:-fedora_plain}
 
         image_create fedora $plain_image_name $fedora_elements_sequence
-    fi
-
-    if [ "$BASE_IMAGE_OS" = "centos" ]; then
-        plain_image_name=${plain_centos_image_name:-centos_plain}
-
-        image_create centos $plain_image_name $centos_elements_sequence
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "centos7" ]; then

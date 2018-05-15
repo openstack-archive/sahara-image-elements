@@ -8,6 +8,6 @@ set -o pipefail
 
 if [ "$DISTRO_NAME" = "ubuntu" ]; then
     apt-get update
-elif [ "$DISTRO_NAME" = "centos" -o "$DISTRO_NAME" = "centos7" -o "$DISTRO_NAME" = "rhel" -o "$DISTRO_NAME" = "rhel7" ]; then
+elif [ "$DISTRO_NAME" = "centos7" -o "$DISTRO_NAME" = "rhel7" ]; then
     yum clean all && yum repolist
 fi

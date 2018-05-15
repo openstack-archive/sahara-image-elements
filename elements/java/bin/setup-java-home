@@ -36,7 +36,7 @@ case "$DISTRO_NAME" in
         update-alternatives --set java $JRE_HOME/bin/java
         update-alternatives --set javac $JDK_HOME/bin/javac
     ;;
-    fedora | rhel | rhel7 | centos | centos7 )
+    fedora | rhel7 | centos7 )
         alternatives --install /usr/bin/java java $JRE_HOME/bin/java 200000
         alternatives --install /usr/bin/javac javac $JDK_HOME/bin/javac 200000
     ;;

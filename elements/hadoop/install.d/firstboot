@@ -35,9 +35,6 @@ function firstboot_common {
         ;;
         CentOS )
             case "$(lsb_release -rs)" in
-                6.*)
-                    chown -R cloud-user:cloud-user /home/cloud-user
-                    ;;
                 7.*)
                     chown -R centos:centos /home/centos
                     ;;
