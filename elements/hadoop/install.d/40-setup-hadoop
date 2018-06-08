@@ -17,6 +17,9 @@ function install_hadoop_v2 {
         "2.8.2")
             hadoop_native_libs_url="${HADOOP_V2_8_2_NATIVE_LIBS_DOWNLOAD_URL}"
         ;;
+        "3.0.1")
+            hadoop_native_libs_url="${HADOOP_V3_0_1_NATIVE_LIBS_DOWNLOAD_URL}"
+        ;;
         *)
             echo "Invalid DIB_HADOOP_VERSION: $DIB_HADOOP_VERSION"
             exit 1
