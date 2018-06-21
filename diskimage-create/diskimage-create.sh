@@ -16,7 +16,7 @@ DIB_DEFAULT_MAPR_VERSION="5.2.0"
 DIB_DEFAULT_SPARK_VERSION="2.3.0"
 
 # The default version for Storm plugin
-DIB_DEFAULT_STORM_VERSION="1.1.0"
+DIB_DEFAULT_STORM_VERSION="1.2.1"
 
 # Bare metal image generation is enabled with the -b flag, it is off by default
 SIE_BAREMETAL="false"
@@ -35,7 +35,7 @@ usage() {
     echo "         [-v 2.7.1|2.7.5|2.8.2|3.0.1|5.5|5.7|5.9|5.11|2.2.0.0|2.2.1.0|2.4.2.0]"
     echo "         [-r 5.1.0|5.2.0]"
     echo "         [-s 1.6.0|2.1.0|2.2.0|2.3.0]"
-    echo "         [-t 0.9.2|1.0.1|1.1.0|1.1.1]"
+    echo "         [-t 1.0.1|1.1.0|1.1.1|1.2.0|1.2.1]"
     echo "         [-f qcow2|raw]"
     echo "         [-d]"
     echo "         [-u]"
@@ -233,7 +233,7 @@ case "$PLUGIN" in
         esac
 
         case "$DIB_STORM_VERSION" in
-            "0.9.2" | "1.0.1" | "1.1.0" | "1.1.1");;
+            "1.0.1" | "1.1.0" | "1.1.1" | "1.2.0" | "1.2.1");;
             "")
                 echo "Storm version not specified"
                 echo "Storm ${DIB_DEFAULT_STORM_VERSION} will be used"
