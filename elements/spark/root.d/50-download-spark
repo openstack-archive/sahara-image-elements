@@ -13,13 +13,14 @@ mkdir -p $tmp_dir
 if [ -z "${SPARK_DOWNLOAD_URL:-}" ]; then
     # Check hadoop version
     # INFO on hadoop versions: http://spark.apache.org/docs/latest/hadoop-third-party-distributions.html
+    # Now the below is just a sanity check
     if [ -z "${SPARK_HADOOP_DL:-}" ]; then
         case "${DIB_CDH_VERSION:-}" in
             5.5)
-                SPARK_HADOOP_DL=hadoop2.6
+                SPARK_HADOOP_DL=hadoop2.7
             ;;
             5.11)
-                SPARK_HADOOP_DL=hadoop2.6
+                SPARK_HADOOP_DL=hadoop2.7
             ;;
             *)
                 echo "WARNING: Cloudera CDH $DIB_CDH_VERSION not supported."

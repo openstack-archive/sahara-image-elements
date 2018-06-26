@@ -1,0 +1,54 @@
+#!/bin/bash
+if [ "${DIB_DEBUG_TRACE:-0}" -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+
+case "$plugin_type" in
+    "vanilla" | "spark" )
+        ;;
+    "cloudera" )
+        echo -n "The s3_hadoop element is not supported on CDH,"
+        echo " because the relevant libraries need no manipulation."
+        # NOTE: actually the above statement is only true on CDH>=5.9
+        exit 1
+        ;;
+    *)
+        # TODO: Investigate if some changes are in fact needed for HDP, MapR
+        echo "The s3_hadoop element is only relevant to Vanilla and Spark."
+        exit 1
+esac
+
+SPARK_JARS_DIR_PATH="/opt/spark/jars"
+HADOOP_TOOLS_DIR_PATH="/opt/hadoop/share/hadoop/tools/lib"
+HADOOP_COMMON_DIR_PATH="/opt/hadoop/share/hadoop/common/lib"
+
+if [ "$plugin_type" = "vanilla" ]; then
+    if [ "$DIB_HADOOP_VERSION" = "2.7.1" -o "$DIB_HADOOP_VERSION" = "2.7.5" ]; then
+        # These versions need a patched hadoop-aws jar
+        wget https://tarballs.openstack.org/sahara-extra/dist/common-artifacts/hadoop-aws-$DIB_HADOOP_VERSION.jar -O $HADOOP_TOOLS_DIR_PATH/hadoop-aws-$DIB_HADOOP_VERSION.jar
+    fi
+
+    # NOTE: It's easier just to copy, than to mess with YARN
+    cp $HADOOP_TOOLS_DIR_PATH/*aws*.jar $HADOOP_COMMON_DIR_PATH
+    if [ "$DIB_HADOOP_VERSION" = "2.7.1" -o "$DIB_HADOOP_VERSION" = "2.7.5" -o "$DIB_HADOOP_VERSION" = "2.8.2" ]; then
+        # Hadoop-aws older than 2.9.0 needs these too
+        cp $HADOOP_TOOLS_DIR_PATH/joda-time*.jar $HADOOP_COMMON_DIR_PATH
+        # The following jars are also on-disk, but under the wrong namespace
+        wget http://central.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.5.3/jackson-core-2.5.3.jar -O $HADOOP_COMMON_DIR_PATH/jackson-core.jar
+        wget http://central.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.5.3/jackson-databind-2.5.3.jar -O $HADOOP_COMMON_DIR_PATH/jackson-databind.jar
+        wget http://central.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.5.3/jackson-annotations-2.5.3.jar -O $HADOOP_COMMON_DIR_PATH/jackson-annotations.jar
+    fi
+fi
+
+# For both Spark and Vanilla plugins:
+# (The s3a driver in hadoop-aws 2.6.5 is too buggy to be redeemed)
+if [ "$SPARK_HADOOP_DL" != "hadoop2.6" ]; then
+    # The hadoop-aws and aws-java-sdk libraries are missing here, but we
+    # cannot copy them from the Hadoop folder on-disk due to
+    # version/patching issues
+    wget https://tarballs.openstack.org/sahara-extra/dist/common-artifacts/hadoop-aws-2.7.3.jar -O $SPARK_JARS_DIR_PATH/hadoop-aws.jar
+    wget http://central.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar -O $SPARK_JARS_DIR_PATH/aws-java-sdk.jar
+fi

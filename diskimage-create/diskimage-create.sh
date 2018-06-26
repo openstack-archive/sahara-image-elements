@@ -622,6 +622,11 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
         export DIB_RELEASE=${DIB_RELEASE:-trusty}
         export DIB_CDH_VERSION="5.5"
     fi
+    if [ "$DIB_SPARK_VERSION" = "1.6.0" ]; then
+        export SPARK_HADOOP_DL=hadoop2.6
+    else
+        export SPARK_HADOOP_DL=hadoop2.7
+    fi
     # Tell the cloudera element to install only hdfs
     export DIB_CDH_HDFS_ONLY=1
 
@@ -630,6 +635,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
 
     # Creating Ubuntu cloud image
     image_create ubuntu $ubuntu_image_name $ubuntu_elements_sequence
+    unset SPARK_HADOOP_DL
     unset DIB_CLOUD_INIT_DATASOURCES
     unset DIB_HDFS_LIB_DIR
     unset DIB_CDH_HDFS_ONLY
