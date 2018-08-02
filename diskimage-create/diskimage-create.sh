@@ -610,7 +610,7 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "spark" ]; then
     export DIB_SPARK_VERSION
     export plugin_type="spark"
 
-    if [ "$DIB_SPARK_VERSION" = "2.2.0" || "$DIB_SPARK_VERSION" = "2.3.0" ]; then
+    if [ "$DIB_SPARK_VERSION" = "2.2.0" -o "$DIB_SPARK_VERSION" = "2.3.0" ]; then
         export DIB_CDH_VERSION="5.11"
         export DIB_RELEASE=${DIB_RELEASE:-xenial}
     else
