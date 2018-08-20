@@ -1,6 +1,9 @@
 - project:
+    templates:
+      - check-requirements
     check:
       jobs:
+        - openstack-tox-pep8
         - sahara-image-elements-buildimages-ambari:
             voting: false
         - sahara-image-elements-buildimages-cloudera:
@@ -15,6 +18,12 @@
             voting: false
         - sahara-image-elements-buildimages-vanilla:
             voting: false
+    gate:
+      jobs:
+        - openstack-tox-pep8
+    post:
+      jobs:
+        - publish-openstack-python-branch-tarball
 
 - job:
     name: sahara-image-elements-buildimages-basejob
