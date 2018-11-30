@@ -115,6 +115,17 @@ else
     RC_SCRIPT_DIR="/etc/rc.d"
 fi
 
+# Make sure that rc-local.service starts after cloud-init.service,
+# so that the cloud-init user (centos, ubuntu, cloud-user, ...)
+# is available. See also:
+# https://bugs.launchpad.net/ubuntu/+source/cloud-init/+bug/1468103
+# All version of distributions affected by this change use systemd.
+mkdir -p /etc/systemd/system/rc-local.service.d/
+cat >/etc/systemd/system/rc-local.service.d/override.conf <<EOF
+[Unit]
+After=cloud-init.service
+EOF
+
 install -D -g root -o root -m 0755 $(dirname $0)/firstboot $RC_SCRIPT_DIR/rc.local
 # make sure it is run, be it on SysV, upstart, or systemd
 chmod +x $RC_SCRIPT_DIR/rc.local
