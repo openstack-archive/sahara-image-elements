@@ -843,7 +843,9 @@ if [ -z "$PLUGIN" -o "$PLUGIN" = "plain" ]; then
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "ubuntu" ]; then
         plain_image_name=${plain_ubuntu_image_name:-ubuntu_plain}
 
+        export DIB_RELEASE=${DIB_RELEASE:-xenial}
         image_create ubuntu $plain_image_name $ubuntu_elements_sequence
+        unset DIB_RELEASE
     fi
 
     if [ -z "$BASE_IMAGE_OS" -o "$BASE_IMAGE_OS" = "fedora" ]; then
