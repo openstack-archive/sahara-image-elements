@@ -1,9 +1,9 @@
 - project:
     templates:
       - check-requirements
+      - openstack-lower-constraints-jobs
     check:
       jobs:
-        - openstack-tox-lower-constraints
         - openstack-tox-pep8
         - sahara-image-elements-buildimages-ambari:
             voting: false
@@ -21,7 +21,6 @@
             voting: false
     gate:
       jobs:
-        - openstack-tox-lower-constraints
         - openstack-tox-pep8
     post:
       jobs:
