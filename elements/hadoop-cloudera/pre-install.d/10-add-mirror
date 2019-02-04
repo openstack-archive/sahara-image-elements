@@ -17,12 +17,12 @@ function add_repo_5_5_0 {
             echo 'deb [arch=amd64] http://archive.cloudera.com/cdh5/ubuntu/trusty/amd64/cdh trusty-cdh5.5.0 contrib' > /etc/apt/sources.list.d/cdh5.list
             echo 'deb-src http://archive.cloudera.com/cdh5/ubuntu/trusty/amd64/cdh trusty-cdh5.5.0 contrib' >> /etc/apt/sources.list.d/cdh5.list
 
-            wget -qO - http://archive-primary.cloudera.com/cdh5/ubuntu/trusty/amd64/cdh/archive.key | apt-key add -
+            wget -qO - http://archive.cloudera.com/cdh5/ubuntu/trusty/amd64/cdh/archive.key | apt-key add -
 
             echo 'deb [arch=amd64] http://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm trusty-cm5.5.0 contrib' > /etc/apt/sources.list.d/cm5.list
             echo 'deb-src http://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm trusty-cm5.5.0 contrib' >> /etc/apt/sources.list.d/cm5.list
 
-            wget -qO - http://archive-primary.cloudera.com/cm5/ubuntu/trusty/amd64/cm/archive.key | apt-key add -
+            wget -qO - http://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/archive.key | apt-key add -
 
             wget -O /etc/apt/sources.list.d/kms.list http://archive.cloudera.com/navigator-keytrustee5/ubuntu/trusty/amd64/navigator-keytrustee/cloudera.list
             wget -qO - http://archive.cloudera.com/navigator-keytrustee5/ubuntu/trusty/amd64/navigator-keytrustee/archive.key | apt-key add -
@@ -92,12 +92,12 @@ function add_repo_5_7_x {
             echo "deb [arch=amd64] http://archive.cloudera.com/cdh5/ubuntu/trusty/amd64/cdh trusty-cdh$DIB_CDH_MINOR_VERSION contrib" > /etc/apt/sources.list.d/cdh5.list
             echo "deb-src http://archive.cloudera.com/cdh5/ubuntu/trusty/amd64/cdh trusty-cdh$DIB_CDH_MINOR_VERSION contrib" >> /etc/apt/sources.list.d/cdh5.list
 
-            wget -qO - http://archive-primary.cloudera.com/cdh5/ubuntu/trusty/amd64/cdh/archive.key | apt-key add -
+            wget -qO - http://archive.cloudera.com/cdh5/ubuntu/trusty/amd64/cdh/archive.key | apt-key add -
 
             echo "deb [arch=amd64] http://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm trusty-cm$DIB_CDH_MINOR_VERSION contrib" > /etc/apt/sources.list.d/cm5.list
             echo "deb-src http://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm trusty-cm$DIB_CDH_MINOR_VERSION contrib" >> /etc/apt/sources.list.d/cm5.list
 
-            wget -qO - http://archive-primary.cloudera.com/cm5/ubuntu/trusty/amd64/cm/archive.key | apt-key add -
+            wget -qO - http://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/archive.key | apt-key add -
 
             wget -O /etc/apt/sources.list.d/kms.list http://archive.cloudera.com/navigator-keytrustee5/ubuntu/trusty/amd64/navigator-keytrustee/cloudera.list
             wget -qO - http://archive.cloudera.com/navigator-keytrustee5/ubuntu/trusty/amd64/navigator-keytrustee/archive.key | apt-key add -
@@ -167,12 +167,12 @@ function add_repo_5_9_x {
             echo "deb [arch=amd64] http://archive.cloudera.com/cdh5/ubuntu/trusty/amd64/cdh trusty-cdh$DIB_CDH_MINOR_VERSION contrib" > /etc/apt/sources.list.d/cdh5.list
             echo "deb-src http://archive.cloudera.com/cdh5/ubuntu/trusty/amd64/cdh trusty-cdh$DIB_CDH_MINOR_VERSION contrib" >> /etc/apt/sources.list.d/cdh5.list
 
-            wget -qO - http://archive-primary.cloudera.com/cdh5/ubuntu/trusty/amd64/cdh/archive.key | apt-key add -
+            wget -qO - http://archive.cloudera.com/cdh5/ubuntu/trusty/amd64/cdh/archive.key | apt-key add -
 
             echo "deb [arch=amd64] http://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm trusty-cm$DIB_CDH_MINOR_VERSION contrib" > /etc/apt/sources.list.d/cm5.list
             echo "deb-src http://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm trusty-cm$DIB_CDH_MINOR_VERSION contrib" >> /etc/apt/sources.list.d/cm5.list
 
-            wget -qO - http://archive-primary.cloudera.com/cm5/ubuntu/trusty/amd64/cm/archive.key | apt-key add -
+            wget -qO - http://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/archive.key | apt-key add -
 
             wget -O /etc/apt/sources.list.d/kms.list http://archive.cloudera.com/navigator-keytrustee5/ubuntu/trusty/amd64/navigator-keytrustee/cloudera.list
             wget -qO - http://archive.cloudera.com/navigator-keytrustee5/ubuntu/trusty/amd64/navigator-keytrustee/archive.key | apt-key add -
@@ -242,12 +242,12 @@ function add_repo_5_11_x {
             echo "deb [arch=amd64] http://archive.cloudera.com/cdh5/ubuntu/xenial/amd64/cdh xenial-cdh$DIB_CDH_MINOR_VERSION contrib" > /etc/apt/sources.list.d/cdh5.list
             echo "deb-src http://archive.cloudera.com/cdh5/ubuntu/xenial/amd64/cdh xenial-cdh$DIB_CDH_MINOR_VERSION contrib" >> /etc/apt/sources.list.d/cdh5.list
 
-            wget -qO - http://archive-primary.cloudera.com/cdh5/ubuntu/xenial/amd64/cdh/archive.key | apt-key add -
+            wget -qO - http://archive.cloudera.com/cdh5/ubuntu/xenial/amd64/cdh/archive.key | apt-key add -
 
             echo "deb [arch=amd64] http://archive.cloudera.com/cm5/ubuntu/xenial/amd64/cm xenial-cm$DIB_CDH_MINOR_VERSION contrib" > /etc/apt/sources.list.d/cm5.list
             echo "deb-src http://archive.cloudera.com/cm5/ubuntu/xenial/amd64/cm xenial-cm$DIB_CDH_MINOR_VERSION contrib" >> /etc/apt/sources.list.d/cm5.list
 
-            wget -qO - http://archive-primary.cloudera.com/cm5/ubuntu/xenial/amd64/cm/archive.key | apt-key add -
+            wget -qO - http://archive.cloudera.com/cm5/ubuntu/xenial/amd64/cm/archive.key | apt-key add -
 
             wget -O /etc/apt/sources.list.d/kms.list http://archive.cloudera.com/navigator-keytrustee5/ubuntu/xenial/amd64/navigator-keytrustee/cloudera.list
             wget -qO - http://archive.cloudera.com/navigator-keytrustee5/ubuntu/xenial/amd64/navigator-keytrustee/archive.key | apt-key add -
