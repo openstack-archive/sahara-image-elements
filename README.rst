@@ -18,4 +18,4 @@ Script for creating Fedora and Ubuntu cloud images with our elements and default
 
     tox -e venv -- sahara-image-create
 
-Note: More information about script `diskimage-create <https://git.openstack.org/cgit/openstack/sahara-image-elements/tree/diskimage-create/README.rst>`_
+Note: More information about script `diskimage-create <https://opendev.org/openstack/sahara-image-elements/src/branch/master/diskimage-create/README.rst>`_
