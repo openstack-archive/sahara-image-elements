@@ -327,7 +327,7 @@ fi
 #################
 
 is_installed() {
-    if [ "$platform" = 'ubuntu' ]; then
+    if [ "$platform" = 'ubuntu' -o "$platform" = 'debian' ]; then
         dpkg -s "$1" &> /dev/null
     else
         # centos, fedora, opensuse, or rhel
@@ -339,8 +339,8 @@ is_installed() {
 
 need_required_packages() {
     case "$platform" in
-        "ubuntu")
-            package_list="qemu kpartx git"
+        "ubuntu" | "debian")
+            package_list="qemu-utils kpartx git"
             ;;
         "fedora")
             package_list="qemu-img kpartx git"
@@ -359,6 +359,7 @@ need_required_packages() {
 
     for p in `echo $package_list`; do
         if ! is_installed $p; then
+            echo "Package $p is not installed on the system."
             return 0
         fi
     done
@@ -369,7 +370,7 @@ if need_required_packages; then
     # install required packages if requested
     if [ -n "$DIB_UPDATE_REQUESTED" ]; then
         case "$platform" in
-            "ubuntu")
+            "ubuntu" | "debian")
                 sudo apt-get update
                 sudo apt-get install $package_list -y
                 ;;
