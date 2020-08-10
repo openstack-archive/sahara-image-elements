@@ -1,6 +1,8 @@
 #!/bin/bash -xe
 
 PLUGIN=$1
+TOX_EXECUTABLE=${2:-'tox'}
+
 export DIB_MIN_TMPFS=10
 case "$PLUGIN" in
     "vanilla")
@@ -8,7 +10,7 @@ case "$PLUGIN" in
         for distro in ubuntu centos7; do
             # limit to 2 releases
             for version in 2.7.1 2.8.2; do
-                tox -e venv -- sahara-image-create -x -u -p $PLUGIN -i $distro -v $version
+                ${TOX_EXECUTABLE} -e venv -- sahara-image-create -x -u -p $PLUGIN -i $distro -v $version
             done
         done
         ;;
@@ -20,13 +22,13 @@ case "$PLUGIN" in
             # NOTE(vgridnev): Number of versions are growing; testing only 2 latest
             # releases of CDH
             for version in 5.9 5.11; do
-              tox -e venv -- sahara-image-create -x -u -p $PLUGIN -i $distro -v $version
+              ${TOX_EXECUTABLE} -e venv -- sahara-image-create -x -u -p $PLUGIN -i $distro -v $version
               find . -maxdepth 1 -name '*cloudera*.qcow2' -delete
               sudo rm -rf ~/.cache/image-create
             done
         done
         ;;
     *)
-        tox -e venv -- sahara-image-create -x -u -p $PLUGIN
+        ${TOX_EXECUTABLE} -e venv -- sahara-image-create -x -u -p $PLUGIN
         ;;
 esac
