@@ -37,9 +37,9 @@ if [ "$plugin_type" = "vanilla" ]; then
         # Hadoop-aws older than 2.9.0 needs these too
         cp $HADOOP_TOOLS_DIR_PATH/joda-time*.jar $HADOOP_COMMON_DIR_PATH
         # The following jars are also on-disk, but under the wrong namespace
-        wget http://central.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.5.3/jackson-core-2.5.3.jar -O $HADOOP_COMMON_DIR_PATH/jackson-core.jar
-        wget http://central.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.5.3/jackson-databind-2.5.3.jar -O $HADOOP_COMMON_DIR_PATH/jackson-databind.jar
-        wget http://central.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.5.3/jackson-annotations-2.5.3.jar -O $HADOOP_COMMON_DIR_PATH/jackson-annotations.jar
+        wget https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.5.3/jackson-core-2.5.3.jar -O $HADOOP_COMMON_DIR_PATH/jackson-core.jar
+        wget https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.5.3/jackson-databind-2.5.3.jar -O $HADOOP_COMMON_DIR_PATH/jackson-databind.jar
+        wget https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.5.3/jackson-annotations-2.5.3.jar -O $HADOOP_COMMON_DIR_PATH/jackson-annotations.jar
     fi
 fi
 
@@ -50,5 +50,5 @@ if [ "$SPARK_HADOOP_DL" != "hadoop2.6" ]; then
     # cannot copy them from the Hadoop folder on-disk due to
     # version/patching issues
     wget https://tarballs.openstack.org/sahara-extra/dist/common-artifacts/hadoop-aws-2.7.3.jar -O $SPARK_JARS_DIR_PATH/hadoop-aws.jar
-    wget http://central.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar -O $SPARK_JARS_DIR_PATH/aws-java-sdk.jar
+    wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar -O $SPARK_JARS_DIR_PATH/aws-java-sdk.jar
 fi
