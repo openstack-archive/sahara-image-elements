@@ -15,7 +15,7 @@ case "$DISTRO_NAME" in
         # the CDH package contains a broken symlink instead of the log4j jar file
         # these 4 lines should go away once Cloudera fixes the package
         echo "Fixing install problem for CDH: log4j";
-        wget http://repo1.maven.org/maven2/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar;
+        wget https://repo1.maven.org/maven2/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar;
         sudo rm /usr/lib/hadoop/lib/slf4j-log4j12-1.6.1.jar;
         sudo mv slf4j-log4j12-1.6.1.jar /usr/lib/hadoop/lib/
 
