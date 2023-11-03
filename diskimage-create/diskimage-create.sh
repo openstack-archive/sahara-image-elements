@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# dummy change
 set -e
 
 export IMAGE_SIZE=$DIB_IMAGE_SIZE
