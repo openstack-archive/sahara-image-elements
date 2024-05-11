@@ -1,1 +1,0 @@
-hdp-stack tar ${DIB_DEFAULT_APACHE_DIR}/hdp/ ${DIB_HDP_STACK_URL}

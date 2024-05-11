@@ -1,5 +1,0 @@
-=====
-oozie
-=====
-
-Oozie deployment.

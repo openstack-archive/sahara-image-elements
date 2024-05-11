@@ -1,2 +1,0 @@
-export JAVA_RC="/etc/profile.d/99-java.sh"
-export JAVA_BIN_RC="/etc/profile.d/98-java-bin.sh"
